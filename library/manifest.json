@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:53:17.026Z",
+  "updatedAt": "2026-11-08T03:54:34.722Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -855,6 +855,31 @@
         "ink": "#232C32",
         "h": 0.93,
         "w": 0.165
+      },
+      "position": null
+    },
+    {
+      "id": "omwdzq3zuk",
+      "title": "Machiavelli and the Modern State",
+      "format": "pdf",
+      "file": "library/books/omwdzq3zuk.pdf",
+      "size": 2884760,
+      "addedAt": "2026-11-08T03:54:32.100Z",
+      "length": {
+        "pages": 342,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#4b2b5b",
+        "accent": "#ecc489"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#4b2b5b",
+        "trim": "#ecc489",
+        "ink": "#ecc489",
+        "h": 0.942,
+        "w": 0.166
       },
       "position": null
     }
