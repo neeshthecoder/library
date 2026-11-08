@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:54:34.722Z",
+  "updatedAt": "2026-11-08T03:57:41.334Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -880,6 +880,31 @@
         "ink": "#ecc489",
         "h": 0.942,
         "w": 0.166
+      },
+      "position": null
+    },
+    {
+      "id": "a5ozm5hh66",
+      "title": "The Death of Ivan Ilyich and Confession",
+      "format": "epub",
+      "file": "library/books/a5ozm5hh66.epub",
+      "size": 1190428,
+      "addedAt": "2026-11-08T03:57:39.313Z",
+      "length": {
+        "pages": 141,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#39bbdd",
+        "accent": "#354551"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#39bbdd",
+        "trim": "#354551",
+        "ink": "#232C32",
+        "h": 0.861,
+        "w": 0.16
       },
       "position": null
     }
