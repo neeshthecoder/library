@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T02:49:02.588Z",
+  "updatedAt": "2026-11-08T02:49:18.541Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -225,6 +225,31 @@
         "ink": "#F8F6F1",
         "h": 0.917,
         "w": 0.197
+      },
+      "position": null
+    },
+    {
+      "id": "ojoefappso",
+      "title": "The power broker : Robert Moses and the fall of New York",
+      "format": "pdf",
+      "file": "library/books/ojoefappso.pdf",
+      "size": 6971508,
+      "addedAt": "2026-11-08T02:49:14.134Z",
+      "length": {
+        "pages": 1896,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#bfb896",
+        "accent": "#ab3726"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#bfb896",
+        "trim": "#ab3726",
+        "ink": "#232C32",
+        "h": 0.776,
+        "w": 0.19
       },
       "position": null
     }
