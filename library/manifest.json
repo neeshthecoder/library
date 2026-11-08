@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:23:02.520Z",
+  "updatedAt": "2026-11-08T03:24:25.557Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -287,10 +287,10 @@
         "w": 0.176
       },
       "position": {
-        "locator": "20",
-        "fraction": 0.05993690851735016,
-        "label": "20–21 of 318",
-        "updatedAt": "2026-11-08T02:57:28.797Z"
+        "locator": "1",
+        "fraction": 0,
+        "label": "1 of 318",
+        "updatedAt": "2026-11-08T03:24:23.324Z"
       }
     },
     {
