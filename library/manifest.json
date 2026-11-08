@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T04:13:25.378Z",
+  "updatedAt": "2026-11-08T04:14:40.604Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1055,6 +1055,31 @@
         "ink": "#F8F6F1",
         "h": 0.847,
         "w": 0.19
+      },
+      "position": null
+    },
+    {
+      "id": "vv54ggox5v",
+      "title": "A Rulebook for Arguments",
+      "format": "epub",
+      "file": "library/books/vv54ggox5v.epub",
+      "size": 763308,
+      "addedAt": "2026-11-08T04:14:38.520Z",
+      "length": {
+        "pages": 102,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#f9f9f9",
+        "accent": "#600610"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#f9f9f9",
+        "trim": "#600610",
+        "ink": "#600610",
+        "h": 0.845,
+        "w": 0.15
       },
       "position": null
     }
