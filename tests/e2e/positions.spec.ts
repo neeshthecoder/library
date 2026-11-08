@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
-import { FakeGitHub, fillConnect, fixture, makeBook, manifestOf, mockPublished } from './helpers'
+import { FakeGitHub, fillConnect, fixture, makeBook, manifestOf, mockPublished, turnPages } from './helpers'
 import type { Manifest } from '../../src/storage/manifest'
 
 test.use({ viewport: { width: 1280, height: 800 } })
@@ -15,7 +15,7 @@ test('saves the position on every page turn and reopens there after closing the 
   await mockPublished(page, manifestOf([PDF]), FILES)
   await page.goto('/#/read/p1')
   await ready(page)
-  for (let i = 0; i < 3; i++) await page.keyboard.press('ArrowRight')
+  await turnPages(page, 3)
   await expect(progress(page)).toHaveText('6–7 of 9')
   await page.close() // closed immediately, no chance to "leave the reader"
   const again = await context.newPage()
@@ -32,7 +32,15 @@ test('EPUB reopens at the same location', async ({ context }) => {
   await ready(page)
   for (let i = 0; i < 5; i++) await page.keyboard.press('ArrowRight')
   await expect.poll(() => progress(page).textContent()).not.toBe('0%')
-  const label = await progress(page).textContent()
+  // wait for queued page turns to finish: the label must hold steady
+  let label = ''
+  await expect.poll(async () => {
+    const a = await progress(page).textContent()
+    await page.waitForTimeout(400)
+    const b = await progress(page).textContent()
+    label = b ?? ''
+    return a === b
+  }).toBe(true)
   await page.close()
   const again = await context.newPage()
   await mockPublished(again, manifestOf([EPUB]), FILES)
@@ -91,7 +99,7 @@ test('continues on another device after syncing', async ({ browser }) => {
   const a = await device()
   await a.page.getByRole('button', { name: 'A Sample PDF' }).click()
   await ready(a.page)
-  for (let i = 0; i < 4; i++) await a.page.keyboard.press('ArrowRight')
+  await turnPages(a.page, 4)
   await expect(progress(a.page)).toHaveText('8–9 of 9')
   expect(gh.pushes).toEqual([]) // no commit per page turn
   await a.page.keyboard.press('Escape')

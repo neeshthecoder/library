@@ -87,11 +87,11 @@ test.describe('connect your library', () => {
         g.onsuccess = () => resolve(g.result ?? null)
       }
     }))
-    expect(await stored()).toMatchObject({ token: 'github_pat_test' })
+    await expect.poll(stored).toMatchObject({ token: 'github_pat_test' })
     await page.getByRole('button', { name: 'Library settings' }).click()
     await page.getByRole('dialog').getByRole('button', { name: 'Disconnect' }).click()
     await expect(page.getByRole('alert')).toContainText('disconnected')
-    expect(await stored()).toBeNull()
+    await expect.poll(stored).toBeNull()
     await page.reload()
     await page.getByRole('button', { name: 'Library settings' }).click()
     await expect(page.getByRole('dialog', { name: 'Library settings' })).toContainText('isn’t connected')

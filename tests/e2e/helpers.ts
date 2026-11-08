@@ -176,3 +176,13 @@ export async function dropFiles(page: Page, files: { name: string; buffer: Buffe
   await page.dispatchEvent('body', 'dragover', { dataTransfer: dt })
   await page.dispatchEvent('body', 'drop', { dataTransfer: dt })
 }
+
+/** Presses an arrow key n times, waiting for each page turn to land. */
+export async function turnPages(page: Page, n: number, key: 'ArrowRight' | 'ArrowLeft' = 'ArrowRight') {
+  const label = page.locator('.reader-progress')
+  for (let i = 0; i < n; i++) {
+    const before = await label.textContent()
+    await page.keyboard.press(key)
+    await (await import('@playwright/test')).expect.poll(() => label.textContent(), { timeout: 5000 }).not.toBe(before)
+  }
+}

@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { FakeGitHub, fillConnect, fixture, makeBook, manifestOf, mockPublished } from './helpers'
+import { FakeGitHub, fillConnect, fixture, makeBook, manifestOf, mockPublished, turnPages } from './helpers'
 
 const BOOKS = [
   makeBook({ id: 'p1', title: 'A Sample PDF', format: 'pdf', length: { pages: 9, estimated: false } }),
@@ -47,7 +47,7 @@ test.describe('reader', () => {
     await open(page, 'p1')
     await page.keyboard.press('ArrowLeft')
     await expect(progress(page)).toHaveText('1 of 9')
-    for (let i = 0; i < 6; i++) await page.keyboard.press('ArrowRight')
+    await turnPages(page, 4)
     await expect(progress(page)).toHaveText('8–9 of 9')
     await page.keyboard.press('ArrowRight')
     await expect(progress(page)).toHaveText('8–9 of 9')
@@ -64,8 +64,7 @@ test.describe('reader', () => {
 
   test('switches between spread and single page on resize, keeping the place', async ({ page }) => {
     await open(page, 'p1')
-    await page.keyboard.press('ArrowRight')
-    await page.keyboard.press('ArrowRight')
+    await turnPages(page, 2)
     await expect(progress(page)).toHaveText('4–5 of 9')
     await page.setViewportSize({ width: 390, height: 800 })
     await expect(progress(page)).toHaveText('4 of 9')
