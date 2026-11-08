@@ -1,6 +1,5 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test } from '@playwright/test'
-import { makeBook, manifestOf, mockPublished } from './helpers'
+import { makeBook, manifestOf, mockPublished, expect, test } from './helpers'
 import type { TrimDesign } from '../../src/storage/manifest'
 
 const TITLES = ['Middlemarch', 'Emma', 'The Left Hand of Darkness', 'Beloved', 'A Very Long Title That Will Not Fit On One Line At All, Not Even Close', 'Dune', 'Persuasion', 'The Remains of the Day', 'Kindred', 'Possession', 'Ulysses', 'Gilead', 'Atonement', 'Wolf Hall', 'Never Let Me Go', 'Housekeeping', 'Middlesex', 'Austerlitz']

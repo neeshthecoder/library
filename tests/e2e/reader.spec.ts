@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test, type Page } from '@playwright/test'
-import { FakeGitHub, fillConnect, fixture, makeBook, manifestOf, mockPublished, turnPages } from './helpers'
+import { type Page } from '@playwright/test'
+import { FakeGitHub, fillConnect, fixture, makeBook, manifestOf, mockPublished, turnPages, expect, setTheme, test } from './helpers'
 
 const BOOKS = [
   makeBook({ id: 'p1', title: 'A Sample PDF', format: 'pdf', length: { pages: 9, estimated: false } }),
@@ -108,6 +108,7 @@ test.describe('reader', () => {
   test('touch swipe turns PDF pages', async ({ browser }) => {
     const ctx = await browser.newContext({ hasTouch: true, viewport: { width: 1280, height: 800 } })
     const page = await ctx.newPage()
+    await setTheme(page, 'day')
     await open(page, 'p1')
     const stage = page.locator('.reader-book')
     const b = (await stage.boundingBox())!

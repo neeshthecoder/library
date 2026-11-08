@@ -1,5 +1,5 @@
-import { expect, test, type Page } from '@playwright/test'
-import { FakeGitHub, fillConnect, fixture, makeBook, manifestOf, mockPublished, turnPages } from './helpers'
+import { type Page } from '@playwright/test'
+import { FakeGitHub, fillConnect, fixture, makeBook, manifestOf, mockPublished, turnPages, expect, setTheme, test } from './helpers'
 import type { Manifest } from '../../src/storage/manifest'
 
 test.use({ viewport: { width: 1280, height: 800 } })
@@ -87,6 +87,7 @@ test('continues on another device after syncing', async ({ browser }) => {
   async function device() {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } })
     const page = await ctx.newPage()
+    await setTheme(page, 'day')
     await gh.install(page)
     await mockPublished(page, published, FILES)
     await page.goto('/')

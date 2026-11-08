@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test, type Page } from '@playwright/test'
+import { type Page } from '@playwright/test'
 import { contrast } from '../../src/spines/contrast'
-import { connect, dropFiles, FakeGitHub, fixture, fillConnect, manifestOf, mockPublished } from './helpers'
+import { connect, dropFiles, FakeGitHub, fixture, fillConnect, manifestOf, mockPublished, expect, test } from './helpers'
 
 const drop = (page: Page, ...names: string[]) => dropFiles(page, names.map((name) => ({ name, buffer: fixture(name) })))
 const preview = (page: Page) => page.getByRole('dialog', { name: 'Add to your shelf' })

@@ -1,6 +1,5 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test } from '@playwright/test'
-import { FakeGitHub, fillConnect, manifestOf, mockPublished } from './helpers'
+import { FakeGitHub, fillConnect, manifestOf, mockPublished, expect, test } from './helpers'
 
 test.describe('connect your library', () => {
   test('connects with a valid token and shows the public notice', async ({ page }) => {

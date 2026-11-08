@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test, type Page } from '@playwright/test'
-import { dropFiles, FakeGitHub, fillConnect, fixture, makeBook, manifestOf, mockPublished } from './helpers'
+import { type Page } from '@playwright/test'
+import { dropFiles, FakeGitHub, fillConnect, fixture, makeBook, manifestOf, mockPublished, expect, setTheme, test } from './helpers'
 
 const BOOKS = Array.from({ length: 12 }, (_, i) => makeBook({ id: `b${i + 1}`, title: ['Middlemarch', 'Emma', 'Beloved', 'Dune'][i % 4] + (i > 3 ? ` ${i}` : ''), format: i === 0 ? 'pdf' : 'epub' }))
 const FILES = { 'b1.pdf': fixture('sample.pdf'), ...Object.fromEntries(BOOKS.slice(1).map((b) => [`${b.id}.epub`, fixture('sample.epub')])) }
@@ -58,6 +58,7 @@ for (const view of VIEWS) {
       // 200% zoom is emulated as half the CSS viewport at twice the pixel density.
       const ctx = await browser.newContext({ viewport: { width: w / zoom, height: h / zoom }, deviceScaleFactor: zoom })
       const page = await ctx.newPage()
+    await setTheme(page, 'day')
       await setup(page)
       await view.open(page)
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)

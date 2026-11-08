@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { test as base, expect } from '@playwright/test'
 import type { Page, Route } from '@playwright/test'
 import type { Book, Manifest } from '../../src/storage/manifest'
 
@@ -186,3 +187,22 @@ export async function turnPages(page: Page, n: number, key: 'ArrowRight' | 'Arro
     await (await import('@playwright/test')).expect.poll(() => label.textContent(), { timeout: 5000 }).not.toBe(before)
   }
 }
+
+// --- Time of day ------------------------------------------------------------
+export const NOON = new Date(2026, 10, 8, 12, 0, 0)
+export const TEN_PM = new Date(2026, 10, 8, 22, 0, 0)
+
+/** Starts the page clock at noon (day) or 10 PM (night); time then flows normally. */
+export async function setTheme(page: Page, theme: 'day' | 'night') {
+  await page.clock.install({ time: theme === 'day' ? NOON : TEN_PM })
+}
+
+/** Tests run in the day theme unless they opt into `theme: 'night'`. */
+export const test = base.extend<{ theme: 'day' | 'night' }>({
+  theme: ['day', { option: true }],
+  page: async ({ page, theme }, use) => {
+    await setTheme(page, theme)
+    await use(page)
+  },
+})
+export { expect }

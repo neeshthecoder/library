@@ -2,6 +2,7 @@
 
 html {
   color-scheme: light;
+  background: var(--paper);
   -webkit-text-size-adjust: 100%;
 }
 
@@ -22,7 +23,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 
 :focus-visible {
-  outline: 2px solid var(--navy);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 

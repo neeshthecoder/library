@@ -38,7 +38,6 @@ export default defineConfig({
     FontaineTransform.vite({
       fallbacks: {
         'Instrument Serif': ['Times New Roman', 'Georgia'],
-        Inter: ['Arial', 'Helvetica Neue', 'Helvetica'],
       },
       resolvePath: (id: string) => new URL(`./public${id.replace(base, '/')}`, import.meta.url),
     }),

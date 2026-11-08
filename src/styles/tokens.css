@@ -13,6 +13,13 @@
   --danger: #9B2C2C;
   --success: #2F5D46;
 
+  /* Semantic roles (swapped at night) */
+  --action: var(--navy);
+  --action-hover: var(--navy-hover);
+  --on-action: var(--on-dark);
+  --focus: var(--navy);
+  --backdrop: rgba(35, 44, 50, 0.4);
+
   /* Shape and depth */
   --radius-card: 2rem;
   --radius-input: 1rem;
@@ -39,7 +46,7 @@
 
   /* Families */
   --font-serif: "Instrument Serif", "Instrument Serif fallback", "Times New Roman", Georgia, serif;
-  --font-sans: Inter, "Inter fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: Helvetica, "Helvetica Neue", Arial, sans-serif;
 
   /* Type scale */
   --display-xl: clamp(3.5rem, 9vw, 8rem);
@@ -57,4 +64,24 @@
   --dur-state: 150ms;
   --dur-move: 200ms;
   --dur-max: 300ms;
+}
+
+/*
+ * Night (19:00–07:00 local time): the styleguide's inverse palette. The page
+ * becomes midnight navy, text white, cards slightly lighter, and the action
+ * fill flips to paper with ink text. Set by public/theme.js before paint.
+ */
+:root[data-theme="night"] {
+  color-scheme: dark;
+  --paper: #0F172F;
+  --linen: #18213B;
+  --ink: #FFFFFF;
+  --ink-muted: #B9C0CC;
+  --danger: #F4A4A4;
+  --success: #9ED4B4;
+  --action: #F8F6F1;
+  --action-hover: #E9E4D8;
+  --on-action: #232C32;
+  --focus: #FFFFFF;
+  --backdrop: rgba(5, 9, 22, 0.6);
 }

@@ -18,10 +18,13 @@
 }
 .drag-overlay-text {
   margin: 0;
-  font-size: var(--heading);
-  font-weight: 500;
-  line-height: 1.12;
-  letter-spacing: -0.015em;
+  padding-inline: var(--space-4);
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--display-md);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-align: center;
   color: var(--ink);
 }
 

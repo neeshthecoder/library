@@ -78,7 +78,7 @@ export function truncate(text: string, size: number, length: number, measure: Me
   return (cut || text.slice(0, Math.max(1, lo))) + ell
 }
 
-/** Canvas-based measurer using Inter 500. Results are cached. */
+/** Canvas-based measurer using the spine title font (Helvetica 500). Results are cached. */
 export function canvasMeasure(): Measure {
   const ctx = document.createElement('canvas').getContext('2d')
   const cache = new Map<string, number>()
@@ -87,7 +87,7 @@ export function canvasMeasure(): Measure {
     let w = cache.get(key)
     if (w === undefined) {
       if (!ctx) return text.length * size * 0.55
-      ctx.font = `500 ${size}px Inter, "Inter fallback", system-ui, sans-serif`
+      ctx.font = `500 ${size}px Helvetica, "Helvetica Neue", Arial, sans-serif`
       w = ctx.measureText(text).width
       cache.set(key, w)
     }

@@ -4,6 +4,7 @@ import { renderSpine } from '../spines/spine'
 import { canvasMeasure, type Measure } from '../spines/title-fit'
 import { libraryReadout } from '../ui/format'
 import { bindWheelScroll } from './wheel-scroll'
+import { NIGHT_SKY } from './night-sky'
 
 export interface UploadStatus {
   state: 'uploading' | 'failed'
@@ -48,8 +49,10 @@ export class ShelfView {
     this.el = document.createElement('main')
     this.el.className = 'shelf-page'
     this.el.innerHTML = `
+      <div class="night-sky" aria-hidden="true">${NIGHT_SKY}</div>
       <header class="shelf-header">
         <h1 class="display display-xl headline-enter">The bookshelf.</h1>
+        <p class="fine shelf-subtitle">Books I am (or should be) reading.</p>
       </header>
       <section class="shelf" aria-label="Shelf">
         <div class="shelf-scroller">

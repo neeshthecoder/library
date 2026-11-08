@@ -8,6 +8,7 @@ import './shelf/bookcase.css'
 import './import/import.css'
 import './reader/reader.css'
 
+import { startThemeClock } from './theme'
 import { navigate, onRouteChange, parseHash, type Route } from './router'
 import { ShelfView } from './shelf/shelf-view'
 import { Cache } from './storage/cache'
@@ -20,6 +21,7 @@ import { pickFiles, processFiles } from './import/queue'
 import { clearMessages, mountMessages, showMessages } from './ui/messages'
 import type { ReaderView } from './reader/reader-view'
 
+startThemeClock()
 const app = document.getElementById('app')!
 mountMessages()
 

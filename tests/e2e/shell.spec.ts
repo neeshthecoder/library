@@ -1,5 +1,4 @@
-import { expect, test } from '@playwright/test'
-import { fixture, makeBook, manifestOf, mockPublished } from './helpers'
+import { fixture, makeBook, manifestOf, mockPublished, expect, test } from './helpers'
 
 test.describe('site shell', () => {
   test('preloads the serif and makes no third-party font requests', async ({ page }) => {

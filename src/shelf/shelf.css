@@ -1,5 +1,6 @@
 .shelf-page {
   --shelf-h: clamp(14rem, 42vh, 24rem);
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
@@ -12,6 +13,7 @@
   text-align: center;
 }
 .shelf-header h1 { max-width: min(20ch, 100%); margin-inline: auto; }
+.shelf-subtitle { margin: var(--space-4) 0 0; }
 
 .shelf { position: relative; }
 
@@ -69,3 +71,14 @@
 .shelf-status { padding-inline: var(--gutter); margin-top: var(--space-3); text-align: center; }
 .shelf-status:empty { display: none; }
 .shelf-status-line { margin: 0; }
+
+/* Night sky: a small moon and a few stars across the top (night only). */
+.night-sky {
+  display: none;
+  position: absolute;
+  inset: 0 0 auto;
+  height: clamp(3rem, 8vh, 6rem);
+  pointer-events: none;
+}
+:root[data-theme="night"] .night-sky { display: block; }
+.night-sky svg { width: 100%; height: 100%; overflow: visible; }

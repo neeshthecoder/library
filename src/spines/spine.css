@@ -12,7 +12,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 .spine:hover, .spine:focus-visible { transform: rotate(var(--lean, 0deg)) translateY(-0.5rem); }
-.spine:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+.spine:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .spine { transition: none; } }
 
 .spine-art { position: relative; z-index: 1; }
