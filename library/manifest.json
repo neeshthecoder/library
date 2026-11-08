@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T02:30:49.009Z",
+  "updatedAt": "2026-11-08T02:30:52.754Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -81,6 +81,31 @@
         "ink": "#232C32",
         "h": 0.863,
         "w": 0.145
+      },
+      "position": null
+    },
+    {
+      "id": "yqarlqrjyk",
+      "title": "Nails and Eyes",
+      "format": "mobi",
+      "file": "library/books/yqarlqrjyk.mobi",
+      "size": 785878,
+      "addedAt": "2026-11-08T02:20:41.610Z",
+      "length": {
+        "pages": 82,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#065f5c",
+        "accent": "#e1ddce"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#065f5c",
+        "trim": "#e1ddce",
+        "ink": "#e1ddce",
+        "h": 0.852,
+        "w": 0.146
       },
       "position": null
     }
