@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:34:12.144Z",
+  "updatedAt": "2026-11-08T03:37:10.606Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -703,6 +703,31 @@
         "ink": "#F8F6F1",
         "h": 0.962,
         "w": 0.165
+      },
+      "position": null
+    },
+    {
+      "id": "5mimns74ky",
+      "title": "Seeing Like a State",
+      "format": "pdf",
+      "file": "library/books/5mimns74ky.pdf",
+      "size": 25404497,
+      "addedAt": "2026-11-08T03:37:00.953Z",
+      "length": {
+        "pages": 463,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#494a46",
+        "accent": "#f3ead1"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#494a46",
+        "trim": "#f3ead1",
+        "ink": "#f3ead1",
+        "h": 0.753,
+        "w": 0.188
       },
       "position": null
     }
