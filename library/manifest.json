@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T04:39:32.661Z",
+  "updatedAt": "2026-11-08T04:40:15.680Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1056,7 +1056,8 @@
         "h": 0.847,
         "w": 0.19
       },
-      "position": null
+      "position": null,
+      "finishedAt": "2026-11-08T04:40:15.076Z"
     },
     {
       "id": "vv54ggox5v",
