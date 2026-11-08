@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T02:58:25.163Z",
+  "updatedAt": "2026-11-08T02:59:10.259Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -311,6 +311,31 @@
         "ink": "#232C32",
         "h": 0.865,
         "w": 0.194
+      },
+      "position": null
+    },
+    {
+      "id": "lyn3cw6vh6",
+      "title": "Game Theory: A Very Short Introduction",
+      "format": "epub",
+      "file": "library/books/lyn3cw6vh6.epub",
+      "size": 758913,
+      "addedAt": "2026-11-08T02:59:08.865Z",
+      "length": {
+        "pages": 185,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#57585c",
+        "accent": "#b9a96e"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#57585c",
+        "trim": "#b9a96e",
+        "ink": "#F8F6F1",
+        "h": 0.912,
+        "w": 0.164
       },
       "position": null
     }
