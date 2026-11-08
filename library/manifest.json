@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:57:41.334Z",
+  "updatedAt": "2026-11-08T03:59:22.291Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -905,6 +905,31 @@
         "ink": "#232C32",
         "h": 0.861,
         "w": 0.16
+      },
+      "position": null
+    },
+    {
+      "id": "6xwidj3fug",
+      "title": "The Road to Character",
+      "format": "epub",
+      "file": "library/books/6xwidj3fug.epub",
+      "size": 577185,
+      "addedAt": "2026-11-08T03:59:20.756Z",
+      "length": {
+        "pages": 327,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#ee542f",
+        "accent": "#120402"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#ee542f",
+        "trim": "#120402",
+        "ink": "#120402",
+        "h": 0.79,
+        "w": 0.164
       },
       "position": null
     }
