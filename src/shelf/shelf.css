@@ -14,6 +14,7 @@
 }
 
 .shelf-header {
+  position: relative; /* paints over the day sky's clouds */
   padding-inline: var(--gutter);
   text-align: center;
 }
@@ -94,3 +95,24 @@
 }
 :root[data-theme="night"] .night-sky { display: block; }
 .night-sky svg { width: 100%; height: 100%; overflow: visible; }
+
+/*
+ * Day sky (src/shelf/day-sky.ts): a small sun in the top right and a few
+ * static clouds behind the headline and subtitle (day only). The clouds are
+ * a pale blue-grey, since white would vanish on paper.
+ */
+.day-sky {
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(clamp(2rem, 6vh, 5rem) + var(--display-xl) * 1.1 + 3rem);
+  overflow: hidden;
+  pointer-events: none;
+}
+:root[data-theme="night"] .day-sky { display: none; }
+.day-sky svg { position: absolute; display: block; height: auto; }
+.sky-sun { top: clamp(0.5rem, 3vh, 2rem); right: clamp(0.75rem, 6vw, 6rem); width: clamp(3rem, 8vw, 7rem); }
+.sky-cloud-1 { left: 6%;  top: 22%; width: clamp(5rem, 11vw, 10rem); }
+.sky-cloud-2 { left: 27%; top: 44%; width: clamp(6rem, 14vw, 13rem); }
+.sky-cloud-3 { left: 55%; top: 16%; width: clamp(7rem, 16vw, 15rem); }
+.sky-cloud-4 { left: 44%; top: 70%; width: clamp(4rem, 8vw, 7rem); }
+.sky-cloud-5 { left: 74%; top: 56%; width: clamp(5rem, 10vw, 9rem); }

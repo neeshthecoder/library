@@ -5,6 +5,7 @@ import { canvasMeasure, type Measure } from '../spines/title-fit'
 import { libraryReadout } from '../ui/format'
 import { bindWheelScroll } from './wheel-scroll'
 import { NIGHT_SKY } from './night-sky'
+import { DAY_SKY } from './day-sky'
 import { BOOKEND_SVG, BOOKEND_VIEWBOX } from './bookend'
 import { critterAfter, critterItem, type CritterKind } from './critters'
 
@@ -79,6 +80,7 @@ export class ShelfView {
     this.el.className = 'shelf-page'
     this.el.innerHTML = `
       <div class="night-sky" aria-hidden="true">${NIGHT_SKY}</div>
+      <div class="day-sky" aria-hidden="true">${DAY_SKY}</div>
       <header class="shelf-header">
         <h1 class="display display-xl headline-enter">The bookshelf.</h1>
         <p class="fine shelf-subtitle">Books I am (or should be) reading.</p>

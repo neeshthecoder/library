@@ -51,6 +51,19 @@ test('day: paper background, no night sky', async ({ page }) => {
   await expect(page.locator('.night-sky')).toBeHidden()
 })
 
+test('day: a sun in the top right and clouds behind the headline', async ({ page }) => {
+  await shelf(page)
+  const sun = (await page.locator('.sky-sun').boundingBox())!
+  const vw = page.viewportSize()!.width
+  expect(sun.x).toBeGreaterThan(vw * 0.7)
+  expect(sun.y).toBeLessThan(60)
+  await expect(page.locator('.sky-cloud')).toHaveCount(5)
+  // the headline paints over the clouds
+  const h1 = (await page.locator('h1').boundingBox())!
+  const top = await page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.closest('h1, .day-sky')?.tagName, [h1.x + h1.width / 2, h1.y + h1.height / 2])
+  expect(top).toBe('H1')
+})
+
 test('switches to night at 19:00 while the page is open', async ({ page }) => {
   await page.clock.install({ time: new Date(2026, 10, 8, 18, 59, 30) })
   await shelf(page)
@@ -69,6 +82,7 @@ test.describe('night', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'night')
     expect(await bg(page)).toBe('rgb(15, 23, 47)')
     expect(await page.locator('h1').evaluate((e) => getComputedStyle(e).color)).toBe('rgb(255, 255, 255)')
+    await expect(page.locator('.day-sky')).toBeHidden()
     const sky = page.locator('.night-sky')
     await expect(sky).toBeVisible()
     const box = (await sky.boundingBox())!
