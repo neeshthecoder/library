@@ -19,7 +19,7 @@ There is no server. Book files and a manifest (`library/manifest.json`) live in 
 
 ### What to know before adding books
 
-- **Books are public.** Anyone with the site link can download every file in `library/books/`, and the repository is public too. The site asks search engines not to index it, and file names are random, but that is not access control. Only add books you are comfortable sharing, and remember that publishing purchased ebooks may breach their license.
+- **Books are public.** Anyone with the site link can download every file in `library/books/`, and the repository is public too. File names are random, and the page carries a `noindex` tag, but that is not access control. On a project site (`<owner>.github.io/<repo>/`), crawlers ignore `robots.txt`, because they only read it at the domain root. Book files themselves can't carry `noindex`, since Pages can't set headers. To block crawlers from the whole domain, add a `robots.txt` with `Disallow: /` to your `<owner>.github.io` user-site repository. Only add books you are comfortable sharing, and remember that publishing purchased ebooks may breach their license.
 - **Deleting doesn't shrink the repository.** A deleted book is removed from the site, but it stays in git history and still counts toward GitHub's roughly 1 GB repository guideline. To purge it for real, rewrite history yourself. For example, run `git filter-repo --path library/books/<id>.<ext> --invert-paths`, then force-push.
 - **Limits.** Each file can be up to 100 MB, which is GitHub's hard limit. The shelf shows the live library total against about 1 GB.
 - **New books take a minute to reach other devices.** Each add, delete, or position sync is a commit, and the site redeploys in about 1–2 minutes. The device that made the change sees it immediately.
@@ -74,4 +74,16 @@ The interface follows `STYLEGUIDE.md`. These deviations are deliberate:
 
 Automated coverage is in `tests/unit` and `tests/e2e`. Manual results (screen readers, real devices, Lighthouse) are recorded below as they are run.
 
-- _Not yet recorded._
+### 2026-11-08: first deploy (https://neeshthecoder.github.io/library/)
+
+- **Deploy:** the GitHub Actions workflow ran unit tests, built the site, passed the budget check, and deployed. Shelf JavaScript: 19.5 KB gzipped (budget 150 KB).
+- **Live smoke test:** current Chromium, WebKit, and Firefox (Playwright, desktop). The shelf loads with the CSP meta in place, and fonts and the manifest load under `/library/`. No HTTP or JavaScript errors.
+- **Lighthouse 12.6.1** (mobile, simulated 4G, Chrome for Testing):
+
+  | Library | Performance | Accessibility | Best practices | LCP | CLS | TBT |
+  |---|---|---|---|---|---|---|
+  | Live site, empty shelf | 100 | 100 | 100 | 1.3 s | 0 | 0 ms |
+  | Local build, 30-book manifest | 100 | 100 | 100 | 1.4 s | 0 | 0 ms |
+
+  INP can't be measured in a page-load audit. Total blocking time is the lab proxy.
+- **Not yet done:** screen-reader passes (VoiceOver on macOS and iOS, NVDA), and testing on real iOS and Android devices.
