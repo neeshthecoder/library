@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:19:45.884Z",
+  "updatedAt": "2026-11-08T03:23:02.520Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -546,6 +546,31 @@
         "ink": "#f8f8f7",
         "h": 0.885,
         "w": 0.158
+      },
+      "position": null
+    },
+    {
+      "id": "rgnnpoootm",
+      "title": "On the Genealogy of Morality",
+      "format": "pdf",
+      "file": "library/books/rgnnpoootm.pdf",
+      "size": 1723526,
+      "addedAt": "2026-11-08T03:23:00.563Z",
+      "length": {
+        "pages": 236,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#075ba9",
+        "accent": "#aac4d9"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#075ba9",
+        "trim": "#aac4d9",
+        "ink": "#F8F6F1",
+        "h": 0.897,
+        "w": 0.175
       },
       "position": null
     }
