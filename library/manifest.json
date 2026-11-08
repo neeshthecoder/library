@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T04:12:20.147Z",
+  "updatedAt": "2026-11-08T04:13:25.378Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1030,6 +1030,31 @@
         "ink": "#dfeaeb",
         "h": 0.796,
         "w": 0.168
+      },
+      "position": null
+    },
+    {
+      "id": "b5zt7x2cu2",
+      "title": "Thinking, Fast and Slow",
+      "format": "epub",
+      "file": "library/books/b5zt7x2cu2.epub",
+      "size": 868669,
+      "addedAt": "2026-11-08T04:13:23.441Z",
+      "length": {
+        "pages": 612,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#f8f7f2",
+        "accent": "#8f7b6a"
+      },
+      "spine": {
+        "source": "trim",
+        "bg": "#4b4326",
+        "trim": "#ca8e49",
+        "ink": "#F8F6F1",
+        "h": 0.847,
+        "w": 0.19
       },
       "position": null
     }
