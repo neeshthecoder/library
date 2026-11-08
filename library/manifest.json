@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:13:34.263Z",
+  "updatedAt": "2026-11-08T03:14:20.397Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -473,6 +473,31 @@
         "label": "1%",
         "updatedAt": "2026-11-08T03:13:22.146Z"
       }
+    },
+    {
+      "id": "tsamjtf4xb",
+      "title": "Waiting for the Barbarians",
+      "format": "epub",
+      "file": "library/books/tsamjtf4xb.epub",
+      "size": 319413,
+      "addedAt": "2026-11-08T03:14:18.981Z",
+      "length": {
+        "pages": 163,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#9f874e",
+        "accent": "#231d10"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#9f874e",
+        "trim": "#231d10",
+        "ink": "#231d10",
+        "h": 0.973,
+        "w": 0.166
+      },
+      "position": null
     }
   ]
 }
