@@ -79,10 +79,11 @@
   justify-content: center;
   margin: 0;
   color: #d9b48a;
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  /* the headline serif, like the spine titles */
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
   line-height: 1;
   /* a crisp 1px lip above the cut (flat, no blur) */
   text-shadow: 0 -1px 0 #24160c;
