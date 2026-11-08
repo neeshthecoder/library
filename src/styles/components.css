@@ -50,7 +50,9 @@
 .link-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: 44px;
+  min-width: 44px;
   padding: 0;
   border: 0;
   background: none;
@@ -73,6 +75,7 @@
   background: var(--linen);
   font-size: var(--body);
 }
+.input[readonly] { color: var(--ink-muted); }
 .input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .field-error { color: var(--danger); font-size: var(--fine); margin: 0; }
 .field-hint { margin: 0; }

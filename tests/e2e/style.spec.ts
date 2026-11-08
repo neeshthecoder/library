@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { type Page } from '@playwright/test'
-import { expect, fixture, makeBook, manifestOf, mockPublished, test } from './helpers'
+import { asOwner, expect, fixture, makeBook, manifestOf, mockPublished, test } from './helpers'
 
 const BOOKS = [makeBook({ id: 'p1', title: 'A Sample PDF', format: 'pdf', length: { pages: 9, estimated: false } }), makeBook({ id: 'b2', title: 'Emma' })]
 const shelf = async (page: Page) => {
@@ -32,7 +32,7 @@ test('subtitle sits under the headline at the footer link size', async ({ page }
 })
 
 test('the drag overlay text is set in Instrument Serif', async ({ page }) => {
-  await shelf(page)
+  await asOwner(page, BOOKS)
   const dt = await page.evaluateHandle(() => { const d = new DataTransfer(); d.items.add(new File(['x'], 'a.pdf')); return d })
   await page.dispatchEvent('body', 'dragenter', { dataTransfer: dt })
   const text = page.getByText('Drag file here')
@@ -88,8 +88,7 @@ test.describe('night', () => {
     await shelf(page)
     const tags = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']
     expect((await new AxeBuilder({ page }).withTags(tags).analyze()).violations.map((v) => v.id)).toEqual([])
-    await page.getByRole('button', { name: 'Library settings' }).click()
-    await page.getByRole('dialog').getByRole('button', { name: 'Connect' }).click()
+    await page.getByRole('button', { name: 'Sign in' }).click()
     const d = page.getByRole('dialog', { name: 'Connect your library' })
     await d.getByLabel('Personal access token').fill('x')
     await d.getByRole('button', { name: 'Connect' }).click() // empty owner → error message

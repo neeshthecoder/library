@@ -23,6 +23,9 @@ export function verifyMessage(r: VerifyResult, owner: string, repo: string): str
 /** Asks for repository details and a token, verifies them, and resolves with settings (or null if cancelled). */
 export async function openConnectDialog(opts: { current?: Settings | null; fetch?: FetchLike; reason?: string } = {}): Promise<Settings | null> {
   const guess = repoFromLocation(location)
+  // On the published site, only this site's own repository can be connected.
+  const locked = !!(guess.owner && guess.repo)
+  const ro = locked ? ' readonly aria-readonly="true"' : ''
   const cur = opts.current
   const d = createDialog('connect-title')
   d.innerHTML = `
@@ -31,9 +34,9 @@ export async function openConnectDialog(opts: { current?: Settings | null; fetch
       ${opts.reason ? `<p class="dialog-body" style="margin:0">${esc(opts.reason)}</p>` : ''}
       <p class="fine" style="margin:0">${esc(PUBLIC_NOTICE)}</p>
       <div class="field"><label for="c-owner">Repository owner</label>
-        <input class="input" id="c-owner" name="owner" autocomplete="off" autocapitalize="off" spellcheck="false" required value="${esc(cur?.owner ?? guess.owner)}"></div>
+        <input class="input" id="c-owner" name="owner" autocomplete="off" autocapitalize="off" spellcheck="false" required${ro} value="${esc(locked ? guess.owner : cur?.owner ?? guess.owner)}"></div>
       <div class="field"><label for="c-repo">Repository name</label>
-        <input class="input" id="c-repo" name="repo" autocomplete="off" autocapitalize="off" spellcheck="false" required value="${esc(cur?.repo ?? guess.repo)}"></div>
+        <input class="input" id="c-repo" name="repo" autocomplete="off" autocapitalize="off" spellcheck="false" required${ro} value="${esc(locked ? guess.repo : cur?.repo ?? guess.repo)}"></div>
       <div class="field"><label for="c-branch">Branch</label>
         <input class="input" id="c-branch" name="branch" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Default branch" value="${esc(cur?.branch ?? '')}"></div>
       <div class="field"><label for="c-token">Personal access token</label>
@@ -76,7 +79,7 @@ export async function openConnectDialog(opts: { current?: Settings | null; fetch
     d.close('ok')
   })
 
-  const initial = d.querySelector<HTMLInputElement>(cur?.owner || guess.owner ? '#c-token' : '#c-owner')
+  const initial = d.querySelector<HTMLInputElement>(locked || cur?.owner ? '#c-token' : '#c-owner')
   await openDialog(d, initial)
   return result
 }
@@ -87,7 +90,7 @@ export async function openSettingsDialog(current: Settings | null): Promise<'con
   d.innerHTML = `
     <h2 class="dialog-title" id="settings-title">Library settings</h2>
     <p class="dialog-body">${current
-      ? `Connected to <strong>${esc(current.owner)}/${esc(current.repo)}</strong> on the ${esc(current.branch)} branch. This device can add and delete books.`
+      ? `Connected to <strong>${esc(current.owner)}/${esc(current.repo)}</strong> on the ${esc(current.branch)} branch. This device can add and delete books. Disconnecting removes the token, cached books, and reading positions from this device.`
       : 'This device isn’t connected. You can read books, but adding or deleting them needs a connection.'}</p>
     <p class="fine">${esc(PUBLIC_NOTICE)}</p>
     <div class="dialog-actions">

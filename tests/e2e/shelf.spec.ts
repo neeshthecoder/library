@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright'
-import { makeBook, manifestOf, mockPublished, expect, test } from './helpers'
+import { asOwner, makeBook, manifestOf, mockPublished, expect, test } from './helpers'
 import type { TrimDesign } from '../../src/storage/manifest'
 
 const TITLES = ['Middlemarch', 'Emma', 'The Left Hand of Darkness', 'Beloved', 'A Very Long Title That Will Not Fit On One Line At All, Not Even Close', 'Dune', 'Persuasion', 'The Remains of the Day', 'Kindred', 'Possession', 'Ulysses', 'Gilead', 'Atonement', 'Wolf Hall', 'Never Let Me Go', 'Housekeeping', 'Middlesex', 'Austerlitz']
@@ -21,12 +21,20 @@ function shelfBooks(n = TITLES.length) {
 }
 
 test.describe('bookshelf', () => {
-  test('shows the empty state', async ({ page }) => {
-    await mockPublished(page, manifestOf([]))
-    await page.goto('/')
+  test('shows the empty state (owner)', async ({ page }) => {
+    await asOwner(page)
     await expect(page.getByRole('heading', { level: 1, name: 'The bookshelf.' })).toBeVisible()
     await expect(page.getByText('Drop a book anywhere to add it.')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Add book' })).toBeVisible()
+    await expect(page.getByRole('region', { name: 'Shelf' })).toBeHidden()
+  })
+
+  test('shows the empty state (guest)', async ({ page }) => {
+    await mockPublished(page, manifestOf([]))
+    await page.goto('/')
+    await expect(page.getByText('No books on the shelf yet.')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Add book' })).toBeHidden()
+    await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible()
     await expect(page.getByRole('region', { name: 'Shelf' })).toBeHidden()
   })
 
@@ -71,8 +79,7 @@ test.describe('bookshelf', () => {
   })
 
   test('footer is a quiet centered line of text links', async ({ page }) => {
-    await mockPublished(page, manifestOf(shelfBooks(3)))
-    await page.goto('/')
+    await asOwner(page, shelfBooks(3))
     const add = page.getByRole('button', { name: 'Add book' })
     await expect(add).toHaveClass(/link-btn/)
     const fs = await add.evaluate((e) => parseFloat(getComputedStyle(e).fontSize))

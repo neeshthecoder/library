@@ -58,8 +58,12 @@ describe('Library loading', () => {
     await t.lib.upload('new')
     expect(t.api.file('library/books/new.epub')).toBe('epub')
     // simulate reload on a stale Pages copy: API down, published still empty
-    await t.lib.disconnect()
-    const lib2 = new Library({ cache: t.cache, fetch: async (u) => (u.includes('manifest') ? new Response(JSON.stringify(emptyManifest())) : new Response('', { status: 404 })), base: '/base/' })
+    // reload while the API is unreachable and Pages hasn't redeployed yet
+    const stale: FetchLike = async (u) => {
+      if (u.startsWith('https://api.github.com')) throw new TypeError('offline')
+      return u.includes('manifest') ? new Response(JSON.stringify(emptyManifest())) : new Response('', { status: 404 })
+    }
+    const lib2 = new Library({ cache: t.cache, fetch: stale, base: '/base/', github: (s) => new GitHub(s, stale, null) })
     await lib2.init()
     expect(lib2.manifest.books.map((b) => b.id)).toEqual(['new'])
     expect(await (await lib2.getFile(lib2.book('new')!))!.text()).toBe('epub')
@@ -152,11 +156,11 @@ describe('GitHub writes', () => {
     expect(t.lib.store.get().pending[0].state).toBe('failed')
   })
 
-  it('needs a connection to upload', async () => {
+  it('refuses to add books on a guest device', async () => {
     const t = setup()
     await t.init()
-    await t.lib.add(book('a'), new Blob(['x']))
-    await expect(t.lib.upload('a')).rejects.toThrow(/Connect/)
+    await expect(t.lib.add(book('a'), new Blob(['x']))).rejects.toThrow(/Connect/)
+    expect(await t.cache.fileIds()).toEqual([])
   })
 })
 
@@ -211,8 +215,11 @@ describe('deletion', () => {
     expect(await t.cache.getFile('a')).toBeNull()
     expect(await t.cache.getPosition('a')).toBeUndefined()
     // a stale published copy that still lists the book doesn't bring it back
-    const lib2 = new Library({ cache: t.cache, fetch: async () => new Response(JSON.stringify(addBook(emptyManifest(), book('a')))), base: '/base/' })
-    await t.cache.clearSettings()
+    const stale: FetchLike = async (u) => {
+      if (u.startsWith('https://api.github.com')) throw new TypeError('offline')
+      return new Response(JSON.stringify(addBook(emptyManifest(), book('a'))))
+    }
+    const lib2 = new Library({ cache: t.cache, fetch: stale, base: '/base/', github: (s) => new GitHub(s, stale, null) })
     await lib2.init()
     expect(lib2.manifest.books).toEqual([])
   })
@@ -224,13 +231,78 @@ describe('deletion', () => {
   })
 
   it('drops cached files for books deleted on another device', async () => {
-    const published = addBook(emptyManifest(), book('a'))
-    const t = setup({ published, files: { 'library/books/a.epub': 'data' } })
+    const api = new FakeGitHubApi(addBook(emptyManifest(), book('a')))
+    const t = setup({ api, connected: true, files: { 'library/books/a.epub': 'data' } })
     await t.init()
     await t.lib.getFile(t.lib.book('a')!)
     expect(await t.cache.hasFile('a')).toBe(true)
-    t.published.current = emptyManifest()
+    api.externalCommit(emptyManifest())
     await t.lib.refresh()
     expect(await t.cache.hasFile('a')).toBe(false)
+  })
+})
+
+describe('guests', () => {
+  const remotePos = { locator: '120', fraction: 0.4, label: '40%', updatedAt: '2026-01-05T00:00:00Z' }
+
+  it('store nothing on the device', async () => {
+    const published = addBook(emptyManifest(), { ...book('a'), position: remotePos })
+    const t = setup({ published, files: { 'library/books/a.epub': 'data' } })
+    await t.init()
+    expect(t.lib.isOwner).toBe(false)
+    expect(await (await t.lib.getFile(t.lib.book('a')!))!.text()).toBe('data')
+    await t.lib.savePosition('a', { locator: '7', fraction: 0.1, label: '10%', updatedAt: '2026-02-01T00:00:00Z' })
+    expect(await t.cache.fileIds()).toEqual([])
+    expect(await t.cache.allPositions()).toEqual([])
+  })
+
+  it('start books at the beginning, keep their place for the tab, and leave the owner’s bookmark alone', async () => {
+    const published = addBook(emptyManifest(), { ...book('a'), position: remotePos })
+    const t = setup({ published })
+    await t.init()
+    expect(t.lib.position('a')).toBeNull()
+    const mine = { locator: '7', fraction: 0.1, label: '10%', updatedAt: '2026-02-01T00:00:00Z' }
+    await t.lib.savePosition('a', mine)
+    expect(t.lib.position('a')).toEqual(mine)
+    expect(t.lib.manifest.books[0].position).toEqual(remotePos) // the shelf still shows the owner's ribbon
+    expect(t.api.pushes).toEqual([])
+  })
+
+  it('have leftovers from earlier visits wiped', async () => {
+    const t = setup()
+    await t.cache.putFile('old', new Blob(['x']))
+    await t.cache.putPosition('old', { locator: '1', fraction: 0, label: '0%', updatedAt: '2026-01-01T00:00:00Z' })
+    await t.cache.putPending({ key: 'add:old', op: { type: 'add', book: book('old') }, state: 'failed', createdAt: '2026-01-01' })
+    await t.init()
+    expect(await t.cache.fileIds()).toEqual([])
+    expect(await t.cache.allPositions()).toEqual([])
+    expect(await t.cache.pending()).toEqual([])
+    expect(t.lib.manifest.books).toEqual([])
+  })
+})
+
+describe('disconnecting', () => {
+  it('removes the token and every local copy and position', async () => {
+    const api = new FakeGitHubApi(addBook(emptyManifest(), book('a')))
+    const t = setup({ api, connected: true, files: { 'library/books/a.epub': 'data' } })
+    await t.init()
+    await t.lib.getFile(t.lib.book('a')!)
+    await t.lib.savePosition('a', { locator: '3', fraction: 0.1, label: '10%', updatedAt: '2026-02-01T00:00:00Z' })
+    await t.lib.disconnect()
+    expect(await t.cache.getSettings()).toBeNull()
+    expect(await t.cache.fileIds()).toEqual([])
+    expect(await t.cache.allPositions()).toEqual([])
+    expect(t.lib.isOwner).toBe(false)
+  })
+
+  it('refuses while a book is waiting to upload', async () => {
+    const api = new FakeGitHubApi()
+    const t = setup({ api, connected: true })
+    await t.init()
+    api.failBlobs = true
+    await t.lib.add(book('a'), new Blob(['x']))
+    await expect(t.lib.upload('a')).rejects.toThrow()
+    await expect(t.lib.disconnect()).rejects.toThrow(/Title a/)
+    expect(await t.cache.getSettings()).not.toBeNull()
   })
 })

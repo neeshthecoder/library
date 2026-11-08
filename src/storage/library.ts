@@ -47,6 +47,12 @@ export interface LibraryDeps {
  */
 export const COMMIT_GRACE_MS = 15 * 60 * 1000
 
+export class UnsyncedBooksError extends Error {
+  constructor(public titles: string[]) {
+    super(`Some books on this device aren’t uploaded yet: ${titles.join(', ')}. Upload or delete them before disconnecting.`)
+  }
+}
+
 export class NotConnectedError extends Error {
   constructor() {
     super('Connect your library to make changes.')
@@ -86,6 +92,8 @@ export class Library {
   #now: () => Date
   #syncing: Promise<void> | null = null
   #uploading = new Map<string, Promise<void>>()
+  /** Guests' reading positions: this tab only, never stored. */
+  #guestPositions = new Map<string, Position>()
 
   constructor(deps: LibraryDeps) {
     this.cache = deps.cache
@@ -101,6 +109,11 @@ export class Library {
 
   get connected(): boolean {
     return !!this.store.get().settings
+  }
+
+  /** The owner is whoever has connected this device with a token that can write. */
+  get isOwner(): boolean {
+    return this.connected
   }
 
   book(id: string): Book | undefined {
@@ -124,7 +137,13 @@ export class Library {
         await this.cache.putPending(p)
       }
     }
-    this.store.set({ settings, pending, local: Object.fromEntries(positions.map((p) => [p.id, p])) })
+    if (!settings) {
+      // Guests store nothing: wipe anything left from earlier visits.
+      await this.cache.clearLocalData()
+      this.store.set({ settings: null, pending: [], local: {} })
+    } else {
+      this.store.set({ settings, pending, local: Object.fromEntries(positions.map((p) => [p.id, p])) })
+    }
     await this.refresh()
   }
 
@@ -194,6 +213,7 @@ export class Library {
 
   /** Adds a book locally right away. Call `upload(id)` afterwards. */
   async add(book: Book, blob: Blob): Promise<void> {
+    if (!this.isOwner) throw new NotConnectedError()
     const keep = new Set(this.store.get().pending.flatMap((p) => (p.op.type === 'add' ? [p.op.book.id] : [])))
     await this.cache.putFile(book.id, blob, keep)
     void Cache.requestPersist()
@@ -300,6 +320,11 @@ export class Library {
 
   /** Loads a book's file: local cache, then the published site, then the API. */
   async getFile(book: Book): Promise<Blob | null> {
+    if (!this.isOwner) {
+      // Guests read straight from the site and keep no copy.
+      const res = await this.#fetch(`${this.#base}${book.file}`).catch(() => null)
+      return res?.ok ? res.blob() : null
+    }
     const cached = await this.cache.getFile(book.id)
     if (cached) return cached
     let blob: Blob | null = null
@@ -317,11 +342,16 @@ export class Library {
 
   /** Best known position: newest of local and manifest. */
   position(id: string): Position | null {
+    if (!this.isOwner) return this.#guestPositions.get(id) ?? null
     const remote = this.store.get().published?.books.find((b) => b.id === id)?.position
     return newerPosition(remote, this.store.get().local[id]?.position)
   }
 
   async savePosition(id: string, position: Position): Promise<void> {
+    if (!this.isOwner) {
+      this.#guestPositions.set(id, position)
+      return
+    }
     const lp: LocalPosition = { id, position, synced: false }
     this.store.set((s) => ({ local: { ...s.local, [id]: lp } }))
     await this.cache.putPosition(id, position, false)
@@ -377,13 +407,23 @@ export class Library {
   // Connection -----------------------------------------------------------------
 
   async connect(settings: Settings): Promise<void> {
+    this.#guestPositions.clear()
     await this.cache.putSettings(settings)
     this.store.set({ settings })
     await this.refresh()
   }
 
+  /**
+   * Turns this device back into a guest: removes the token and every local
+   * copy and position. Sync positions first. Refuses while books are waiting
+   * to upload, since they would be lost.
+   */
   async disconnect(): Promise<void> {
+    const waiting = this.store.get().pending.filter((p) => p.op.type === 'add' && p.state !== 'committed')
+    if (waiting.length) throw new UnsyncedBooksError(waiting.map((p) => (p.op.type === 'add' ? p.op.book.title : '')))
     await this.cache.clearSettings()
-    this.store.set({ settings: null })
+    await this.cache.clearLocalData()
+    this.#guestPositions.clear()
+    this.store.set({ settings: null, pending: [], local: {} })
   }
 }

@@ -172,6 +172,12 @@ export class Cache {
     await (await this.#db).delete('pending', key)
   }
 
+  /** Removes every cached book, position and pending change from this device. */
+  async clearLocalData(): Promise<void> {
+    const db = await this.#db
+    await Promise.all([db.clear('files'), db.clear('positions'), db.clear('pending')])
+  }
+
   // Settings ---------------------------------------------------------------------
 
   async getSettings(): Promise<Settings | null> {

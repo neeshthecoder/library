@@ -1,15 +1,13 @@
 import AxeBuilder from '@axe-core/playwright'
 import { type Page } from '@playwright/test'
 import { contrast } from '../../src/spines/contrast'
-import { connect, dropFiles, FakeGitHub, fixture, fillConnect, manifestOf, mockPublished, expect, test } from './helpers'
+import { asOwner, dropFiles, FakeGitHub, fixture, manifestOf, mockPublished, expect, test } from './helpers'
 
 const drop = (page: Page, ...names: string[]) => dropFiles(page, names.map((name) => ({ name, buffer: fixture(name) })))
 const preview = (page: Page) => page.getByRole('dialog', { name: 'Add to your shelf' })
 
-async function ready(page: Page, gh = new FakeGitHub()) {
-  await gh.install(page)
-  await mockPublished(page, manifestOf([]))
-  await page.goto('/')
+async function ready(page: Page) {
+  const gh = await asOwner(page)
   await expect(page.getByText('Drop a book anywhere to add it.')).toBeVisible()
   return gh
 }
@@ -59,6 +57,25 @@ test.describe('drag overlay', () => {
     await page.dispatchEvent('body', 'dragenter', { dataTransfer: dt })
     await expect(page.locator('.drag-overlay')).toBeVisible()
     await expect(page.locator('.drag-overlay')).toBeHidden({ timeout: 2000 })
+  })
+})
+
+test.describe('guests', () => {
+  test('cannot add books: no Add book, no overlay, drops ignored', async ({ page }) => {
+    await new FakeGitHub().install(page)
+    await mockPublished(page, manifestOf([]))
+    await page.goto('/')
+    await expect(page.getByText('No books on the shelf yet.')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Add book' })).toBeHidden()
+    await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible()
+    const dt = await page.evaluateHandle(() => { const d = new DataTransfer(); d.items.add(new File(['x'], 'a.epub')); return d })
+    await page.dispatchEvent('body', 'dragenter', { dataTransfer: dt })
+    await expect(page.locator('.drag-overlay')).toBeHidden()
+    await drop(page, 'sample.epub')
+    await page.waitForTimeout(800)
+    await expect(preview(page)).toHaveCount(0)
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+    expect(page.url()).toMatch(/localhost/) // the browser didn't navigate to the dropped file
   })
 })
 
@@ -185,7 +202,6 @@ test.describe('import', () => {
 
   test('queues several files and reports rejections together', async ({ page }) => {
     const gh = await ready(page)
-    await connect(page)
     await dropFiles(page, [
       { name: 'one.epub', buffer: fixture('sample.epub') },
       { name: 'notes.docx', buffer: fixture('notes.docx') },
@@ -202,13 +218,11 @@ test.describe('import', () => {
     await expect.poll(() => gh.pushes).toEqual(['Add "A Book Without a Cover"'])
   })
 
-  test('first add on an unconnected device asks to connect, then uploads', async ({ page }) => {
+  test('adds a book and uploads it as one commit', async ({ page }) => {
     const gh = await ready(page)
     await drop(page, 'sample.epub')
     await preview(page).getByRole('button', { name: 'Add to shelf' }).click()
     await expect(page.getByRole('button', { name: 'Middlemarch' })).toBeVisible()
-    await expect(page.getByRole('dialog', { name: 'Connect your library' })).toBeVisible()
-    await fillConnect(page)
     await expect.poll(() => gh.pushes).toEqual(['Add "Middlemarch"'])
     const m = gh.manifest()
     expect(m.books[0].title).toBe('Middlemarch')
@@ -219,7 +233,6 @@ test.describe('import', () => {
 
   test('offline upload stays on the shelf with a retry', async ({ page }) => {
     const gh = await ready(page)
-    await connect(page)
     gh.offline = true
     await drop(page, 'sample.epub')
     await preview(page).getByRole('button', { name: 'Add to shelf' }).click()
@@ -232,11 +245,8 @@ test.describe('import', () => {
   })
 
   test('a dropped book on the reader opens the preview', async ({ page }) => {
-    const gh = new FakeGitHub()
-    await gh.install(page)
     const { makeBook } = await import('./helpers')
-    await mockPublished(page, manifestOf([makeBook({ id: 'b1', title: 'Emma' })]), { 'b1.epub': fixture('sample.epub') })
-    await page.goto('/#/read/b1')
+    await asOwner(page, [makeBook({ id: 'b1', title: 'Emma' })], { 'b1.epub': fixture('sample.epub') }, '/#/read/b1')
     await expect(page.getByRole('button', { name: 'Back to shelf' })).toBeVisible()
     await drop(page, 'nocover.epub')
     await expect(preview(page)).toBeVisible()

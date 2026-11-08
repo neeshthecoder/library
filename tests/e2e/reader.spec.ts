@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { type Page } from '@playwright/test'
-import { FakeGitHub, fillConnect, fixture, makeBook, manifestOf, mockPublished, turnPages, expect, setTheme, test } from './helpers'
+import { asOwner, fixture, makeBook, manifestOf, mockPublished, turnPages, expect, setTheme, test } from './helpers'
 
 const BOOKS = [
   makeBook({ id: 'p1', title: 'A Sample PDF', format: 'pdf', length: { pages: 9, estimated: false } }),
@@ -165,14 +165,7 @@ test.describe('delete', () => {
   test.use({ viewport: { width: 1280, height: 800 } })
 
   async function connected(page: Page) {
-    const gh = new FakeGitHub(manifestOf([BOOKS[1]]))
-    gh.blobs.set('x', FILES['e1.epub'])
-    await gh.install(page)
-    await mockPublished(page, manifestOf([BOOKS[1]]), FILES)
-    await page.goto('/')
-    await page.getByRole('button', { name: 'Library settings' }).click()
-    await page.getByRole('dialog').getByRole('button', { name: 'Connect' }).click()
-    await fillConnect(page)
+    const gh = await asOwner(page, [BOOKS[1]], FILES)
     await page.getByRole('button', { name: 'Middlemarch' }).click()
     await expect(page.locator('.reader-stage[data-ready]')).toBeVisible({ timeout: 15000 })
     return gh
@@ -201,14 +194,9 @@ test.describe('delete', () => {
     expect(gh.manifest().books).toEqual([])
   })
 
-  test('asks to connect first on an unconnected device', async ({ page }) => {
-    const gh = new FakeGitHub(manifestOf([BOOKS[1]]))
-    await gh.install(page)
+  test('guests have no delete control', async ({ page }) => {
     await open(page, 'e1')
-    await page.getByRole('button', { name: 'Delete book' }).click()
-    const d = page.getByRole('dialog', { name: 'Connect your library' })
-    await expect(d).toContainText('Connect your library to delete books.')
-    await d.getByRole('button', { name: 'Cancel' }).click()
-    await expect(page.getByRole('alertdialog')).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'Delete book' })).toBeHidden()
   })
+
 })

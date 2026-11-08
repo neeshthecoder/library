@@ -146,11 +146,26 @@ export class FakeGitHub {
   #trees = new Map<string, Record<string, Buffer>>()
 }
 
-/** Connects the library through the UI. */
+/** Signs in (connects the library) through the UI. */
 export async function connect(page: Page) {
-  await page.getByRole('button', { name: 'Library settings' }).click()
-  await page.getByRole('dialog').getByRole('button', { name: 'Connect' }).click()
+  await page.getByRole('button', { name: 'Sign in' }).click()
   await fillConnect(page)
+  // the token is saved once the owner controls appear
+  await expect(page.getByRole('button', { name: 'Library settings' })).toBeVisible()
+}
+
+/**
+ * Opens the site as the signed-in owner: a fake repo holding `books`, the same
+ * books published on Pages, then signs in. Returns the fake repo.
+ */
+export async function asOwner(page: Page, books: Book[] = [], files: Record<string, Buffer> = {}, path = '/') {
+  const gh = new FakeGitHub(manifestOf(books))
+  await gh.install(page)
+  await mockPublished(page, () => gh.manifest(), files)
+  await page.goto('/')
+  await connect(page)
+  if (path !== '/') await page.goto(path)
+  return gh
 }
 
 export async function fillConnect(page: Page) {

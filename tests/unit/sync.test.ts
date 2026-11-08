@@ -73,12 +73,13 @@ describe('PositionSync', () => {
     expect(s.api.pushes).toHaveLength(2)
   })
 
-  it('does nothing on an unconnected device but keeps the local position', async () => {
+  it('does nothing on a guest device and stores nothing', async () => {
     const s = await setup(false)
     await s.turn(12)
     await s.sync.flush()
     expect(s.api.pushes).toEqual([])
-    expect((await s.cache.getPosition('a'))!.position.locator).toBe('12')
+    expect(await s.cache.getPosition('a')).toBeUndefined()
+    expect(s.lib.position('a')?.locator).toBe('12')
   })
 
   it('retries positions that failed to sync', async () => {

@@ -79,7 +79,9 @@ export class ReaderView {
     this.#progress = this.el.querySelector('.reader-progress')!
 
     this.el.querySelector('[data-back]')!.addEventListener('click', () => cb.onBack())
-    this.el.querySelector('[data-delete]')!.addEventListener('click', () => void this.#delete())
+    const del = this.el.querySelector<HTMLElement>('[data-delete]')!
+    del.hidden = !lib.isOwner
+    del.addEventListener('click', () => void this.#delete())
     this.el.querySelector('.reader-edge-prev')!.addEventListener('click', () => void this.prev())
     this.el.querySelector('.reader-edge-next')!.addEventListener('click', () => void this.next())
     this.#mql.addEventListener('change', this.#onMode)

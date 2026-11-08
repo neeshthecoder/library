@@ -17,6 +17,8 @@ export interface ShelfState {
   totalBytes: number
   uploads: Record<string, UploadStatus>
   loading: boolean
+  /** Connected owner (can add and manage) or a read-only guest. */
+  owner: boolean
 }
 
 export interface ShelfCallbacks {
@@ -24,6 +26,7 @@ export interface ShelfCallbacks {
   onAddBook(): void
   onSettings(): void
   onRetry(id: string): void
+  onSignIn(): void
 }
 
 const SCROLL_KEY = 'shelf-scroll'
@@ -70,6 +73,7 @@ export class ShelfView {
         <button type="button" class="link-btn" data-action="add">Add book</button>
         <span class="shelf-size"></span>
         <button type="button" class="link-btn" data-action="settings">Library settings</button>
+        <button type="button" class="link-btn" data-action="signin">Sign in</button>
       </footer>
       <div class="visually-hidden shelf-descs"></div>`
     this.#list = this.el.querySelector('.shelf-books')!
@@ -82,6 +86,7 @@ export class ShelfView {
 
     this.el.querySelector('[data-action="add"]')!.addEventListener('click', () => cb.onAddBook())
     this.el.querySelector('[data-action="settings"]')!.addEventListener('click', () => cb.onSettings())
+    this.el.querySelector('[data-action="signin"]')!.addEventListener('click', () => cb.onSignIn())
     this.#status.addEventListener('click', (e) => {
       const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-retry]')
       if (btn) cb.onRetry(btn.dataset.retry!)
@@ -122,6 +127,9 @@ export class ShelfView {
     const empty = !state.loading && this.#books.length === 0
     this.#shelf.hidden = empty
     this.#empty.hidden = !empty
+    this.#empty.textContent = state.owner ? 'Drop a book anywhere to add it.' : 'No books on the shelf yet.'
+    for (const a of ['add', 'settings']) this.el.querySelector<HTMLElement>(`[data-action="${a}"]`)!.hidden = !state.owner
+    this.el.querySelector<HTMLElement>('[data-action="signin"]')!.hidden = state.owner
     this.#readout.textContent = libraryReadout(this.#books.length, state.totalBytes).text
     this.#renderStatus(state.uploads)
     this.#renderBooks()

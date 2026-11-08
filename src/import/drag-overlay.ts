@@ -43,7 +43,7 @@ export const WATCHDOG_MS = 300
  * Installs the whole-window overlay. Calls `onFiles` with dropped files.
  * Returns an unbind function.
  */
-export function installDragOverlay(onFiles: (files: File[]) => void, win: Window = window): () => void {
+export function installDragOverlay(onFiles: (files: File[]) => void, win: Window = window, enabled: () => boolean = () => true): () => void {
   const doc = win.document
   const overlay = doc.createElement('div')
   overlay.className = 'drag-overlay'
@@ -67,12 +67,17 @@ export function installDragOverlay(onFiles: (files: File[]) => void, win: Window
   const onEnter = (e: DragEvent) => {
     const files = hasFiles(e.dataTransfer)
     if (files) e.preventDefault()
+    if (!enabled()) return
     dispatch({ type: 'enter', files })
     if (files) arm()
   }
   const onOver = (e: DragEvent) => {
     if (!hasFiles(e.dataTransfer)) return
-    e.preventDefault()
+    e.preventDefault() // also stops the browser opening a dropped file
+    if (!enabled()) {
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'none'
+      return
+    }
     if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy'
     if (!state.visible) dispatch({ type: 'enter', files: true })
     arm()
@@ -89,6 +94,7 @@ export function installDragOverlay(onFiles: (files: File[]) => void, win: Window
     e.preventDefault()
     win.clearTimeout(timer)
     dispatch({ type: 'drop' })
+    if (!enabled()) return
     const files = Array.from(e.dataTransfer?.files ?? [])
     if (files.length) onFiles(files)
   }

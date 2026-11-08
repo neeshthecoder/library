@@ -42,12 +42,13 @@ const shelf = new ShelfView({
   onAddBook: () => void pickFiles().then(importFiles),
   onSettings: () => void settings(),
   onRetry: (id) => void startUpload(id),
+  onSignIn: () => void signIn(),
 })
 
 function renderShelf(): void {
   const s = library.store.get()
   const m = library.manifest
-  shelf.update({ books: m.books, totalBytes: library.totalBytes(), uploads: uploadsFrom(s), loading: s.loading })
+  shelf.update({ books: m.books, totalBytes: library.totalBytes(), uploads: uploadsFrom(s), loading: s.loading, owner: library.isOwner })
 }
 library.store.subscribe(renderShelf)
 
@@ -59,13 +60,22 @@ async function ensureConnected(reason?: string): Promise<boolean> {
   return true
 }
 
+async function signIn(): Promise<void> {
+  if (await ensureConnected()) showMessages(['Signed in. This device can add and delete books.'], 'info', 4000)
+}
+
 async function settings(): Promise<void> {
   const action = await openSettingsDialog(library.store.get().settings)
   if (action === 'disconnect') {
-    await library.disconnect()
-    showMessages(['This device is disconnected. The token was removed.'], 'info', 5000)
+    await sync.flush()
+    try {
+      await library.disconnect()
+      showMessages(['This device is disconnected. The token, cached books, and reading positions were removed.'], 'info', 6000)
+    } catch (e) {
+      showMessages([e instanceof Error ? e.message : 'This device couldn’t be disconnected.'])
+    }
   } else if (action === 'connect') {
-    if (await ensureConnected()) showMessages(['This device is connected.'], 'info', 4000)
+    await signIn()
   }
 }
 
@@ -82,7 +92,7 @@ async function startUpload(id: string): Promise<void> {
 
 /** Queues dropped or picked files; batches are processed one after another. */
 async function importFiles(files: File[]): Promise<void> {
-  if (!files.length) return
+  if (!files.length || !library.isOwner) return
   importQueue.push(files)
   if (importing) return
   importing = true
@@ -116,7 +126,7 @@ async function importBatch(files: File[]): Promise<void> {
   }
 }
 
-installDragOverlay((files) => void importFiles(files))
+installDragOverlay((files) => void importFiles(files), window, () => library.isOwner)
 
 async function show(next: Route): Promise<void> {
   route = next

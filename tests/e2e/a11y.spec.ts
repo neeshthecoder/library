@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { type Page } from '@playwright/test'
-import { dropFiles, FakeGitHub, fillConnect, fixture, makeBook, manifestOf, mockPublished, expect, setTheme, test } from './helpers'
+import { dropFiles, FakeGitHub, fixture, makeBook, manifestOf, mockPublished, connect, expect, setTheme, test } from './helpers'
 
 const BOOKS = Array.from({ length: 12 }, (_, i) => makeBook({ id: `b${i + 1}`, title: ['Middlemarch', 'Emma', 'Beloved', 'Dune'][i % 4] + (i > 3 ? ` ${i}` : ''), format: i === 0 ? 'pdf' : 'epub' }))
 const FILES = { 'b1.pdf': fixture('sample.pdf'), ...Object.fromEntries(BOOKS.slice(1).map((b) => [`${b.id}.epub`, fixture('sample.epub')])) }
@@ -16,13 +16,13 @@ async function axe(page: Page, include?: string) {
 type View = { name: string; open(page: Page): Promise<void>; scope?: string }
 const VIEWS: View[] = [
   { name: 'shelf', open: async (p) => { await p.goto('/'); await p.locator('.spine').first().waitFor() } },
-  { name: 'empty shelf', open: async (p) => { await p.unroute('**/library/manifest.json*'); await mockPublished(p, manifestOf([])); await p.goto('/'); await p.getByText('Drop a book anywhere').waitFor() } },
+  { name: 'empty shelf', open: async (p) => { await p.unroute('**/library/manifest.json*'); await mockPublished(p, manifestOf([])); await p.goto('/'); await p.getByText('No books on the shelf yet.').waitFor() } },
   { name: 'reader', open: async (p) => { await p.goto('/#/read/b1'); await p.locator('.reader-stage[data-ready]').waitFor() } },
-  { name: 'preview dialog', scope: 'dialog', open: async (p) => { await p.goto('/'); await p.locator('.spine').first().waitFor(); await dropFiles(p, [{ name: 'sample.epub', buffer: fixture('sample.epub') }]); await p.getByRole('dialog').waitFor() } },
-  { name: 'connect dialog', scope: 'dialog', open: async (p) => { await p.goto('/'); await p.getByRole('button', { name: 'Library settings' }).click(); await p.getByRole('dialog').getByRole('button', { name: 'Connect' }).click(); await p.getByRole('dialog', { name: 'Connect your library' }).waitFor() } },
-  { name: 'settings dialog', scope: 'dialog', open: async (p) => { await p.goto('/'); await p.getByRole('button', { name: 'Library settings' }).click(); await p.getByRole('dialog').waitFor() } },
+  { name: 'preview dialog', scope: 'dialog', open: async (p) => { await p.goto('/'); await connect(p); await p.locator('.spine').first().waitFor(); await dropFiles(p, [{ name: 'sample.epub', buffer: fixture('sample.epub') }]); await p.getByRole('dialog', { name: 'Add to your shelf' }).waitFor() } },
+  { name: 'connect dialog', scope: 'dialog', open: async (p) => { await p.goto('/'); await p.getByRole('button', { name: 'Sign in' }).click(); await p.getByRole('dialog', { name: 'Connect your library' }).waitFor() } },
+  { name: 'settings dialog', scope: 'dialog', open: async (p) => { await p.goto('/'); await connect(p); await p.getByRole('button', { name: 'Library settings' }).click(); await p.getByRole('dialog', { name: 'Library settings' }).waitFor() } },
   { name: 'delete dialog', scope: 'dialog', open: async (p) => {
-    await p.goto('/'); await p.getByRole('button', { name: 'Library settings' }).click(); await p.getByRole('dialog').getByRole('button', { name: 'Connect' }).click(); await fillConnect(p)
+    await p.goto('/'); await connect(p)
     await p.goto('/#/read/b1'); await p.locator('.reader-stage[data-ready]').waitFor(); await p.getByRole('button', { name: 'Delete book' }).click(); await p.getByRole('alertdialog').waitFor()
   } },
 ]
