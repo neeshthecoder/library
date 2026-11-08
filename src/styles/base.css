@@ -3,6 +3,8 @@
 html {
   color-scheme: light;
   background: var(--paper);
+  /* no rubber-band bounce past the page edges */
+  overscroll-behavior: none;
   -webkit-text-size-adjust: 100%;
 }
 

@@ -1,17 +1,24 @@
 .shelf-page {
-  --shelf-h: clamp(14rem, 42vh, 24rem);
+  /*
+   * The shelf takes whatever height is left after the headline, subtitle,
+   * spacing, bookcase frame and footer, so the page fits the window (no stray
+   * vertical scroll) on anything taller than ~600px. Capped at 24rem.
+   */
+  --chrome-h: calc(21rem + var(--display-xl) * 0.95);
+  --shelf-h: clamp(11rem, calc(100dvh - var(--chrome-h)), 24rem);
   position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  padding-block: clamp(3rem, 8vh, 6rem) var(--space-5);
+  padding-block: clamp(2rem, 6vh, 5rem) clamp(1rem, 3vh, 2rem);
 }
 
 .shelf-header {
   padding-inline: var(--gutter);
-  margin-bottom: clamp(2rem, 6vh, 4rem);
   text-align: center;
 }
+/* sits a little lower on the page */
+.shelf { margin-top: clamp(2.5rem, 9vh, 6rem); }
 .shelf-header h1 { max-width: min(20ch, 100%); margin-inline: auto; }
 .shelf-subtitle { margin: var(--space-4) 0 0; }
 
@@ -61,13 +68,13 @@
   justify-content: center;
   align-items: center;
   gap: 0 var(--space-5);
-  margin-top: auto;
-  padding: var(--space-8) var(--gutter) 0;
+  /* directly under the shelf rather than pinned to the bottom edge */
+  padding: clamp(1rem, 3vh, 2rem) var(--gutter) 0;
   color: var(--ink-muted);
 }
 .shelf-footer { font-size: 0.75rem; }
 .shelf-footer .link-btn { font-size: inherit; }
-.shelf-page:has(.shelf-empty:not([hidden])) .shelf-footer { padding-top: var(--space-6); }
+
 
 .shelf-status { padding-inline: var(--gutter); margin-top: var(--space-3); text-align: center; }
 .shelf-status:empty { display: none; }

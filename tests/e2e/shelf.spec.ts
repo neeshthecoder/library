@@ -92,7 +92,8 @@ test.describe('bookshelf', () => {
     expect(Math.abs(footer.x + footer.width / 2 - vw / 2)).toBeLessThan(2)
     const box = (await add.boundingBox())!
     const shelf = (await page.locator('.bookcase').boundingBox())!
-    expect(box.y).toBeGreaterThan(shelf.y + shelf.height + 40)
+    expect(box.y).toBeGreaterThan(shelf.y + shelf.height + 8) // tucked under the shelf
+    expect(box.y).toBeLessThan(shelf.y + shelf.height + 90)
   })
 
   for (const width of [320, 768, 1440]) {
@@ -110,6 +111,26 @@ test.describe('bookshelf', () => {
       await page.screenshot({ path: `test-artifacts/shelf-${width}.png` })
     })
   }
+
+  test('the page fits the window: no stray vertical scroll', async ({ page }) => {
+    for (const [w, h] of [[1280, 720], [1366, 768], [1440, 900], [1920, 1080], [1920, 700], [1024, 600], [390, 667], [390, 844]]) {
+      await page.setViewportSize({ width: w, height: h })
+      await mockPublished(page, manifestOf(shelfBooks()))
+      await page.goto('/')
+      await page.locator('.spine').first().waitFor()
+      const over = await page.evaluate(() => document.documentElement.scrollHeight - innerHeight)
+      expect(over, `${w}x${h}`).toBeLessThanOrEqual(0)
+    }
+    // wheeling past the end of the shelf leaves the page where it is
+    await page.setViewportSize({ width: 1280, height: 720 })
+    await page.reload()
+    const scroller = page.locator('.shelf-scroller')
+    await scroller.hover()
+    await scroller.evaluate((e) => (e.scrollLeft = e.scrollWidth))
+    await page.mouse.wheel(0, 400)
+    await page.waitForTimeout(200)
+    expect(await page.evaluate(() => scrollY)).toBe(0)
+  })
 
   test('vertical wheel scrolls the shelf, then the page at the end', async ({ page }) => {
     await page.setViewportSize({ width: 480, height: 420 })

@@ -164,7 +164,8 @@ dialog.dialog::backdrop { background: var(--backdrop); }
   position: fixed;
   z-index: 50;
   left: 50%;
-  bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
+  /* top of the screen, over the headline, so notes never cover shelf controls */
+  top: calc(var(--space-4) + env(safe-area-inset-top, 0px));
   width: min(100% - 2rem, 36rem);
   transform: translateX(-50%);
 }

@@ -234,6 +234,10 @@ test.describe('import', () => {
     await preview(page).getByRole('button', { name: 'Add to shelf' }).click()
     await expect(page.getByRole('button', { name: 'Middlemarch' })).toBeVisible()
     await expect(page.locator('.shelf-status')).toContainText('Middlemarch isn’t uploaded yet.')
+    // the error note must not cover the retry link
+    const note = (await page.locator('.app-message-card').boundingBox())!
+    const retry = (await page.getByRole('button', { name: 'Retry upload' }).boundingBox())!
+    expect(note.y + note.height <= retry.y || retry.y + retry.height <= note.y).toBe(true)
     gh.offline = false
     await page.getByRole('button', { name: 'Retry upload' }).click()
     await expect.poll(() => gh.pushes).toEqual(['Add "Middlemarch"'])
