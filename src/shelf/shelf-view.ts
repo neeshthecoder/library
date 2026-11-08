@@ -162,10 +162,16 @@ export class ShelfView {
 
     this.#ro = new ResizeObserver(([entry]) => {
       const px = Math.round(entry.contentRect.height)
-      if (px && px !== this.#shelfPx) {
+      if (!px) return // detached or hidden: keep the last good size, don't reflow to zero
+      if (px !== this.#shelfPx) {
         this.#shelfPx = px
         this.#renderedKey = ''
         this.#renderBooks()
+      } else {
+        // Same size (e.g. the shelf was just re-shown after the reader): the
+        // books flow back on their own, but the absolutely-placed decor needs
+        // repositioning against fresh geometry.
+        requestAnimationFrame(() => this.#layoutDecor())
       }
     })
     this.#ro.observe(this.#list)
@@ -191,6 +197,10 @@ export class ShelfView {
     this.#readout.textContent = libraryReadout(this.#books.length, state.totalBytes).text
     this.#renderStatus(state.uploads)
     this.#renderBooks()
+    // #renderBooks skips re-rendering when the book list is unchanged, so after
+    // returning to the shelf its decor would keep stale positions. Reposition it
+    // against the now-live geometry.
+    requestAnimationFrame(() => this.#layoutDecor())
   }
 
   /** Restores the shelf scroll position saved this session. */
@@ -312,6 +322,9 @@ export class ShelfView {
     const end = this.#list.querySelector<HTMLElement>('li.bookend')
     if (!end) return
     const caseBox = this.#bookcase.getBoundingClientRect()
+    // Bail while the shelf has no layout (detached, or hidden in the reader):
+    // every rect would be zero and the decor would collapse into the corner.
+    if (!caseBox.width) return
     const endBox = end.getBoundingClientRect()
     const back = this.#bookcase.querySelector<HTMLElement>('.bookcase-back')!.getBoundingClientRect()
     const finishedLeft = endBox.right - caseBox.left

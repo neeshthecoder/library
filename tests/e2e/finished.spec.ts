@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { type Page } from '@playwright/test'
-import { asOwner, expect, fixture, makeBook, manifestOf, mockPublished, test } from './helpers'
+import { asOwner, expect, fixture, makeBook, manifestOf, mockPublished, test, turnPages } from './helpers'
 import type { Book } from '../../src/storage/manifest'
 
 test.use({ viewport: { width: 1280, height: 800 } })
@@ -166,3 +166,31 @@ for (const theme of ['day', 'night'] as const) {
     })
   })
 }
+
+test('critters and the Finished label keep their place after reading a book and returning', async ({ page }) => {
+  // enough books for several critters (after books 3, 9, 15)
+  const many = Array.from({ length: 15 }, (_, i) => makeBook({ id: `m${i + 1}`, title: `Title ${i + 1}` }))
+  const files = Object.fromEntries(many.map((b) => [`${b.id}.epub`, fixture('sample.epub')]))
+  await asOwner(page, many, files) // owner, so reading positions are saved
+  await page.locator('.critter').first().waitFor()
+
+  const critterXs = () => page.locator('.critter').evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().x)))
+  const engravingX = async () => Math.round((await page.locator('.plank-engraving').boundingBox())!.x)
+  const before = await critterXs()
+  const engBefore = await engravingX()
+  expect(before.length).toBeGreaterThanOrEqual(2)
+  expect(Math.max(...before) - Math.min(...before)).toBeGreaterThan(100) // genuinely spread out
+
+  await page.locator('.spine').first().click()
+  await expect(page).toHaveURL(/#\/read/)
+  // Turning a page saves a position: that updates the shelf's store while it is
+  // off-screen, which used to re-lay out the decor against zero geometry.
+  await turnPages(page, 2)
+  await page.goBack()
+  await page.locator('.critter').first().waitFor()
+
+  const after = await critterXs()
+  for (let i = 0; i < before.length; i++) expect(Math.abs(after[i] - before[i]), `critter ${i}`).toBeLessThan(3)
+  expect(Math.abs((await engravingX()) - engBefore)).toBeLessThan(3)
+  expect(Math.max(...after) - Math.min(...after)).toBeGreaterThan(100) // not bunched into the corner
+})
