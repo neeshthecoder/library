@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T02:30:52.754Z",
+  "updatedAt": "2026-11-08T02:30:56.858Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -106,6 +106,32 @@
         "ink": "#e1ddce",
         "h": 0.852,
         "w": 0.146
+      },
+      "position": null
+    },
+    {
+      "id": "xk3ihufpll",
+      "title": "The Wall",
+      "format": "epub",
+      "file": "library/books/xk3ihufpll.epub",
+      "size": 1741495,
+      "addedAt": "2026-11-08T02:21:53.644Z",
+      "length": {
+        "pages": 194,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#5b9ed2",
+        "accent": "#342518"
+      },
+      "spine": {
+        "source": "trim",
+        "design": "arch",
+        "bg": "#00384a",
+        "trim": "#c66f5d",
+        "ink": "#F8F6F1",
+        "h": 0.859,
+        "w": 0.162
       },
       "position": null
     }
