@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T02:49:31.724Z",
+  "updatedAt": "2026-11-08T02:52:23.123Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -250,6 +250,31 @@
         "ink": "#232C32",
         "h": 0.776,
         "w": 0.19
+      },
+      "position": null
+    },
+    {
+      "id": "aizyxrvliv",
+      "title": "Co-Opetition: MBA Game Theory",
+      "format": "pdf",
+      "file": "library/books/aizyxrvliv.pdf",
+      "size": 2682368,
+      "addedAt": "2026-11-08T02:52:20.849Z",
+      "length": {
+        "pages": 318,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#a83e43",
+        "accent": "#00cad3"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#a83e43",
+        "trim": "#00cad3",
+        "ink": "#F8F6F1",
+        "h": 0.967,
+        "w": 0.176
       },
       "position": null
     }
