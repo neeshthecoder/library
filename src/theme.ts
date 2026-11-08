@@ -30,15 +30,50 @@ export function applyTheme(theme: Theme, doc: Document = document): void {
 }
 
 /**
+ * A manual theme choice, stored per device. When set, it wins over the clock
+ * and stays put through the 07:00/19:00 switches until it's toggled again.
+ * Kept in localStorage so it survives reloads and is read before first paint
+ * (see public/theme.js).
+ */
+export const OVERRIDE_KEY = 'theme-override'
+
+export function themeOverride(): Theme | null {
+  try {
+    const v = localStorage.getItem(OVERRIDE_KEY)
+    return v === 'day' || v === 'night' ? v : null
+  } catch {
+    return null
+  }
+}
+
+/** Stores a manual theme choice and applies it at once. */
+export function setThemeOverride(theme: Theme): void {
+  try {
+    localStorage.setItem(OVERRIDE_KEY, theme)
+  } catch { /* ignore */ }
+  applyTheme(theme)
+}
+
+/** The theme to show now: a manual override if set, else the clock's. */
+export function currentTheme(now: () => Date = () => new Date()): Theme {
+  return themeOverride() ?? themeAt(now())
+}
+
+/**
  * Keeps the theme in step with the clock: switches at 07:00 and 19:00, and
  * re-checks when the page becomes visible (timers pause while a laptop sleeps).
+ * A manual override (set by the secret period toggle) takes over: while one is
+ * stored, the clock is left alone and the stored theme stays put.
  */
 export function startThemeClock(now: () => Date = () => new Date()): () => void {
   let timer: number | undefined
   const tick = () => {
-    applyTheme(themeAt(now()))
     window.clearTimeout(timer)
-    timer = window.setTimeout(tick, msUntilNextSwitch(now()) + 500)
+    const override = themeOverride()
+    applyTheme(override ?? themeAt(now()))
+    // While overridden, don't schedule a switch; the clock resumes only if the
+    // override is ever cleared.
+    if (!override) timer = window.setTimeout(tick, msUntilNextSwitch(now()) + 500)
   }
   const onVisible = () => document.visibilityState === 'visible' && tick()
   document.addEventListener('visibilitychange', onVisible)

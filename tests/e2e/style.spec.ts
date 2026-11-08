@@ -51,6 +51,36 @@ test('day: paper background, no night sky', async ({ page }) => {
   await expect(page.locator('.night-sky')).toBeHidden()
 })
 
+test('the secret period toggle flips day/night and sticks across a reload', async ({ page }) => {
+  await shelf(page) // noon → day
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'day')
+  await page.locator('.period-toggle').click()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'night')
+  await expect(page.locator('.night-sky')).toBeVisible()
+  await expect(page.locator('.day-sky')).toBeHidden()
+  // the choice survives a reload (read before first paint)
+  await page.reload()
+  await page.locator('.spine').first().waitFor()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'night')
+  // and flips back
+  await page.locator('.period-toggle').click()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'day')
+})
+
+test.describe('a forced theme ignores the clock', () => {
+  test.use({ theme: 'night' }) // clock starts at 22:00
+
+  test('forcing day at night stays day deeper into the night', async ({ page }) => {
+    await shelf(page)
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'night')
+    await page.locator('.period-toggle').click()
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'day')
+    // 22:00 → +2h = midnight, which would normally be night; the override holds
+    await page.clock.fastForward('02:00:00')
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'day')
+  })
+})
+
 test('day: a sun in the top right and clouds behind the headline', async ({ page }) => {
   await shelf(page)
   const sun = (await page.locator('.sky-sun').boundingBox())!

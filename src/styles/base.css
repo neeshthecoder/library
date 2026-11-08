@@ -54,6 +54,26 @@ button { cursor: pointer; }
 
 .display-xl { font-size: var(--display-xl); line-height: 0.95; letter-spacing: -0.025em; }
 
+/*
+ * A secret day/night toggle hiding as the period in "The bookshelf." It looks
+ * and sits exactly like the full stop: inherits the headline's font and color,
+ * no button chrome, no hover hint. Keyboard users still get a focus ring.
+ */
+.period-toggle {
+  appearance: none;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  cursor: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.period-toggle:focus { outline: none; }
+.period-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 2px; }
+
 .fine { font-size: var(--fine); line-height: 1.5; letter-spacing: 0.005em; color: var(--ink-muted); }
 
 .headline-enter { animation: headline-in 400ms var(--ease) both; }

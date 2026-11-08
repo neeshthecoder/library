@@ -3,6 +3,7 @@ import { leanGap, spineGap, spineLean, spinePx } from '../spines/geometry'
 import { renderSpine } from '../spines/spine'
 import { canvasMeasure, type Measure } from '../spines/title-fit'
 import { libraryReadout } from '../ui/format'
+import { setThemeOverride } from '../theme'
 import { bindWheelScroll } from './wheel-scroll'
 import { NIGHT_SKY } from './night-sky'
 import { DAY_SKY } from './day-sky'
@@ -82,7 +83,7 @@ export class ShelfView {
       <div class="night-sky" aria-hidden="true">${NIGHT_SKY}</div>
       <div class="day-sky" aria-hidden="true">${DAY_SKY}</div>
       <header class="shelf-header">
-        <h1 class="display display-xl headline-enter">The bookshelf.</h1>
+        <h1 class="display display-xl headline-enter">The bookshelf<button type="button" class="period-toggle" aria-label="Switch between day and night">.</button></h1>
         <p class="fine shelf-subtitle">Books I am (or should be) reading.</p>
       </header>
       <section class="shelf" aria-label="Shelf">
@@ -123,6 +124,10 @@ export class ShelfView {
     this.el.querySelector('[data-action="add"]')!.addEventListener('click', () => cb.onAddBook())
     this.el.querySelector('[data-action="settings"]')!.addEventListener('click', () => cb.onSettings())
     this.el.querySelector('[data-action="signin"]')!.addEventListener('click', () => cb.onSignIn())
+    // Secret toggle hidden in the headline's period: flip day/night and keep it.
+    this.el.querySelector('.period-toggle')!.addEventListener('click', () => {
+      setThemeOverride(document.documentElement.dataset.theme === 'night' ? 'day' : 'night')
+    })
     this.#status.addEventListener('click', (e) => {
       const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-retry]')
       if (btn) cb.onRetry(btn.dataset.retry!)
