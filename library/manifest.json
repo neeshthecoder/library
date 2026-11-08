@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:33:31.013Z",
+  "updatedAt": "2026-11-08T03:34:12.144Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -681,6 +681,28 @@
         "ink": "#F8F6F1",
         "h": 0.797,
         "w": 0.193
+      },
+      "position": null
+    },
+    {
+      "id": "uvr76ripcm",
+      "title": "Justice",
+      "format": "epub",
+      "file": "library/books/uvr76ripcm.epub",
+      "size": 1936432,
+      "addedAt": "2026-11-08T03:34:07.655Z",
+      "length": {
+        "pages": 338,
+        "estimated": true
+      },
+      "cover": null,
+      "spine": {
+        "source": "trim",
+        "bg": "#372545",
+        "trim": "#6a8a40",
+        "ink": "#F8F6F1",
+        "h": 0.962,
+        "w": 0.165
       },
       "position": null
     }
