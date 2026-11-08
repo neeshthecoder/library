@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:33:14.762Z",
+  "updatedAt": "2026-11-08T03:33:31.013Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -652,7 +652,12 @@
         "h": 0.787,
         "w": 0.201
       },
-      "position": null
+      "position": {
+        "locator": "epubcfi(/6/12!/4/2/2[section_196504]/4,/22/4/1:281,/28/4/1:54)",
+        "fraction": 0.005130115881164858,
+        "label": "1%",
+        "updatedAt": "2026-11-08T03:33:29.134Z"
+      }
     },
     {
       "id": "2wdnfx44y7",
