@@ -1,0 +1,83 @@
+.shelf-page {
+  --shelf-h: clamp(14rem, 42vh, 24rem);
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding-block: clamp(3rem, 8vh, 6rem) var(--space-7);
+}
+
+.shelf-header {
+  padding-inline: var(--gutter);
+  margin-bottom: clamp(2rem, 6vh, 4rem);
+  text-align: center;
+}
+.shelf-header h1 { max-width: 20ch; margin-inline: auto; }
+
+.shelf { position: relative; }
+
+.shelf-scroller {
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  padding-top: 1.5rem; /* room for the lift and the ribbon */
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--ink-muted) 40%, transparent) transparent;
+}
+.shelf-scroller::-webkit-scrollbar { height: 6px; }
+.shelf-scroller::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--ink-muted) 40%, transparent); border-radius: var(--radius-pill); }
+.shelf-scroller::-webkit-scrollbar-track { background: transparent; }
+@media (hover: hover) and (pointer: fine) {
+  .shelf-scroller:not(:hover) { scrollbar-color: transparent transparent; }
+  .shelf-scroller:not(:hover)::-webkit-scrollbar-thumb { background: transparent; }
+}
+
+.shelf-track {
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-inline: var(--gutter) calc(var(--gutter) + 1.5rem);
+  padding-bottom: var(--space-3);
+}
+
+.shelf-books {
+  display: flex;
+  align-items: flex-end;
+  height: var(--shelf-h);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.shelf-books li { display: flex; align-items: flex-end; }
+
+/* The shelf plank is illustration: a flat rounded bar, not a hairline. */
+.shelf-bar {
+  width: calc(100% + 1.5rem);
+  height: 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--ink-muted);
+}
+
+.shelf-empty {
+  margin: 0 auto var(--space-5);
+  padding-inline: var(--gutter);
+  max-width: var(--text-max);
+  text-align: center;
+  font-size: var(--body-lg);
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.shelf-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
+  padding-inline: var(--gutter);
+  margin-top: var(--space-6);
+}
+.shelf-page:has(.shelf-empty:not([hidden])) .shelf-footer { justify-content: center; margin-top: 0; }
+.shelf-readout { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--space-4); margin: 0; }
+
+.shelf-status { padding-inline: var(--gutter); margin-top: var(--space-3); }
+.shelf-status:empty { display: none; }
+.shelf-status-line { margin: 0; }

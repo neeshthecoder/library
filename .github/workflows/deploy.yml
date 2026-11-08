@@ -1,0 +1,70 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Library changes commit in quick succession; only the latest deploy matters.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect library-only commits
+        id: changes
+        run: |
+          if [ "${{ github.event_name }}" = "push" ] && git diff --quiet HEAD~1 HEAD -- . ':(exclude)library'; then
+            echo "library_only=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "library_only=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Unit tests
+        if: steps.changes.outputs.library_only != 'true'
+        run: npm test
+
+      - name: Build
+        run: npm run build
+        env:
+          # Project sites live under /<repo>/; user sites (<owner>.github.io) at /.
+          BASE_PATH: ${{ endsWith(github.event.repository.name, '.github.io') && '/' || format('/{0}/', github.event.repository.name) }}
+
+      - name: Check shelf JavaScript budget
+        run: npm run check:size
+
+      - name: Add the library
+        run: cp -r library dist/library
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

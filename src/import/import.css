@@ -1,0 +1,65 @@
+/* Deliberate styleguide deviation: the drag target uses a dashed outline. */
+.drag-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  pointer-events: none;
+  animation: dialog-in var(--dur-state) var(--ease);
+}
+.drag-overlay-box {
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-card);
+  outline: 2px dashed var(--ink-muted);
+  outline-offset: -2px;
+}
+.drag-overlay-text {
+  margin: 0;
+  font-size: var(--heading);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+/* Preview dialog */
+dialog.preview-dialog { width: min(100% - 2rem, 48rem); }
+.preview-grid {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+.preview-stage {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-width: 6rem;
+  padding: var(--space-5) var(--space-4) 0;
+  border-radius: var(--radius-input);
+  background: var(--linen);
+}
+.preview-stage .spine { cursor: default; }
+.preview-stage .spine:hover { transform: none; }
+.preview-stage-shelf { display: flex; flex-direction: column; align-items: center; }
+.preview-stage-shelf::after {
+  content: "";
+  display: block;
+  width: calc(100% + 1.5rem);
+  height: 0.5rem;
+  margin-top: 0;
+  border-radius: var(--radius-pill);
+  background: var(--ink-muted);
+}
+.preview-controls { display: grid; gap: var(--space-5); }
+.preview-colors { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); align-items: end; }
+.preview-colors .btn { grid-column: 1 / -1; justify-self: start; }
+.preview-queue { margin: 0 0 var(--space-2); }
+
+@media (max-width: 40rem) {
+  .preview-grid { grid-template-columns: 1fr; }
+  .preview-stage { justify-self: stretch; }
+}

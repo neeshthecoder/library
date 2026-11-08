@@ -1,0 +1,60 @@
+/* Styleguide tokens. The only place raw interface colors may appear. */
+:root {
+  /* Color */
+  --paper: #F8F6F1;
+  --linen: #F1EEE7;
+  --ink: #232C32;
+  --ink-muted: #49565F;
+  --navy: #303A4E;
+  --navy-hover: #262F41;
+  --midnight: #0F172F;
+  --on-dark: #FFFFFF;
+  --on-dark-muted: #B9C0CC;
+  --danger: #9B2C2C;
+  --success: #2F5D46;
+
+  /* Shape and depth */
+  --radius-card: 2rem;
+  --radius-input: 1rem;
+  --radius-pill: 999px;
+  --shadow: 0 2px 8px rgba(35, 44, 50, 0.12);
+
+  /* Spacing scale (rem): 0.25 0.5 0.75 1 1.5 2 3 4 6 8 12 */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+  --space-11: 12rem;
+
+  /* Layout */
+  --content-max: 72rem;
+  --text-max: 40rem;
+  --gutter: max(1rem, env(safe-area-inset-left, 0px));
+
+  /* Families */
+  --font-serif: "Instrument Serif", "Instrument Serif fallback", "Times New Roman", Georgia, serif;
+  --font-sans: Inter, "Inter fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Type scale */
+  --display-xl: clamp(3.5rem, 9vw, 8rem);
+  --display-lg: clamp(3rem, 7vw, 6rem);
+  --display-md: clamp(2.5rem, 5vw, 4.5rem);
+  --heading: clamp(1.75rem, 3vw, 2.75rem);
+  --title: 1.25rem;
+  --body-lg: 1.25rem;
+  --body: 1rem;
+  --ui: 1rem;
+  --fine: 0.875rem;
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur-state: 150ms;
+  --dur-move: 200ms;
+  --dur-max: 300ms;
+}
