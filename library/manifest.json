@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:10:35.874Z",
+  "updatedAt": "2026-11-08T03:11:11.323Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -415,6 +415,31 @@
         "ink": "#F8F6F1",
         "h": 0.821,
         "w": 0.17
+      },
+      "position": null
+    },
+    {
+      "id": "xst3zq43xy",
+      "title": "The Remains of the Day",
+      "format": "azw3",
+      "file": "library/books/xst3zq43xy.azw3",
+      "size": 1247120,
+      "addedAt": "2026-11-08T03:11:09.668Z",
+      "length": {
+        "pages": 208,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#fafafa",
+        "accent": "#110b0b"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#fafafa",
+        "trim": "#110b0b",
+        "ink": "#110b0b",
+        "h": 0.79,
+        "w": 0.173
       },
       "position": null
     }
