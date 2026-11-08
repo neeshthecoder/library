@@ -9,7 +9,7 @@
 - [x] 1.5 Add the CSP meta tag (design §9), `<meta name="robots" content="noindex, nofollow">`, and `public/robots.txt`; verify a Playwright test that a `fetch` to a non-allowed host is blocked
 - [x] 1.6 Implement `router.ts` (hash routes `#/` and `#/read/:id`, unknown id → shelf + message) and a shell that renders placeholder views; verify unit tests for route parsing and a Playwright test that back/forward and reload work
 - [x] 1.7 Add `scripts/check-size.mjs` (gzip the shelf entry chunk + static imports from Vite's manifest, fail ≥ 150 KB) as `npm run check:size`; verify it passes now and fails when a large dummy import is added
-- [ ] 1.8 Add `.github/workflows/deploy.yml` (push to main + dispatch, Pages permissions, `concurrency: pages` with cancel-in-progress, Node 22 npm cache, test → build → check:size → copy `library/` into `dist/` → upload-pages-artifact → deploy-pages); verify by pushing to a test repo with Pages enabled and loading the deployed URL under `/<repo>/`
+- [x] 1.8 Add `.github/workflows/deploy.yml` (push to main + dispatch, Pages permissions, `concurrency: pages` with cancel-in-progress, Node 22 npm cache, test → build → check:size → copy `library/` into `dist/` → upload-pages-artifact → deploy-pages); verify by pushing to a test repo with Pages enabled and loading the deployed URL under `/<repo>/`
 - [ ] 1.9 Write `README.md` covering setup, Pages enablement, PAT creation (single repo, Contents read/write, expiry), and a "Styleguide exemptions" section (spines/ribbons/shelf plank, dashed drag overlay, book content typography); verify the steps by following them on the test repo
 
 ## 2. Spines and shelf
