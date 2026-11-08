@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T02:57:37.105Z",
+  "updatedAt": "2026-11-08T02:58:25.163Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -287,6 +287,32 @@
         "label": "20–21 of 318",
         "updatedAt": "2026-11-08T02:57:28.797Z"
       }
+    },
+    {
+      "id": "74xad4odub",
+      "title": "A Beautiful Mind",
+      "format": "epub",
+      "file": "library/books/74xad4odub.epub",
+      "size": 1341543,
+      "addedAt": "2026-11-08T02:58:23.334Z",
+      "length": {
+        "pages": 937,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#f2f3f3",
+        "accent": "#9d2727"
+      },
+      "spine": {
+        "source": "trim",
+        "design": "medallion",
+        "bg": "#d5cbb3",
+        "trim": "#0069b8",
+        "ink": "#232C32",
+        "h": 0.865,
+        "w": 0.194
+      },
+      "position": null
     }
   ]
 }
