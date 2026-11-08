@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:28:27.561Z",
+  "updatedAt": "2026-11-08T03:33:14.762Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -651,6 +651,31 @@
         "ink": "#F8F6F1",
         "h": 0.787,
         "w": 0.201
+      },
+      "position": null
+    },
+    {
+      "id": "2wdnfx44y7",
+      "title": "Why Nations Fail: The Origins of Power, Prosperity, and Poverty",
+      "format": "pdf",
+      "file": "library/books/2wdnfx44y7.pdf",
+      "size": 7047640,
+      "addedAt": "2026-11-08T03:33:10.633Z",
+      "length": {
+        "pages": 579,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#b2ced7",
+        "accent": "#2f2f2f"
+      },
+      "spine": {
+        "source": "trim",
+        "bg": "#003833",
+        "trim": "#0091ad",
+        "ink": "#F8F6F1",
+        "h": 0.797,
+        "w": 0.193
       },
       "position": null
     }
