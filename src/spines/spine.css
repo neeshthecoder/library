@@ -10,6 +10,8 @@
   transform-origin: bottom right;
   transition: transform var(--dur-state) var(--ease);
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
 }
 .spine:hover, .spine:focus-visible { transform: rotate(var(--lean, 0deg)) translateY(-0.5rem); }
 .spine:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }

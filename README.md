@@ -27,6 +27,15 @@ There is no server. Book files and a manifest (`library/manifest.json`) live in 
 - **Sign-in is locked** to this site's own repository. Even with sign-in in place, writing to the library still needs a token with write access to your repo, which only you can create.
 - **Disconnecting** a device (Library settings → Disconnect) syncs your place, then removes the token, cached books, and positions. It refuses while a book is still waiting to upload.
 
+### Finished books
+
+The far right of the bookcase holds your **Finished** books, behind a bookend lamp, with "Finished" carved into the shelf. As the owner you can:
+- **Mouse:** drag a book across the bookend.
+- **Touch:** press and hold a book, then drag it.
+- **Without dragging:** use "Mark finished" in the reader's top bar.
+
+Drag a book back to the left to move it back to reading. Each move is one small commit. Guests see both sections but can't move books.
+
 ### What to know before adding books
 
 - **Books are public.** Anyone with the site link can download every file in `library/books/`, and the repository is public too. File names are random, and the page carries a `noindex` tag, but that is not access control. On a project site (`<owner>.github.io/<repo>/`), crawlers ignore `robots.txt`, because they only read it at the domain root. Book files themselves can't carry `noindex`, since Pages can't set headers. To block crawlers from the whole domain, add a `robots.txt` with `Disallow: /` to your `<owner>.github.io` user-site repository. Only add books you are comfortable sharing, and remember that publishing purchased ebooks may breach their license.
@@ -70,7 +79,7 @@ pdf.js and foliate-js load only when the reader or the import preview opens, so 
 The interface follows `STYLEGUIDE.md`. These deviations are deliberate:
 
 - **Spines and bookmark ribbons are illustrations.** Every spine uses one plain design: a flat color with two accent bands, and the title set horizontally in the middle like a printed spine label. Words wrap onto centered lines, as large as the spine allows, breaking at existing hyphens and only hyphenating a word when nothing else fits. Spines render chunkier than their stored width (60 px minimum) to make room. Colors come from the book's cover, or are generated when there's no cover, so they fall outside the token palette. Spines are flat, with rounded corners and no shadows or gradients. A single flat tone band, 3% lighter than the spine color, adds a little depth. (The three ornamental trims from `design/spine-trims.png` were removed because they made titles hard to read.) Ribbons are lightened when needed so they stay visible (3:1) against the bookcase's dark back wall. Spine titles use the band color when it reaches 4.5:1. Otherwise they use paper or ink, and pure white or black only when neither of those reaches 4.5:1.
-- **The bookcase** is illustration too: flat deep-brown oak tones for the side walls, top board, back panel (darkest, as if in shadow), and plank (`src/shelf/bookcase.css`). There's no texture, gradient, or shadow. The styleguide has no wood colors and forbids borders and hairlines, but a shelf needs to look like one. About one book in ten leans on its neighbour.
+- **The bookcase** is illustration too: flat deep-brown oak tones for the side walls, top board, back panel (darkest, as if in shadow), and plank (`src/shelf/bookcase.css`). There's no texture, gradient, or shadow. The styleguide has no wood colors and forbids borders and hairlines, but a shelf needs to look like one. About one book in ten leans on its neighbour. The divider between reading and finished books is a flat, geometric bookend lamp (`src/shelf/bookend.ts`): a wooden block, slate pipes, and a translucent amber bulb that glows faintly at night. The carved "Finished" uses a crisp 1px lip, a flat text-shadow with no blur, as part of the illustration.
 - **The drag overlay** uses a dashed outline, despite the "no borders" rule, so the drop target reads clearly.
 - **Helvetica instead of Inter.** All sans text, including spine titles, uses `Helvetica, "Helvetica Neue", Arial`. Helvetica is licensed and can't be self-hosted, so it's a system font: Macs and iPhones show Helvetica, and Windows and most Android phones show Arial. Only Instrument Serif is downloaded.
 - **The drag overlay text** ("Drag file here") is set in Instrument Serif at `display-md`, the smallest size the styleguide allows for the serif.

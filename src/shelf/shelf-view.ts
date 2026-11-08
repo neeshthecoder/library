@@ -1,10 +1,11 @@
-import { shelfOrder, type Book } from '../storage/manifest'
+import { shelfSections, type Book } from '../storage/manifest'
 import { leanGap, spineGap, spineLean, spinePx } from '../spines/geometry'
 import { renderSpine } from '../spines/spine'
 import { canvasMeasure, type Measure } from '../spines/title-fit'
 import { libraryReadout } from '../ui/format'
 import { bindWheelScroll } from './wheel-scroll'
 import { NIGHT_SKY } from './night-sky'
+import { BOOKEND_SVG, BOOKEND_VIEWBOX } from './bookend'
 
 export interface UploadStatus {
   state: 'uploading' | 'failed'
@@ -27,6 +28,8 @@ export interface ShelfCallbacks {
   onSettings(): void
   onRetry(id: string): void
   onSignIn(): void
+  /** Owner dragged a book across the divider. */
+  onMove(id: string, finished: boolean): void
 }
 
 const SCROLL_KEY = 'shelf-scroll'
@@ -46,6 +49,27 @@ export class ShelfView {
   #renderedKey = ''
   #focusIndex = 0
   #ro: ResizeObserver
+  #owner = false
+  #finishedIds = new Set<string>()
+  #bookcase!: HTMLElement
+  #engraving!: HTMLElement
+  #onMove: (id: string, finished: boolean) => void
+  #drag: {
+    id: string
+    btn: HTMLButtonElement
+    pointerId: number
+    touch: boolean
+    startX: number
+    startY: number
+    x: number
+    active: boolean
+    timer?: number
+    ghost?: HTMLElement
+    offX: number
+    offY: number
+  } | null = null
+  #suppressClick = false
+  #raf = 0
 
   constructor(cb: ShelfCallbacks) {
     this.#measure = canvasMeasure()
@@ -63,7 +87,9 @@ export class ShelfView {
             <div class="bookcase-back">
               <ul class="shelf-books" role="list"></ul>
             </div>
-            <div class="bookcase-plank" aria-hidden="true"></div>
+            <div class="bookcase-plank" aria-hidden="true"><p class="plank-engraving">Finished</p></div>
+            <div class="drop-zone-hint reading-zone-hint" aria-hidden="true"></div>
+            <div class="drop-zone-hint finished-zone-hint" aria-hidden="true"></div>
           </div>
         </div>
       </section>
@@ -83,6 +109,10 @@ export class ShelfView {
     this.#readout = this.el.querySelector('.shelf-size')!
     this.#status = this.el.querySelector('.shelf-status')!
     this.#descs = this.el.querySelector('.shelf-descs')!
+    this.#bookcase = this.el.querySelector('.bookcase')!
+    this.#engraving = this.el.querySelector('.plank-engraving')!
+    this.#onMove = cb.onMove
+    this.#bindDrag()
 
     this.el.querySelector('[data-action="add"]')!.addEventListener('click', () => cb.onAddBook())
     this.el.querySelector('[data-action="settings"]')!.addEventListener('click', () => cb.onSettings())
@@ -95,6 +125,12 @@ export class ShelfView {
     bindWheelScroll(this.#scroller)
     this.#list.addEventListener('keydown', (e) => this.#onKey(e))
     this.#list.addEventListener('click', (e) => {
+      // keyboard activation (detail 0) always opens; a pointer release after a drag doesn't
+      if (this.#suppressClick && (e as MouseEvent).detail !== 0) {
+        this.#suppressClick = false
+        e.preventDefault()
+        return
+      }
       const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.spine')
       if (btn) cb.onOpen(btn.dataset.id!)
     })
@@ -123,7 +159,11 @@ export class ShelfView {
   }
 
   update(state: ShelfState): void {
-    this.#books = shelfOrder(state.books)
+    const { reading, finished } = shelfSections(state.books)
+    this.#books = [...reading, ...finished]
+    this.#finishedIds = new Set(finished.map((b) => b.id))
+    this.#owner = state.owner
+    this.#bookcase.dataset.owner = String(state.owner)
     const empty = !state.loading && this.#books.length === 0
     this.#shelf.hidden = empty
     this.#empty.hidden = !empty
@@ -170,7 +210,7 @@ export class ShelfView {
   #renderBooks(): void {
     if (!this.#shelfPx) return
     const key = this.#shelfPx + '|' + this.#books
-      .map((b) => [b.id, b.title, JSON.stringify(b.spine), !!b.position, b.position?.label].join('~'))
+      .map((b) => [b.id, b.title, JSON.stringify(b.spine), !!b.position, b.position?.label, this.#finishedIds.has(b.id)].join('~'))
       .join('|')
     if (key === this.#renderedKey) return
     this.#renderedKey = key
@@ -180,36 +220,185 @@ export class ShelfView {
     this.#list.replaceChildren()
     this.#descs.replaceChildren()
     this.#focusIndex = Math.min(this.#focusIndex, Math.max(0, this.#books.length - 1))
-    let prevLeaned = false
-    this.#books.forEach((book, i) => {
-      const li = document.createElement('li')
-      const lean = spineLean(book.id, i === this.#books.length - 1, prevLeaned)
-      prevLeaned = lean > 0
-      const px = spinePx(book.spine.h, book.spine.w, this.#shelfPx)
-      li.style.marginRight = `${spineGap(book.id) + leanGap(px.height, px.width, lean)}px`
-      const btn = document.createElement('button')
-      btn.type = 'button'
-      btn.className = 'spine'
-      btn.dataset.id = book.id
-      btn.setAttribute('aria-label', book.title)
-      btn.title = book.title
-      btn.tabIndex = i === this.#focusIndex ? 0 : -1
-      if (book.position) {
-        const desc = document.createElement('span')
-        desc.id = `spine-desc-${book.id}`
-        desc.textContent = `In progress, ${book.position.label}`
-        this.#descs.append(desc)
-        btn.setAttribute('aria-describedby', desc.id)
-      }
-      renderSpine(btn, { id: book.id, title: book.title, spine: book.spine, started: !!book.position }, this.#shelfPx, this.#measure)
-      if (lean) {
-        btn.style.setProperty('--lean', `${lean}deg`)
-        btn.dataset.lean = 'true'
-      }
-      li.append(btn)
-      this.#list.append(li)
-    })
+    const reading = this.#books.filter((b) => !this.#finishedIds.has(b.id))
+    const finished = this.#books.filter((b) => this.#finishedIds.has(b.id))
+
+    const section = (books: Book[], isFinished: boolean, offset: number) => {
+      let prevLeaned = false
+      books.forEach((book, j) => {
+        const i = offset + j
+        const li = document.createElement('li')
+        const lean = spineLean(book.id, j === books.length - 1, prevLeaned)
+        prevLeaned = lean > 0
+        const px = spinePx(book.spine.h, book.spine.w, this.#shelfPx)
+        li.style.marginRight = `${spineGap(book.id) + leanGap(px.height, px.width, lean)}px`
+        const btn = document.createElement('button')
+        btn.type = 'button'
+        btn.className = 'spine'
+        btn.dataset.id = book.id
+        btn.dataset.section = isFinished ? 'finished' : 'reading'
+        btn.draggable = false
+        btn.setAttribute('aria-label', book.title)
+        btn.title = book.title
+        btn.tabIndex = i === this.#focusIndex ? 0 : -1
+        const descText = isFinished ? 'Finished' : book.position ? `In progress, ${book.position.label}` : ''
+        if (descText) {
+          const desc = document.createElement('span')
+          desc.id = `spine-desc-${book.id}`
+          desc.textContent = descText
+          this.#descs.append(desc)
+          btn.setAttribute('aria-describedby', desc.id)
+        }
+        renderSpine(btn, { id: book.id, title: book.title, spine: book.spine, started: !isFinished && !!book.position }, this.#shelfPx, this.#measure)
+        if (lean) {
+          btn.style.setProperty('--lean', `${lean}deg`)
+          btn.dataset.lean = 'true'
+        }
+        li.append(btn)
+        this.#list.append(li)
+      })
+    }
+
+    section(reading, false, 0)
+    const end = document.createElement('li')
+    end.className = 'bookend'
+    end.setAttribute('aria-hidden', 'true')
+    const h = Math.round(this.#shelfPx * 0.96)
+    end.style.height = `${h}px`
+    end.style.width = `${Math.round((h * BOOKEND_VIEWBOX.w) / BOOKEND_VIEWBOX.h)}px`
+    end.innerHTML = BOOKEND_SVG
+    this.#list.append(end)
+    section(finished, true, reading.length)
+    const spacer = document.createElement('li')
+    spacer.className = 'finished-spacer'
+    spacer.setAttribute('aria-hidden', 'true')
+    if (!finished.length) spacer.dataset.empty = ''
+    this.#list.append(spacer)
+
     if (focusedId) this.#button(focusedId)?.focus({ preventScroll: true })
+    requestAnimationFrame(() => this.#layoutDecor())
+  }
+
+  /** Places the engraving and the drop-zone hints relative to the bookend. */
+  #layoutDecor(): void {
+    const end = this.#list.querySelector<HTMLElement>('li.bookend')
+    if (!end) return
+    const caseBox = this.#bookcase.getBoundingClientRect()
+    const endBox = end.getBoundingClientRect()
+    const back = this.#bookcase.querySelector<HTMLElement>('.bookcase-back')!.getBoundingClientRect()
+    const finishedLeft = endBox.right - caseBox.left
+    const finishedWidth = back.right - endBox.right
+    Object.assign(this.#engraving.style, { left: `${finishedLeft}px`, width: `${finishedWidth}px` })
+    const fin = this.#bookcase.querySelector<HTMLElement>('.finished-zone-hint')!
+    Object.assign(fin.style, { left: `${finishedLeft}px`, width: `${finishedWidth}px` })
+    const rd = this.#bookcase.querySelector<HTMLElement>('.reading-zone-hint')!
+    Object.assign(rd.style, { left: `${back.left - caseBox.left}px`, width: `${endBox.left - back.left}px` })
+  }
+
+  // Dragging between sections ------------------------------------------------
+
+  #bindDrag(): void {
+    const LONG_PRESS = 350
+    this.#list.addEventListener('pointerdown', (e) => {
+      this.#suppressClick = false // a fresh press: clicks count again
+      if (!this.#owner || e.button !== 0 || this.#drag) return
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.spine')
+      if (!btn) return
+      const r = btn.getBoundingClientRect()
+      const touch = e.pointerType !== 'mouse'
+      this.#drag = { id: btn.dataset.id!, btn, pointerId: e.pointerId, touch, startX: e.clientX, startY: e.clientY, x: e.clientX, active: false, offX: e.clientX - r.left, offY: e.clientY - r.top }
+      if (touch) this.#drag.timer = window.setTimeout(() => this.#startDrag(), LONG_PRESS)
+    })
+    window.addEventListener('pointermove', (e) => {
+      const d = this.#drag
+      if (!d || e.pointerId !== d.pointerId) return
+      const dist = Math.hypot(e.clientX - d.startX, e.clientY - d.startY)
+      if (!d.active) {
+        if (!d.touch && dist > 6) this.#startDrag()
+        else if (d.touch && dist > 8) return this.#endDrag(false) // a scroll, not a drag
+        if (!this.#drag?.active) return
+      }
+      d.x = e.clientX
+      this.#moveGhost(e.clientX, e.clientY)
+      this.#bookcase.dataset.drop = this.#targetFinished(e.clientX) ? 'finished' : 'reading'
+    })
+    window.addEventListener('pointerup', (e) => {
+      if (this.#drag && e.pointerId === this.#drag.pointerId) this.#endDrag(true)
+    })
+    window.addEventListener('pointercancel', (e) => {
+      if (this.#drag && e.pointerId === this.#drag.pointerId) this.#endDrag(false)
+    })
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.#drag?.active) {
+        e.preventDefault()
+        e.stopPropagation()
+        this.#endDrag(false)
+      }
+    }, true)
+    // once a touch drag has started, stop the shelf from scrolling under it
+    this.#scroller.addEventListener('touchmove', (e) => { if (this.#drag?.active) e.preventDefault() }, { passive: false })
+    this.#list.addEventListener('contextmenu', (e) => { if (this.#drag) e.preventDefault() })
+  }
+
+  #startDrag(): void {
+    const d = this.#drag
+    if (!d || d.active) return
+    window.clearTimeout(d.timer)
+    d.active = true
+    const r = d.btn.getBoundingClientRect()
+    const ghost = d.btn.cloneNode(true) as HTMLElement
+    ghost.removeAttribute('id')
+    ghost.classList.add('spine-drag-ghost')
+    ghost.setAttribute('aria-hidden', 'true')
+    Object.assign(ghost.style, { width: `${r.width}px`, height: `${r.height}px` })
+    document.body.append(ghost)
+    d.ghost = ghost
+    d.btn.classList.add('is-drag-source')
+    try { d.btn.setPointerCapture(d.pointerId) } catch { /* not capturable */ }
+    this.#moveGhost(d.x, d.startY)
+    this.#bookcase.dataset.drop = this.#targetFinished(d.x) ? 'finished' : 'reading'
+    const tick = () => {
+      if (!this.#drag?.active) return
+      const s = this.#scroller.getBoundingClientRect()
+      const edge = 64
+      if (this.#drag.x < s.left + edge) this.#scroller.scrollLeft -= 12
+      else if (this.#drag.x > s.right - edge) this.#scroller.scrollLeft += 12
+      this.#bookcase.dataset.drop = this.#targetFinished(this.#drag.x) ? 'finished' : 'reading'
+      this.#raf = requestAnimationFrame(tick)
+    }
+    this.#raf = requestAnimationFrame(tick)
+  }
+
+  #moveGhost(x: number, y: number): void {
+    const d = this.#drag
+    if (!d?.ghost) return
+    d.ghost.style.left = `${x - d.offX}px`
+    d.ghost.style.top = `${y - d.offY}px`
+  }
+
+  #targetFinished(x: number): boolean {
+    const end = this.#list.querySelector<HTMLElement>('li.bookend')
+    if (!end) return false
+    const r = end.getBoundingClientRect()
+    return x > r.left + r.width / 2
+  }
+
+  #endDrag(drop: boolean): void {
+    const d = this.#drag
+    if (!d) return
+    window.clearTimeout(d.timer)
+    cancelAnimationFrame(this.#raf)
+    this.#drag = null
+    delete this.#bookcase.dataset.drop
+    if (!d.active) return
+    d.ghost?.remove()
+    d.btn.classList.remove('is-drag-source')
+    // The release that ends (or follows a cancelled) drag must not open the
+    // book. Cleared on the next press.
+    this.#suppressClick = true
+    if (!drop) return
+    const toFinished = this.#targetFinished(d.x)
+    if (toFinished !== this.#finishedIds.has(d.id)) this.#onMove(d.id, toFinished)
   }
 
   #renderStatus(uploads: Record<string, UploadStatus>): void {

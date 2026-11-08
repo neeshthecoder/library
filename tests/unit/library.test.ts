@@ -242,6 +242,37 @@ describe('deletion', () => {
   })
 })
 
+describe('finishing books', () => {
+  it('commits one change and shows it immediately', async () => {
+    const api = new FakeGitHubApi(addBook(emptyManifest(), book('a')))
+    const t = setup({ api, connected: true })
+    await t.init()
+    const p = t.lib.setFinished('a', true)
+    expect(t.lib.manifest.books[0].finishedAt).toBeTruthy() // optimistic
+    await p
+    expect(api.pushes).toEqual(['Finish "Title a"'])
+    expect(api.manifest().books[0].finishedAt).toBeTruthy()
+    await t.lib.setFinished('a', false)
+    expect(api.pushes.at(-1)).toBe('Move "Title a" back to reading')
+    expect(api.manifest().books[0].finishedAt).toBeNull()
+  })
+
+  it('reverts if the commit fails', async () => {
+    const api = new FakeGitHubApi(addBook(emptyManifest(), book('a')))
+    const t = setup({ api, connected: true })
+    await t.init()
+    api.authOk = false
+    await expect(t.lib.setFinished('a', true)).rejects.toThrow()
+    expect(t.lib.manifest.books[0].finishedAt ?? null).toBeNull()
+  })
+
+  it('is owner-only', async () => {
+    const t = setup({ published: addBook(emptyManifest(), book('a')) })
+    await t.init()
+    await expect(t.lib.setFinished('a', true)).rejects.toThrow(/Connect/)
+  })
+})
+
 describe('guests', () => {
   const remotePos = { locator: '120', fraction: 0.4, label: '40%', updatedAt: '2026-01-05T00:00:00Z' }
 

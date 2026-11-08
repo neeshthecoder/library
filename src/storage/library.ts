@@ -9,6 +9,7 @@ import {
   newerPosition,
   parseManifest,
   removeBook,
+  setFinished,
   setPosition,
   totalSize,
   type Book,
@@ -314,6 +315,35 @@ export class Library {
       delete local[id]
       return { local }
     })
+  }
+
+  /**
+   * Moves a book into (or out of) the Finished section. Shows immediately;
+   * one commit records it. Reverts and rethrows if the commit fails.
+   */
+  async setFinished(id: string, finished: boolean): Promise<void> {
+    const s = this.store.get()
+    if (!s.settings) throw new NotConnectedError()
+    const finishedAt = finished ? this.#now().toISOString() : null
+    const key = `finish:${id}`
+    const p: PendingOp = { key, op: { type: 'finish', id, finishedAt }, state: 'uploading', createdAt: this.#now().toISOString() }
+    const previous = s.pending.find((x) => x.key === key)
+    this.#setPending(p)
+    try {
+      const title = this.book(id)?.title ?? 'book'
+      const res = await this.#gh(s.settings).commit(
+        (m) => setFinished(m, id, finishedAt, this.#now().toISOString()),
+        [],
+        finished ? `Finish "${title}"` : `Move "${title}" back to reading`,
+      )
+      const done: PendingOp = { ...p, state: 'committed', committedAt: this.#now().getTime() }
+      await this.cache.putPending(done)
+      this.#setPending(done)
+      this.store.set({ published: res.manifest })
+    } catch (e) {
+      this.store.set((st) => ({ pending: [...st.pending.filter((x) => x.key !== key), ...(previous ? [previous] : [])] }))
+      throw e
+    }
   }
 
   // Files --------------------------------------------------------------------

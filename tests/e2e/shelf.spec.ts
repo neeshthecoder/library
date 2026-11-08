@@ -62,15 +62,18 @@ test.describe('bookshelf', () => {
     }
   })
 
-  test('bookcase holds the books upright, flush left, and ends just past the last one', async ({ page }) => {
+  test('bookcase holds the books upright, flush left, and ends just past the Finished section', async ({ page }) => {
     await mockPublished(page, manifestOf(shelfBooks(3)))
     await page.goto('/')
-    const last = (await page.locator('.spine').last().boundingBox())!
     const first = (await page.locator('.spine').first().boundingBox())!
     const back = (await page.locator('.bookcase-back').boundingBox())!
     const plank = (await page.locator('.bookcase-plank').boundingBox())!
+    const end = (await page.locator('li.bookend').boundingBox())!
+    const spacer = (await page.locator('li.finished-spacer').boundingBox())!
+    const last = (await page.locator('.spine').last().boundingBox())!
     expect(first.x - back.x).toBeLessThan(8) // flush left inside the case
-    const overhang = back.x + back.width - (last.x + last.width)
+    expect(last.x + last.width).toBeLessThanOrEqual(end.x + 1) // reading books sit left of the bookend
+    const overhang = back.x + back.width - (spacer.x + spacer.width)
     expect(overhang).toBeGreaterThan(20)
     expect(overhang).toBeLessThan(36)
     // books stand on the plank

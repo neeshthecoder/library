@@ -1,7 +1,7 @@
 import type { Book } from '../storage/manifest'
 import type { Library } from '../storage/library'
 import { createDialog, esc, openDialog } from '../ui/dialog'
-import { ICON_BACK, ICON_TRASH } from '../ui/icons'
+import { ICON_BACK, ICON_CHECK, ICON_TRASH } from '../ui/icons'
 import { showMessages } from '../ui/messages'
 import type { BookRenderer, Location } from './renderer'
 import { currentMode, SPREAD_QUERY, type Mode } from './spread'
@@ -12,6 +12,8 @@ export interface ReaderCallbacks {
   onPageTurn(): void
   /** Ensures a connection; resolves false if the user declined. */
   ensureConnected(reason: string): Promise<boolean>
+  /** Mark the book finished or move it back to reading (owner only). */
+  onToggleFinished(id: string, finished: boolean): Promise<void>
 }
 
 export function deleteMessage(title: string) {
@@ -53,6 +55,7 @@ export class ReaderView {
   #chain: Promise<void> = Promise.resolve()
   #queued = 0
   #destroyed = false
+  #unsub: () => void = () => undefined
 
   constructor(book: Book, lib: Library, cb: ReaderCallbacks) {
     this.#book = book
@@ -64,7 +67,10 @@ export class ReaderView {
       <header class="reader-bar">
         <button type="button" class="icon-btn" data-back aria-label="Back to shelf">${ICON_BACK}<span aria-hidden="true">Shelf</span></button>
         <p class="fine reader-progress" aria-live="polite"></p>
-        <button type="button" class="icon-btn" data-delete aria-label="Delete book">${ICON_TRASH}</button>
+        <div class="reader-actions">
+          <button type="button" class="icon-btn reader-finish" data-finish aria-pressed="false">${ICON_CHECK}<span>Mark finished</span></button>
+          <button type="button" class="icon-btn" data-delete aria-label="Delete book">${ICON_TRASH}</button>
+        </div>
       </header>
       <main class="reader-stage" data-format="${book.format}">
         <h1 class="visually-hidden">${esc(book.title)}</h1>
@@ -82,6 +88,16 @@ export class ReaderView {
     const del = this.el.querySelector<HTMLElement>('[data-delete]')!
     del.hidden = !lib.isOwner
     del.addEventListener('click', () => void this.#delete())
+    const fin = this.el.querySelector<HTMLButtonElement>('[data-finish]')!
+    fin.hidden = !lib.isOwner
+    const syncFinish = () => {
+      const done = !!lib.book(book.id)?.finishedAt
+      fin.setAttribute('aria-pressed', String(done))
+      fin.querySelector('span')!.textContent = done ? 'Finished' : 'Mark finished'
+    }
+    syncFinish()
+    this.#unsub = lib.store.subscribe(syncFinish)
+    fin.addEventListener('click', () => void cb.onToggleFinished(book.id, !lib.book(book.id)?.finishedAt))
     this.el.querySelector('.reader-edge-prev')!.addEventListener('click', () => void this.prev())
     this.el.querySelector('.reader-edge-next')!.addEventListener('click', () => void this.next())
     this.#mql.addEventListener('change', this.#onMode)
@@ -141,6 +157,7 @@ export class ReaderView {
 
   destroy(): void {
     this.#destroyed = true
+    this.#unsub()
     document.removeEventListener('keydown', this.#onKey)
     this.#mql.removeEventListener('change', this.#onMode)
     this.#renderer?.destroy()

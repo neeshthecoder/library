@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  addBook, applyOp, bookPath, isReflected, ManifestVersionError, merge, newBookId, parseManifest, removeBook, setPosition, shelfOrder, totalSize,
+  addBook, setFinished, shelfSections, applyOp, bookPath, isReflected, ManifestVersionError, merge, newBookId, parseManifest, removeBook, setPosition, shelfOrder, totalSize,
   type Book, type Manifest,
 } from '../../src/storage/manifest'
 
@@ -59,6 +59,24 @@ describe('manifest', () => {
     const m = { ...m0, books: [book('c', '2026-03-01T00:00:00Z'), book('a', '2026-01-01T00:00:00Z'), book('b', '2026-02-01T00:00:00Z')] }
     expect(shelfOrder(m.books).map((b) => b.id)).toEqual(['a', 'b', 'c'])
     expect(totalSize(m)).toBe(300)
+  })
+
+  it('moves books between reading and finished', () => {
+    let m = addBook(addBook(addBook(m0, book('a', '2026-01-01T00:00:00Z')), book('b', '2026-01-02T00:00:00Z')), book('c', '2026-01-03T00:00:00Z'))
+    m = applyOp(m, { type: 'finish', id: 'c', finishedAt: '2026-03-01T00:00:00Z' })
+    m = applyOp(m, { type: 'finish', id: 'a', finishedAt: '2026-03-02T00:00:00Z' })
+    const s = shelfSections(m.books)
+    expect(s.reading.map((b) => b.id)).toEqual(['b'])
+    expect(s.finished.map((b) => b.id)).toEqual(['c', 'a']) // in the order they were finished
+    expect(isReflected(m, { type: 'finish', id: 'a', finishedAt: '2026-03-02T00:00:00Z' })).toBe(true)
+    m = setFinished(m, 'a', null)
+    expect(shelfSections(m.books).reading.map((b) => b.id)).toEqual(['a', 'b'])
+    expect(setFinished(m, 'a', null)).toBe(m)
+  })
+
+  it('treats books from older manifests as still reading', () => {
+    const old = parseManifest({ version: 1, updatedAt: 'x', books: [book('a')] })
+    expect(shelfSections(old.books).reading).toHaveLength(1)
   })
 
   it('makes 10-character base32 ids', () => {

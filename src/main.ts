@@ -43,6 +43,7 @@ const shelf = new ShelfView({
   onSettings: () => void settings(),
   onRetry: (id) => void startUpload(id),
   onSignIn: () => void signIn(),
+  onMove: (id, finished) => void moveBook(id, finished),
 })
 
 function renderShelf(): void {
@@ -58,6 +59,18 @@ async function ensureConnected(reason?: string): Promise<boolean> {
   if (!s) return false
   await library.connect(s)
   return true
+}
+
+/** Moves a book into or out of the Finished section (one commit). */
+async function moveBook(id: string, finished: boolean): Promise<void> {
+  const title = library.book(id)?.title ?? 'The book'
+  try {
+    const p = library.setFinished(id, finished)
+    showMessages([finished ? `${title} moved to Finished.` : `${title} moved back to reading.`], 'info', 3000)
+    await p
+  } catch (e) {
+    showMessages([`${title} couldn’t be moved. ${e instanceof Error ? e.message : ''}`.trim()])
+  }
 }
 
 async function signIn(): Promise<void> {
@@ -155,6 +168,7 @@ async function show(next: Route): Promise<void> {
       },
       onPageTurn: () => sync.notePageTurn(),
       ensureConnected: (reason) => ensureConnected(reason),
+      onToggleFinished: (id, finished) => moveBook(id, finished),
     })
     reader = view
     document.title = `${book.title} · The bookshelf`

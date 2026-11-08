@@ -36,6 +36,8 @@ export interface Book {
   cover: { dominant: string; accent: string } | null
   spine: SpineSettings
   position: Position | null
+  /** When the book was moved to the Finished section (absent or null: still reading). */
+  finishedAt?: string | null
 }
 
 export interface Manifest {
@@ -48,6 +50,7 @@ export type Op =
   | { type: 'add'; book: Book }
   | { type: 'delete'; id: string }
   | { type: 'positions'; positions: Record<string, Position> }
+  | { type: 'finish'; id: string; finishedAt: string | null }
 
 export class ManifestVersionError extends Error {
   constructor(public found: unknown) {
@@ -106,8 +109,20 @@ export function setPosition(m: Manifest, id: string, pos: Position, now = new Da
   return changed ? { ...m, updatedAt: now, books } : m
 }
 
+export function setFinished(m: Manifest, id: string, finishedAt: string | null, now = new Date().toISOString()): Manifest {
+  let changed = false
+  const books = m.books.map((b) => {
+    if (b.id !== id || (b.finishedAt ?? null) === finishedAt) return b
+    changed = true
+    return { ...b, finishedAt }
+  })
+  return changed ? { ...m, updatedAt: now, books } : m
+}
+
 export function applyOp(m: Manifest, op: Op, now?: string): Manifest {
   switch (op.type) {
+    case 'finish':
+      return setFinished(m, op.id, op.finishedAt, now)
     case 'add':
       return addBook(m, op.book, now)
     case 'delete':
@@ -125,6 +140,10 @@ export function merge(remote: Manifest, ops: readonly Op[]): Manifest {
 /** True when the manifest already reflects the operation. */
 export function isReflected(m: Manifest, op: Op): boolean {
   switch (op.type) {
+    case 'finish': {
+      const b = m.books.find((x) => x.id === op.id)
+      return !b || (b.finishedAt ?? null) === op.finishedAt
+    }
     case 'add':
       return m.books.some((b) => b.id === op.book.id)
     case 'delete':
@@ -140,6 +159,15 @@ export function isReflected(m: Manifest, op: Op): boolean {
 
 export function totalSize(m: Manifest): number {
   return m.books.reduce((n, b) => n + (b.size || 0), 0)
+}
+
+/** Reading (left of the divider) and finished (right) books, each in shelf order. */
+export function shelfSections(books: readonly Book[]): { reading: Book[]; finished: Book[] } {
+  const reading = shelfOrder(books.filter((b) => !b.finishedAt))
+  const finished = books
+    .filter((b) => b.finishedAt)
+    .sort((a, b) => Date.parse(a.finishedAt!) - Date.parse(b.finishedAt!) || a.id.localeCompare(b.id))
+  return { reading, finished }
 }
 
 /** Books ordered oldest-added first (left) to newest (right). */

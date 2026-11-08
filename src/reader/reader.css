@@ -14,7 +14,8 @@
   padding-top: max(var(--space-2), env(safe-area-inset-top, 0px));
 }
 .reader-bar [data-back] { justify-self: start; }
-.reader-bar [data-delete] { justify-self: end; }
+.reader-actions { justify-self: end; display: flex; align-items: center; gap: var(--space-1); }
+.reader-finish[aria-pressed="true"] { color: var(--success); }
 .reader-progress {
   margin: 0;
   font-variant-numeric: tabular-nums;
