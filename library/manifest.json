@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T02:48:43.391Z",
+  "updatedAt": "2026-11-08T02:49:02.588Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -199,6 +199,32 @@
         "ink": "#F8F6F1",
         "h": 0.889,
         "w": 0.179
+      },
+      "position": null
+    },
+    {
+      "id": "w5vox6my6j",
+      "title": "Can't Hurt Me: Master Your Mind and Defy the Odds",
+      "format": "pdf",
+      "file": "library/books/w5vox6my6j.pdf",
+      "size": 6281657,
+      "addedAt": "2026-11-08T02:48:59.383Z",
+      "length": {
+        "pages": 306,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#dfdddd",
+        "accent": "#13110e"
+      },
+      "spine": {
+        "source": "trim",
+        "design": "frame",
+        "bg": "#3e1c48",
+        "trim": "#7b76bb",
+        "ink": "#F8F6F1",
+        "h": 0.917,
+        "w": 0.197
       },
       "position": null
     }
