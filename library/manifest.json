@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:42:49.724Z",
+  "updatedAt": "2026-11-08T03:48:15.567Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -775,6 +775,31 @@
         "ink": "#3a3a37",
         "h": 0.751,
         "w": 0.204
+      },
+      "position": null
+    },
+    {
+      "id": "gocv3tihi4",
+      "title": "The Origins of Totalitarianism",
+      "format": "azw3",
+      "file": "library/books/gocv3tihi4.azw3",
+      "size": 1256512,
+      "addedAt": "2026-11-08T03:48:13.583Z",
+      "length": {
+        "pages": 1085,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#fea805",
+        "accent": "#543801"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#fea805",
+        "trim": "#543801",
+        "ink": "#543801",
+        "h": 0.904,
+        "w": 0.199
       },
       "position": null
     }
