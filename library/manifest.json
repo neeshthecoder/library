@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:27:29.279Z",
+  "updatedAt": "2026-11-08T03:27:56.588Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -601,6 +601,31 @@
         "ink": "#232C32",
         "h": 0.845,
         "w": 0.166
+      },
+      "position": null
+    },
+    {
+      "id": "tetoobh4hr",
+      "title": "Meditations",
+      "format": "epub",
+      "file": "library/books/tetoobh4hr.epub",
+      "size": 2259276,
+      "addedAt": "2026-11-08T03:27:54.389Z",
+      "length": {
+        "pages": 183,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#060608",
+        "accent": "#faf9f9"
+      },
+      "spine": {
+        "source": "trim",
+        "bg": "#002529",
+        "trim": "#00856f",
+        "ink": "#F8F6F1",
+        "h": 0.893,
+        "w": 0.158
       },
       "position": null
     }
