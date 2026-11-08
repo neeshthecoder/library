@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T04:07:41.209Z",
+  "updatedAt": "2026-11-08T04:11:10.143Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -980,6 +980,31 @@
         "ink": "#F8F6F1",
         "h": 0.76,
         "w": 0.2
+      },
+      "position": null
+    },
+    {
+      "id": "pup6vlcprf",
+      "title": "The Problems of Philosophy",
+      "format": "mobi",
+      "file": "library/books/pup6vlcprf.mobi",
+      "size": 456999,
+      "addedAt": "2026-11-08T04:11:08.458Z",
+      "length": {
+        "pages": 115,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#0dbee1",
+        "accent": "#9c3f22"
+      },
+      "spine": {
+        "source": "trim",
+        "bg": "#003450",
+        "trim": "#737dd6",
+        "ink": "#F8F6F1",
+        "h": 0.95,
+        "w": 0.142
       },
       "position": null
     }
