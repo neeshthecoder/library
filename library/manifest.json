@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T02:59:10.259Z",
+  "updatedAt": "2026-11-08T02:59:30.148Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -336,6 +336,32 @@
         "ink": "#F8F6F1",
         "h": 0.912,
         "w": 0.164
+      },
+      "position": null
+    },
+    {
+      "id": "q77dehmjx7",
+      "title": "The Art of Strategy",
+      "format": "pdf",
+      "file": "library/books/q77dehmjx7.pdf",
+      "size": 3662590,
+      "addedAt": "2026-11-08T02:59:27.379Z",
+      "length": {
+        "pages": 550,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#fdfdfd",
+        "accent": "#848179"
+      },
+      "spine": {
+        "source": "trim",
+        "design": "frame",
+        "bg": "#002a3f",
+        "trim": "#be6200",
+        "ink": "#F8F6F1",
+        "h": 0.775,
+        "w": 0.213
       },
       "position": null
     }
