@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:37:10.606Z",
+  "updatedAt": "2026-11-08T03:42:37.313Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -728,6 +728,28 @@
         "ink": "#f3ead1",
         "h": 0.753,
         "w": 0.188
+      },
+      "position": null
+    },
+    {
+      "id": "7gwvai4xth",
+      "title": "A Theory of Justice: Revised Edition",
+      "format": "mobi",
+      "file": "library/books/7gwvai4xth.mobi",
+      "size": 1219156,
+      "addedAt": "2026-11-08T03:42:35.448Z",
+      "length": {
+        "pages": 689,
+        "estimated": true
+      },
+      "cover": null,
+      "spine": {
+        "source": "trim",
+        "bg": "#003d40",
+        "trim": "#009e73",
+        "ink": "#F8F6F1",
+        "h": 0.871,
+        "w": 0.183
       },
       "position": null
     }
