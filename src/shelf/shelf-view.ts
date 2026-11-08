@@ -1,5 +1,5 @@
 import { shelfOrder, type Book } from '../storage/manifest'
-import { spineGap } from '../spines/geometry'
+import { leanGap, spineGap, spineLean, spinePx } from '../spines/geometry'
 import { renderSpine } from '../spines/spine'
 import { canvasMeasure, type Measure } from '../spines/title-fit'
 import { libraryReadout } from '../ui/format'
@@ -53,19 +53,21 @@ export class ShelfView {
       </header>
       <section class="shelf" aria-label="Shelf">
         <div class="shelf-scroller">
-          <div class="shelf-track">
-            <ul class="shelf-books" role="list"></ul>
-            <div class="shelf-bar" aria-hidden="true"></div>
+          <div class="bookcase">
+            <div class="bookcase-back">
+              <ul class="shelf-books" role="list"></ul>
+            </div>
+            <div class="bookcase-plank" aria-hidden="true"></div>
           </div>
         </div>
       </section>
       <p class="shelf-empty" hidden>Drop a book anywhere to add it.</p>
-      <div class="shelf-footer">
-        <button type="button" class="btn btn-secondary btn-small" data-action="add">Add book</button>
-        <p class="fine shelf-readout"><span class="shelf-size"></span>
-          <button type="button" class="link-btn" data-action="settings">Library settings</button></p>
-      </div>
       <div class="fine shelf-status" role="status"></div>
+      <footer class="shelf-footer fine">
+        <button type="button" class="link-btn" data-action="add">Add book</button>
+        <span class="shelf-size"></span>
+        <button type="button" class="link-btn" data-action="settings">Library settings</button>
+      </footer>
       <div class="visually-hidden shelf-descs"></div>`
     this.#list = this.el.querySelector('.shelf-books')!
     this.#scroller = this.el.querySelector('.shelf-scroller')!
@@ -167,9 +169,13 @@ export class ShelfView {
     this.#list.replaceChildren()
     this.#descs.replaceChildren()
     this.#focusIndex = Math.min(this.#focusIndex, Math.max(0, this.#books.length - 1))
+    let prevLeaned = false
     this.#books.forEach((book, i) => {
       const li = document.createElement('li')
-      li.style.marginRight = `${spineGap(book.id)}px`
+      const lean = spineLean(book.id, i === this.#books.length - 1, prevLeaned)
+      prevLeaned = lean > 0
+      const px = spinePx(book.spine.h, book.spine.w, this.#shelfPx)
+      li.style.marginRight = `${spineGap(book.id) + leanGap(px.height, px.width, lean)}px`
       const btn = document.createElement('button')
       btn.type = 'button'
       btn.className = 'spine'
@@ -185,6 +191,10 @@ export class ShelfView {
         btn.setAttribute('aria-describedby', desc.id)
       }
       renderSpine(btn, { id: book.id, title: book.title, spine: book.spine, started: !!book.position }, this.#shelfPx, this.#measure)
+      if (lean) {
+        btn.style.setProperty('--lean', `${lean}deg`)
+        btn.dataset.lean = 'true'
+      }
       li.append(btn)
       this.#list.append(li)
     })

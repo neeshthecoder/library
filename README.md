@@ -60,7 +60,7 @@ pdf.js and foliate-js load only when the reader or the import preview opens, so 
 The interface follows `STYLEGUIDE.md`. These deviations are deliberate:
 
 - **Spines and bookmark ribbons are illustrations.** They use colors outside the token palette (cover-derived or randomly generated), ornament, and star motifs (the Medallion trim). They are flat, with rounded corners and no shadows or gradients. A single flat tone band, 3% lighter than the spine color, echoes the reference artwork. Ribbons are darkened when needed so they stay visible (3:1) on the paper background. Spine titles use the trim color when it reaches 4.5:1. Otherwise they use paper or ink, and pure white or black only when neither of those reaches 4.5:1.
-- **The shelf plank** is a flat rounded bar in `--ink-muted`. The styleguide forbids hairlines, and the plank is part of the illustration, not a divider.
+- **The bookcase** is illustration too: flat wood tones for the side walls, top board, back panel, and plank (`src/shelf/bookcase.css`). There's no texture, gradient, or shadow. The styleguide has no wood colors and forbids borders and hairlines, but a shelf needs to look like one. About one book in ten leans on its neighbour.
 - **The drag overlay** uses a dashed outline, despite the "no borders" rule, so the drop target reads clearly.
 - **Book content** inside the reader keeps the publisher's typography. The serif and type-scale rules apply to interface chrome, not to the books themselves.
 

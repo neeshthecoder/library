@@ -8,6 +8,12 @@ export function hash01(id: string, salt = ''): number {
     h ^= s.charCodeAt(i)
     h = Math.imul(h, 0x01000193)
   }
+  // murmur3 finalizer: spreads similar ids evenly
+  h ^= h >>> 16
+  h = Math.imul(h, 0x85ebca6b)
+  h ^= h >>> 13
+  h = Math.imul(h, 0xc2b2ae35)
+  h ^= h >>> 16
   return (h >>> 0) / 4294967296
 }
 
@@ -37,6 +43,25 @@ export function spineWidth(id: string, pages: number, design?: TrimDesign): numb
 /** Gap after a spine, in px: 0 or 4 for the hand-placed look. */
 export function spineGap(id: string): number {
   return hash01(id, 'gap') < 0.5 ? 0 : 4
+}
+
+/**
+ * Lean angle in degrees: roughly one book in ten leans on its right-hand
+ * neighbour, like a real shelf. Never the last book, never two in a row.
+ */
+export function spineLean(id: string, isLast: boolean, prevLeaned: boolean): number {
+  if (isLast || prevLeaned) return 0
+  const r = hash01(id, 'lean')
+  return r < 0.1 ? Math.round((5 + r * 30) * 10) / 10 : 0
+}
+
+/**
+ * Extra space a leaning book needs on its right. It tips on its bottom-right
+ * corner, so its top moves right by h·sin(θ) and just touches the neighbour.
+ */
+export function leanGap(heightPx: number, _widthPx: number, deg: number): number {
+  if (!deg) return 0
+  return Math.ceil(heightPx * Math.sin((deg * Math.PI) / 180))
 }
 
 export function spinePx(h: number, w: number, shelfPx: number): { width: number; height: number } {

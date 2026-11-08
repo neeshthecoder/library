@@ -4,6 +4,7 @@ import './styles/base.css'
 import './styles/components.css'
 import './spines/spine.css'
 import './shelf/shelf.css'
+import './shelf/bookcase.css'
 import './import/import.css'
 import './reader/reader.css'
 

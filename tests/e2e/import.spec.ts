@@ -27,7 +27,7 @@ test.describe('drag overlay', () => {
     await expect(overlay).toBeVisible()
     await expect(overlay).toContainText('Drag file here')
     let hidden = 0
-    for (const sel of ['h1', '.shelf-footer', 'button.btn', 'body']) {
+    for (const sel of ['h1', '.shelf-footer', '.shelf-footer .link-btn', 'body']) {
       await page.dispatchEvent(sel, 'dragenter', { dataTransfer: dt })
       await page.dispatchEvent('body', 'dragleave', { dataTransfer: dt })
       await page.dispatchEvent(sel, 'dragover', { dataTransfer: dt })

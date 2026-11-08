@@ -1,0 +1,42 @@
+/*
+ * The bookcase is illustration (exempt from the palette, like the spines):
+ * flat wood tones, no texture, gradients, or shadows. A compartment with side
+ * walls and a top board, a recessed back panel, and a plank with a lighter top
+ * face and darker front edge. It ends a short way past the last book.
+ */
+.bookcase {
+  --wood: #8c6040;
+  --wood-top: #b08155;
+  --wood-edge: #6e4a30;
+  --back: #d6c3a5;
+  --wall: 0.75rem;
+
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--wall) var(--wall) 0;
+  border-radius: 0.75rem 0.75rem 0.375rem 0.375rem;
+  background: var(--wood);
+}
+
+.bookcase-back {
+  display: flex;
+  align-items: flex-end;
+  /* room above the tallest book for the lift and the ribbon */
+  padding: 2rem calc(1.5rem + 0.25rem) 0 0.25rem;
+  border-radius: 0.375rem 0.375rem 0 0;
+  background: var(--back);
+}
+
+.bookcase-plank {
+  height: 1.25rem;
+  margin-inline: calc(-1 * var(--wall));
+  border-radius: 0 0 0.375rem 0.375rem;
+  background: var(--wood-edge); /* front edge */
+}
+.bookcase-plank::before { /* top face */
+  content: "";
+  display: block;
+  height: 0.45rem;
+  background: var(--wood-top);
+}

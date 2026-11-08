@@ -55,16 +55,35 @@ test.describe('bookshelf', () => {
     }
   })
 
-  test('shelf bar ends just past the last spine', async ({ page }) => {
+  test('bookcase holds the books upright, flush left, and ends just past the last one', async ({ page }) => {
     await mockPublished(page, manifestOf(shelfBooks(3)))
     await page.goto('/')
-    const last = await page.locator('.spine').last().boundingBox()
-    const first = await page.locator('.spine').first().boundingBox()
-    const bar = await page.locator('.shelf-bar').boundingBox()
-    expect(Math.abs(bar!.x - first!.x)).toBeLessThan(1)
-    const overhang = bar!.x + bar!.width - (last!.x + last!.width)
+    const last = (await page.locator('.spine').last().boundingBox())!
+    const first = (await page.locator('.spine').first().boundingBox())!
+    const back = (await page.locator('.bookcase-back').boundingBox())!
+    const plank = (await page.locator('.bookcase-plank').boundingBox())!
+    expect(first.x - back.x).toBeLessThan(8) // flush left inside the case
+    const overhang = back.x + back.width - (last.x + last.width)
     expect(overhang).toBeGreaterThan(20)
-    expect(overhang).toBeLessThan(30)
+    expect(overhang).toBeLessThan(36)
+    // books stand on the plank
+    expect(Math.abs(first.y + first.height - plank.y)).toBeLessThan(2)
+    expect(first.height).toBeGreaterThan(first.width * 2)
+  })
+
+  test('footer is a quiet centered line of text links', async ({ page }) => {
+    await mockPublished(page, manifestOf(shelfBooks(3)))
+    await page.goto('/')
+    const add = page.getByRole('button', { name: 'Add book' })
+    await expect(add).toHaveClass(/link-btn/)
+    const fs = await add.evaluate((e) => parseFloat(getComputedStyle(e).fontSize))
+    expect(fs).toBeLessThanOrEqual(14)
+    const footer = (await page.locator('.shelf-footer').boundingBox())!
+    const vw = page.viewportSize()!.width
+    expect(Math.abs(footer.x + footer.width / 2 - vw / 2)).toBeLessThan(2)
+    const box = (await add.boundingBox())!
+    const shelf = (await page.locator('.bookcase').boundingBox())!
+    expect(box.y).toBeGreaterThan(shelf.y + shelf.height + 40)
   })
 
   for (const width of [320, 768, 1440]) {
@@ -84,7 +103,7 @@ test.describe('bookshelf', () => {
   }
 
   test('vertical wheel scrolls the shelf, then the page at the end', async ({ page }) => {
-    await page.setViewportSize({ width: 480, height: 600 })
+    await page.setViewportSize({ width: 480, height: 420 })
     await mockPublished(page, manifestOf(shelfBooks()))
     await page.goto('/')
     const scroller = page.locator('.shelf-scroller')
