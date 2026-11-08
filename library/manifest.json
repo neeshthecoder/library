@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T04:14:40.604Z",
+  "updatedAt": "2026-11-08T04:15:28.081Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1080,6 +1080,31 @@
         "ink": "#600610",
         "h": 0.845,
         "w": 0.15
+      },
+      "position": null
+    },
+    {
+      "id": "gk6okoles4",
+      "title": "A Mathematician's Lament",
+      "format": "epub",
+      "file": "library/books/gk6okoles4.epub",
+      "size": 734435,
+      "addedAt": "2026-11-08T04:15:26.388Z",
+      "length": {
+        "pages": 66,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#fcfcfc",
+        "accent": "#7c6b5f"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#fcfcfc",
+        "trim": "#7c6b5f",
+        "ink": "#7c6b5f",
+        "h": 0.895,
+        "w": 0.131
       },
       "position": null
     }
