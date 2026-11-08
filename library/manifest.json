@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:16:56.996Z",
+  "updatedAt": "2026-11-08T03:19:45.884Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -521,6 +521,31 @@
         "ink": "#ab904c",
         "h": 0.85,
         "w": 0.171
+      },
+      "position": null
+    },
+    {
+      "id": "fmvlznihyl",
+      "title": "The Myth of Sisyphus",
+      "format": "pdf",
+      "file": "library/books/fmvlznihyl.pdf",
+      "size": 657497,
+      "addedAt": "2026-11-08T03:19:44.164Z",
+      "length": {
+        "pages": 160,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#010312",
+        "accent": "#f8f8f7"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#010312",
+        "trim": "#f8f8f7",
+        "ink": "#f8f8f7",
+        "h": 0.885,
+        "w": 0.158
       },
       "position": null
     }
