@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T04:11:10.143Z",
+  "updatedAt": "2026-11-08T04:12:20.147Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1005,6 +1005,31 @@
         "ink": "#F8F6F1",
         "h": 0.95,
         "w": 0.142
+      },
+      "position": null
+    },
+    {
+      "id": "join5xdcup",
+      "title": "Superforecasting: The Art and Science of Prediction",
+      "format": "pdf",
+      "file": "library/books/join5xdcup.pdf",
+      "size": 3778346,
+      "addedAt": "2026-11-08T04:12:16.602Z",
+      "length": {
+        "pages": 282,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#272526",
+        "accent": "#dfeaeb"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#272526",
+        "trim": "#dfeaeb",
+        "ink": "#dfeaeb",
+        "h": 0.796,
+        "w": 0.168
       },
       "position": null
     }
