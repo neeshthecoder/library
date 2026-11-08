@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:24:25.557Z",
+  "updatedAt": "2026-11-08T03:25:00.082Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -571,6 +571,31 @@
         "ink": "#F8F6F1",
         "h": 0.897,
         "w": 0.175
+      },
+      "position": null
+    },
+    {
+      "id": "f5bff4kcpe",
+      "title": "Aristotle - Nicomachean Ethics",
+      "format": "azw3",
+      "file": "library/books/f5bff4kcpe.azw3",
+      "size": 354392,
+      "addedAt": "2026-11-08T03:24:58.716Z",
+      "length": {
+        "pages": 209,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#e7d8ab",
+        "accent": "#867653"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#e7d8ab",
+        "trim": "#867653",
+        "ink": "#232C32",
+        "h": 0.845,
+        "w": 0.166
       },
       "position": null
     }
