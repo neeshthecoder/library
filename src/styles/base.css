@@ -55,24 +55,43 @@ button { cursor: pointer; }
 .display-xl { font-size: var(--display-xl); line-height: 0.95; letter-spacing: -0.025em; }
 
 /*
- * A secret day/night toggle hiding as the period in "The bookshelf." It looks
- * and sits exactly like the full stop: inherits the headline's font and color,
- * no button chrome, no hover hint. Keyboard users still get a focus ring.
+ * The day/night toggle that stands in for the period in "The bookshelf." A
+ * small sliding switch, sized in em so it scales with the headline: a pill
+ * track (an inset ring, no border, like .btn-secondary) with a knob that
+ * slides right when night is on. On-palette so it works in both themes.
  */
 .period-toggle {
   appearance: none;
   font: inherit;
-  letter-spacing: inherit;
-  color: inherit;
-  background: none;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 0.66em;
+  height: 0.36em;
+  padding: 0.05em;
+  margin-left: 0.06em;
+  vertical-align: -0.02em;
   border: 0;
-  margin: 0;
-  padding: 0;
-  cursor: inherit;
+  border-radius: var(--radius-pill);
+  background: var(--linen);
+  box-shadow: inset 0 0 0 0.014em color-mix(in srgb, var(--ink) 22%, transparent);
+  cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
+.period-toggle::before { /* the knob */
+  content: "";
+  width: 0.24em;
+  height: 0.24em;
+  border-radius: 50%;
+  background: var(--action);
+  box-shadow: var(--shadow);
+  transition: transform var(--dur-move) var(--ease);
+}
+.period-toggle[aria-checked="true"]::before { transform: translateX(0.3em); }
+.period-toggle:hover { background: color-mix(in srgb, var(--ink) 10%, var(--linen)); }
 .period-toggle:focus { outline: none; }
-.period-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 2px; }
+.period-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 0.04em; }
+@media (prefers-reduced-motion: reduce) { .period-toggle::before { transition: none; } }
 
 .fine { font-size: var(--fine); line-height: 1.5; letter-spacing: 0.005em; color: var(--ink-muted); }
 

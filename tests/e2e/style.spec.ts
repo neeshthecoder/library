@@ -22,7 +22,7 @@ test('sans text uses Helvetica; spine titles use the headline serif', async ({ p
 
 test('subtitle sits under the headline; footer text is smaller still', async ({ page }) => {
   await shelf(page)
-  const sub = page.getByText('Books I am (or should be) reading.')
+  const sub = page.getByText('Books Avaneesh is (or should be) reading.')
   await expect(sub).toBeVisible()
   const size = (sel: string) => page.locator(sel).first().evaluate((e) => parseFloat(getComputedStyle(e).fontSize))
   expect(await size('.shelf-subtitle')).toBe(14)
@@ -51,11 +51,15 @@ test('day: paper background, no night sky', async ({ page }) => {
   await expect(page.locator('.night-sky')).toBeHidden()
 })
 
-test('the secret period toggle flips day/night and sticks across a reload', async ({ page }) => {
+test('the period switch flips day/night, reflects state, and sticks across a reload', async ({ page }) => {
   await shelf(page) // noon → day
+  const sw = page.locator('.period-toggle')
+  await expect(sw).toHaveRole('switch')
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'day')
-  await page.locator('.period-toggle').click()
+  await expect(sw).toHaveAttribute('aria-checked', 'false')
+  await sw.click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'night')
+  await expect(sw).toHaveAttribute('aria-checked', 'true') // knob slides to the night side
   await expect(page.locator('.night-sky')).toBeVisible()
   await expect(page.locator('.day-sky')).toBeHidden()
   // the choice survives a reload (read before first paint)

@@ -52,6 +52,7 @@ export class ShelfView {
   #renderedKey = ''
   #focusIndex = 0
   #ro: ResizeObserver
+  #themeObserver!: MutationObserver
   #owner = false
   #finishedIds = new Set<string>()
   #bookcase!: HTMLElement
@@ -83,8 +84,8 @@ export class ShelfView {
       <div class="night-sky" aria-hidden="true">${NIGHT_SKY}</div>
       <div class="day-sky" aria-hidden="true">${DAY_SKY}</div>
       <header class="shelf-header">
-        <h1 class="display display-xl headline-enter">The bookshelf<button type="button" class="period-toggle" aria-label="Switch between day and night">.</button></h1>
-        <p class="fine shelf-subtitle">Books I am (or should be) reading.</p>
+        <h1 class="display display-xl headline-enter">The bookshelf<button type="button" class="period-toggle" role="switch" aria-label="Night mode" title="Day / night"></button></h1>
+        <p class="fine shelf-subtitle">Books Avaneesh is (or should be) reading.</p>
       </header>
       <section class="shelf" aria-label="Shelf">
         <div class="shelf-scroller">
@@ -124,10 +125,16 @@ export class ShelfView {
     this.el.querySelector('[data-action="add"]')!.addEventListener('click', () => cb.onAddBook())
     this.el.querySelector('[data-action="settings"]')!.addEventListener('click', () => cb.onSettings())
     this.el.querySelector('[data-action="signin"]')!.addEventListener('click', () => cb.onSignIn())
-    // Secret toggle hidden in the headline's period: flip day/night and keep it.
-    this.el.querySelector('.period-toggle')!.addEventListener('click', () => {
+    // The switch standing in for the headline's period: flip day/night and keep it.
+    const toggle = this.el.querySelector('.period-toggle')!
+    toggle.addEventListener('click', () => {
       setThemeOverride(document.documentElement.dataset.theme === 'night' ? 'day' : 'night')
     })
+    // Keep the knob in step with the theme, however it changed (click or clock).
+    const syncToggle = () => toggle.setAttribute('aria-checked', String(document.documentElement.dataset.theme === 'night'))
+    syncToggle()
+    this.#themeObserver = new MutationObserver(syncToggle)
+    this.#themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
     this.#status.addEventListener('click', (e) => {
       const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-retry]')
       if (btn) cb.onRetry(btn.dataset.retry!)
@@ -208,6 +215,7 @@ export class ShelfView {
 
   destroy(): void {
     this.#ro.disconnect()
+    this.#themeObserver.disconnect()
   }
 
   #button(id: string) {
