@@ -31,8 +31,13 @@
   overscroll-behavior-x: contain;
   padding-inline: var(--gutter);
   padding-bottom: var(--space-3);
-  /* headroom for the critters on top of the bookcase; it overlaps the space above */
-  --critter-room: calc(var(--shelf-h) * 0.36);
+  /*
+   * Headroom for the critters on top of the bookcase (it overlaps the space
+   * above). The tallest is the squirrel (~0.34 of the shelf) plus its raised
+   * "Click Me!" sign, so leave the squirrel's height and some extra for the
+   * sign — otherwise overflow-y: hidden clips the top of the sign.
+   */
+  --critter-room: calc(var(--shelf-h) * 0.34 + 2.75rem);
   padding-top: var(--critter-room);
   margin-top: calc(-1 * var(--critter-room));
   scrollbar-width: thin;
