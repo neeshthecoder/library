@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T06:18:52.095Z",
+  "updatedAt": "2026-11-08T07:37:42.236Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -241,7 +241,8 @@
         "fraction": 0.003278688524590164,
         "label": "2–3 of 306",
         "updatedAt": "2026-11-08T06:18:47.989Z"
-      }
+      },
+      "finishedAt": "2026-11-08T07:37:41.717Z"
     },
     {
       "id": "ojoefappso",
