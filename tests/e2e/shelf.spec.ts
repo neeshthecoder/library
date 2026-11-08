@@ -44,6 +44,17 @@ test.describe('bookshelf', () => {
     await expect(page.getByText('5 books · 34 KB of about 1 GB')).toBeVisible()
   })
 
+  test('headline stays centered at mid widths', async ({ page }) => {
+    for (const width of [900, 1100, 1300]) {
+      await page.setViewportSize({ width, height: 800 })
+      await mockPublished(page, manifestOf([]))
+      await page.goto('/')
+      const box = (await page.getByRole('heading', { level: 1 }).boundingBox())!
+      expect(Math.abs(box.x + box.width / 2 - width / 2), `at ${width}px`).toBeLessThan(2)
+      expect(box.x).toBeGreaterThanOrEqual(0)
+    }
+  })
+
   test('shelf bar ends just past the last spine', async ({ page }) => {
     await mockPublished(page, manifestOf(shelfBooks(3)))
     await page.goto('/')

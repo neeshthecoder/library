@@ -137,6 +137,19 @@ describe('GitHub writes', () => {
     expect((await gh.verify()).error).toBe('no-push')
     api.push = true
     expect(await gh.verify()).toEqual({ ok: true, defaultBranch: 'main' })
+    // the account can push, but the fine-grained token lacks Contents: write
+    api.tokenCanWrite = false
+    expect((await gh.verify()).error).toBe('no-push')
+  })
+
+  it('explains a token without write access when uploading', async () => {
+    const api = new FakeGitHubApi()
+    const t = setup({ api, connected: true })
+    await t.init()
+    api.tokenCanWrite = false
+    await t.lib.add(book('a'), new Blob(['x']))
+    await expect(t.lib.upload('a')).rejects.toThrow('This token can’t write to me/lib. Give it “Contents: Read and write” access to this repository, then try again.')
+    expect(t.lib.store.get().pending[0].state).toBe('failed')
   })
 
   it('needs a connection to upload', async () => {

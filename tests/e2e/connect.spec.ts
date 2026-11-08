@@ -40,6 +40,22 @@ test.describe('connect your library', () => {
     await expect(d.getByRole('alert')).toContainText('Contents: Read and write')
   })
 
+  test('catches a fine-grained token without Contents: write on an owned repo', async ({ page }) => {
+    const gh = new FakeGitHub()
+    gh.tokenCanWrite = false // permissions.push is still true: the account owns the repo
+    await gh.install(page)
+    await mockPublished(page, manifestOf([]))
+    await page.goto('/')
+    await page.getByRole('button', { name: 'Library settings' }).click()
+    await page.getByRole('dialog').getByRole('button', { name: 'Connect' }).click()
+    const d = page.getByRole('dialog', { name: 'Connect your library' })
+    await d.getByLabel('Repository owner').fill('me')
+    await d.getByLabel('Repository name').fill('library')
+    await d.getByLabel('Personal access token').fill('github_pat_readonly')
+    await d.getByRole('button', { name: 'Connect' }).click()
+    await expect(d.getByRole('alert')).toContainText('can’t write to me/library')
+  })
+
   test('explains a rejected token', async ({ page }) => {
     const gh = new FakeGitHub()
     gh.tokenOk = false

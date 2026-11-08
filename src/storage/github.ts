@@ -108,22 +108,39 @@ export class GitHub {
     if (status >= 200 && status < 300) return (text ? JSON.parse(text) : {}) as T
     let msg = text
     try { msg = JSON.parse(text).message ?? text } catch { /* not JSON */ }
+    if (status === 403 && /not accessible by (personal access|integration)/i.test(msg)) {
+      throw new AuthError(status, `This token can’t write to ${this.#s.owner}/${this.#s.repo}. Give it “Contents: Read and write” access to this repository, then try again.`)
+    }
     if (status === 401 || (status === 403 && !/rate limit/i.test(msg))) throw new AuthError(status, msg)
     if (status === 409 || (status === 422 && method === 'PATCH' && path.includes('/git/refs/'))) throw new ConflictError(status, msg)
     throw new GitHubError(status, msg)
   }
 
-  /** Checks the token can push to the repository. */
+  /**
+   * Checks the token can write to the repository. `permissions.push` on the
+   * repo reflects the *account's* access, not a fine-grained token's, so we
+   * also create a tiny unreferenced blob: that needs Contents: write and
+   * changes nothing visible (git garbage-collects it).
+   */
   async verify(): Promise<VerifyResult> {
+    let repo: { default_branch: string; permissions?: { push?: boolean } }
     try {
-      const repo = await this.#json<{ default_branch: string; permissions?: { push?: boolean } }>('GET', '')
-      if (!repo.permissions?.push) return { ok: false, error: 'no-push', defaultBranch: repo.default_branch }
-      return { ok: true, defaultBranch: repo.default_branch }
+      repo = await this.#json('GET', '')
     } catch (e) {
       if (e instanceof AuthError) return { ok: false, error: 'auth' }
       if (e instanceof GitHubError && e.status === 404) return { ok: false, error: 'not-found' }
       return { ok: false, error: 'network' }
     }
+    if (!repo.permissions?.push) return { ok: false, error: 'no-push', defaultBranch: repo.default_branch }
+    try {
+      await this.#json('POST', '/git/blobs', { content: 'bookshelf write check', encoding: 'utf-8' })
+    } catch (e) {
+      if (e instanceof AuthError || (e instanceof GitHubError && (e.status === 404 || e.status === 403))) {
+        return { ok: false, error: 'no-push', defaultBranch: repo.default_branch }
+      }
+      return { ok: false, error: 'network' }
+    }
+    return { ok: true, defaultBranch: repo.default_branch }
   }
 
   async getHead(): Promise<{ commitSha: string; treeSha: string }> {

@@ -57,6 +57,8 @@ export class FakeGitHub {
   conflictsLeft = 0
   /** Fail blob uploads (simulate offline). */
   offline = false
+  /** Fine-grained token without Contents: write. */
+  tokenCanWrite = true
   #n = 0
 
   constructor(initial: Manifest = manifestOf([])) {
@@ -105,6 +107,7 @@ export class FakeGitHub {
     }
     if (p === '/git/blobs' && req.method() === 'POST') {
       if (this.offline) return route.abort('internetdisconnected')
+      if (!this.tokenCanWrite) return json(403, { message: 'Resource not accessible by personal access token' })
       const { content, encoding } = JSON.parse(req.postData() ?? '{}')
       const sha = this.#sha()
       this.blobs.set(sha, Buffer.from(content, encoding === 'base64' ? 'base64' : 'utf8'))

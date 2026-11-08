@@ -15,6 +15,8 @@ export class FakeGitHubApi {
   authOk = true
   push = true
   failBlobs = false
+  /** Fine-grained token without Contents: write. */
+  tokenCanWrite = true
   #n = 0
 
   constructor(initial: Manifest = emptyManifest()) {
@@ -52,6 +54,7 @@ export class FakeGitHubApi {
     }
     if (p === '/git/blobs' && method === 'POST') {
       if (this.failBlobs) throw new TypeError('Failed to fetch')
+      if (!this.tokenCanWrite) return json(403, { message: 'Resource not accessible by personal access token' })
       const sha = this.#id()
       this.blobs.set(sha, body.encoding === 'base64' ? Buffer.from(body.content, 'base64').toString('latin1') : body.content)
       return json(201, { sha })

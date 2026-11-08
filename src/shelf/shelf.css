@@ -11,7 +11,7 @@
   margin-bottom: clamp(2rem, 6vh, 4rem);
   text-align: center;
 }
-.shelf-header h1 { max-width: 20ch; margin-inline: auto; }
+.shelf-header h1 { max-width: min(20ch, 100%); margin-inline: auto; }
 
 .shelf { position: relative; }
 
