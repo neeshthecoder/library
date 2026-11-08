@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:50:31.562Z",
+  "updatedAt": "2026-11-08T03:53:17.026Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -830,6 +830,31 @@
         "ink": "#F8F6F1",
         "h": 0.878,
         "w": 0.198
+      },
+      "position": null
+    },
+    {
+      "id": "j6pr2cqwqr",
+      "title": "Leviathan: Parts I and II",
+      "format": "pdf",
+      "file": "library/books/j6pr2cqwqr.pdf",
+      "size": 15486624,
+      "addedAt": "2026-11-08T03:53:08.265Z",
+      "length": {
+        "pages": 324,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#ffffff",
+        "accent": "#7c8dc1"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#ffffff",
+        "trim": "#7c8dc1",
+        "ink": "#232C32",
+        "h": 0.93,
+        "w": 0.165
       },
       "position": null
     }
