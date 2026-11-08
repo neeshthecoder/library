@@ -3,7 +3,7 @@ import { hexToOklch, oklchToHex } from './color'
 import { ensureContrast, SHELF_BACK } from './contrast'
 import { spinePx } from './geometry'
 import { renderSpineArt } from './trims'
-import { fitTitle, LINE_HEIGHT, type Measure } from './title-fit'
+import { fitTitle, LINE_HEIGHT, SOFT_HYPHEN, type Measure } from './title-fit'
 
 export interface SpineModel {
   id: string
@@ -69,12 +69,17 @@ export function renderSpine(el: HTMLElement, model: SpineModel, shelfPx: number,
     fontSize: `${fit.size}px`,
     lineHeight: String(LINE_HEIGHT),
   })
-  for (const text of fit.lines) {
+  fit.lines.forEach((text, i) => {
+    const soft = text.endsWith(SOFT_HYPHEN)
+    // Real spaces between lines keep the text matching the title for
+    // assistive tech; none after a hyphen, real or inserted.
+    const prev = fit.lines[i - 1]
+    if (prev && !prev.endsWith('-') && !prev.endsWith(SOFT_HYPHEN)) title.append(' ')
     const line = document.createElement('span')
-    line.className = 'spine-title-line'
-    line.textContent = text
+    line.className = soft ? 'spine-title-line soft-break' : 'spine-title-line'
+    line.textContent = soft ? text.slice(0, -1) : text
     title.append(line)
-  }
+  })
   el.append(title)
   el.dataset.truncated = String(fit.truncated)
 }

@@ -15,5 +15,5 @@ export function coverSpine({ H }: TrimOptions): TrimDrawing {
     line(10, H - inset - band - 8, 90, H - inset - band - 8),
   ].join('')
   const y = inset + band + 18
-  return { body, panel: { x: 16, y, w: 68, h: H - 2 * y } }
+  return { body, panel: { x: 6, y, w: 88, h: H - 2 * y } }
 }

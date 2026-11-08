@@ -3,7 +3,7 @@ import { coverSpine } from './cover'
 import type { TrimDrawing } from './common'
 
 export const LOW_DETAIL_PX = 56
-const MIN_UNITS_H = 320
+const MIN_UNITS_H = 200
 
 export interface SpineArt {
   svg: string

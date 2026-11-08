@@ -65,6 +65,7 @@
   padding: var(--space-8) var(--gutter) 0;
   color: var(--ink-muted);
 }
+.shelf-footer { font-size: 0.75rem; }
 .shelf-footer .link-btn { font-size: inherit; }
 .shelf-page:has(.shelf-empty:not([hidden])) .shelf-footer { padding-top: var(--space-6); }
 

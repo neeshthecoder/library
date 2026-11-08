@@ -19,7 +19,8 @@ export const MIN_H = 0.74
 export const MAX_H = 0.98
 export const MIN_W = 0.12
 export const MAX_W = 0.22
-export const MIN_SPINE_PX = 44
+/** Narrowest a spine renders: wide enough for a horizontal title (and ≥ 44 px touch target). */
+export const MIN_SPINE_PX = 60
 
 /** Height as a fraction of shelf height, 0.74–0.98. */
 export function spineHeight(id: string): number {
@@ -60,8 +61,16 @@ export function leanGap(heightPx: number, _widthPx: number, deg: number): number
   return Math.ceil(heightPx * Math.sin((deg * Math.PI) / 180))
 }
 
+/**
+ * On-screen thickness. Stored widths (0.12–0.22 of shelf height) are mapped
+ * to chunkier books (0.19–0.32) so horizontal titles have room.
+ */
+export function displayWidth(w: number): number {
+  return 0.19 + (w - MIN_W) * 1.3
+}
+
 export function spinePx(h: number, w: number, shelfPx: number): { width: number; height: number } {
-  return { width: Math.max(MIN_SPINE_PX, Math.round(w * shelfPx)), height: Math.round(h * shelfPx) }
+  return { width: Math.max(MIN_SPINE_PX, Math.round(displayWidth(w) * shelfPx)), height: Math.round(h * shelfPx) }
 }
 
 const round = (x: number) => Math.round(x * 1000) / 1000

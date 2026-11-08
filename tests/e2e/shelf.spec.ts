@@ -83,7 +83,7 @@ test.describe('bookshelf', () => {
     const add = page.getByRole('button', { name: 'Add book' })
     await expect(add).toHaveClass(/link-btn/)
     const fs = await add.evaluate((e) => parseFloat(getComputedStyle(e).fontSize))
-    expect(fs).toBeLessThanOrEqual(14)
+    expect(fs).toBeLessThanOrEqual(12)
     const footer = (await page.locator('.shelf-footer').boundingBox())!
     const vw = page.viewportSize()!.width
     expect(Math.abs(footer.x + footer.width / 2 - vw / 2)).toBeLessThan(2)

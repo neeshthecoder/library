@@ -41,8 +41,9 @@ describe('spine geometry', () => {
     expect(leanGap(300, 50, 7)).toBe(37)
   })
 
-  it('never renders narrower than a 44 px touch target', () => {
-    expect(spinePx(0.8, 0.12, 224).width).toBe(44)
-    expect(spinePx(0.8, 0.2, 384).width).toBe(77)
+  it('renders chunky enough for horizontal titles, never under 60 px', () => {
+    expect(spinePx(0.8, 0.12, 224).width).toBe(60)
+    expect(spinePx(0.8, 0.12, 384).width).toBe(73)
+    expect(spinePx(0.8, 0.22, 384).width).toBe(123)
   })
 })

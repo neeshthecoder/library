@@ -19,12 +19,14 @@ test('sans text and spine titles use Helvetica', async ({ page }) => {
   expect(await page.locator('h1').evaluate((e) => getComputedStyle(e).fontFamily)).toMatch(/^"?Instrument Serif/)
 })
 
-test('subtitle sits under the headline at the footer link size', async ({ page }) => {
+test('subtitle sits under the headline; footer text is smaller still', async ({ page }) => {
   await shelf(page)
   const sub = page.getByText('Books I am (or should be) reading.')
   await expect(sub).toBeVisible()
-  const size = (sel: string) => page.locator(sel).first().evaluate((e) => getComputedStyle(e).fontSize)
-  expect(await size('.shelf-subtitle')).toBe(await size('.shelf-footer .link-btn'))
+  const size = (sel: string) => page.locator(sel).first().evaluate((e) => parseFloat(getComputedStyle(e).fontSize))
+  expect(await size('.shelf-subtitle')).toBe(14)
+  expect(await size('.shelf-footer .link-btn')).toBe(12)
+  expect(await size('.shelf-size')).toBe(12)
   const h1 = (await page.locator('h1').boundingBox())!
   const s = (await sub.boundingBox())!
   expect(s.y).toBeGreaterThan(h1.y + h1.height - 1)

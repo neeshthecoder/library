@@ -2,63 +2,97 @@
 export type Measure = (text: string, size: number) => number
 
 export interface FitResult {
+  /** Lines as displayed. A line ending in SOFT_HYPHEN was broken mid-word. */
   lines: string[]
   size: number
   truncated: boolean
 }
 
-export const MAX_SIZE = 20
-export const MIN_SIZE = 11
-export const LINE_HEIGHT = 1.15
+/** Marks a hyphen the fitter inserted (not part of the title). Rendered via CSS. */
+export const SOFT_HYPHEN = '\u00AD'
+
+export const MAX_SIZE = 17
+export const MIN_SIZE = 10
+export const LINE_HEIGHT = 1.2
 const STEP = 0.5
+const HYPHEN = '-' // measured width of an inserted hyphen
 
-/**
- * Fits a title into a vertical panel. `thickness` is the panel's width (the
- * direction lines stack in) and `length` is its height (the direction text
- * runs in). Tries one line, then two balanced lines, then truncates with an
- * ellipsis at the minimum size.
- */
-export function fitTitle(title: string, thickness: number, length: number, measure: Measure): FitResult {
-  const text = title.trim().replace(/\s+/g, ' ')
-  const start = Math.min(MAX_SIZE, Math.floor((thickness * 0.62) / STEP) * STEP)
-  const twoLinesPossible = 2 * MIN_SIZE * LINE_HEIGHT <= thickness
-
-  for (let size = start; size >= MIN_SIZE; size -= STEP) {
-    if (size * LINE_HEIGHT <= thickness && measure(text, size) <= length) {
-      return { lines: [text], size, truncated: false }
-    }
+/** Splits a word that's too wide into hyphenated pieces that fit. */
+function breakWord(word: string, size: number, width: number, measure: Measure): string[] {
+  const parts: string[] = []
+  let rest = word
+  while (measure(rest, size) > width && rest.length > 1) {
+    let n = rest.length - 1
+    while (n > 1 && measure(rest.slice(0, n) + HYPHEN, size) > width) n-- // a soft hyphen renders as '-'
+    parts.push(rest.slice(0, n) + SOFT_HYPHEN)
+    rest = rest.slice(n)
   }
-
-  if (twoLinesPossible) {
-    const words = text.split(' ')
-    if (words.length > 1) {
-      const maxTwo = Math.min(start, Math.floor(thickness / (2 * LINE_HEIGHT) / STEP) * STEP)
-      for (let size = maxTwo; size >= MIN_SIZE; size -= STEP) {
-        const split = bestSplit(words, size, measure)
-        if (split && Math.max(measure(split[0], size), measure(split[1], size)) <= length) {
-          return { lines: split, size, truncated: false }
-        }
-      }
-    }
-  }
-
-  const size = Math.max(MIN_SIZE, Math.min(start, MIN_SIZE))
-  return { lines: [truncate(text, size, length, measure)], size, truncated: true }
+  parts.push(rest)
+  return parts
 }
 
-function bestSplit(words: string[], size: number, measure: Measure): [string, string] | null {
-  let best: [string, string] | null = null
-  let bestMax = Infinity
-  for (let i = 1; i < words.length; i++) {
-    const a = words.slice(0, i).join(' ')
-    const b = words.slice(i).join(' ')
-    const m = Math.max(measure(a, size), measure(b, size))
-    if (m < bestMax) {
-      bestMax = m
-      best = [a, b]
+/**
+ * Splits text into wrap units. Spaces separate words; an existing hyphen is
+ * also a break point ("Chaise-" | "Longue"), joined back without a space.
+ */
+function tokens(text: string): { text: string; glue: string }[] {
+  const out: { text: string; glue: string }[] = []
+  text.split(' ').forEach((word, i) => {
+    const parts = word.split(/(?<=[^\s-]-)(?=[^-])/)
+    parts.forEach((p, j) => out.push({ text: p, glue: j > 0 ? '' : i > 0 ? ' ' : '' }))
+  })
+  return out
+}
+
+/** Greedy word wrap. Breaks at spaces and existing hyphens; hyphenates words wider than the line. */
+export function wrap(text: string, size: number, width: number, measureRaw: Measure): { lines: string[]; broke: boolean } {
+  const measure = withSoftHyphen(measureRaw)
+  const lines: string[] = []
+  let broke = false
+  let line = ''
+  for (const tok of tokens(text)) {
+    const candidate = line ? line + tok.glue + tok.text : tok.text
+    if (measure(candidate, size) <= width) {
+      line = candidate
+      continue
+    }
+    if (line) lines.push(line)
+    if (measure(tok.text, size) <= width) line = tok.text
+    else {
+      const pieces = breakWord(tok.text, size, width, measure)
+      broke = true
+      lines.push(...pieces.slice(0, -1))
+      line = pieces[pieces.length - 1]
     }
   }
-  return best
+  if (line) lines.push(line)
+  return { lines, broke }
+}
+
+/**
+ * Fits a title horizontally into a spine's middle panel, like a printed spine
+ * label: words wrap onto centered lines, as large as the panel allows. Breaking
+ * a word with a hyphen is avoided unless needed at the minimum size; if the
+ * lines still don't fit the panel's height, the last line ends with an ellipsis.
+ */
+export function fitTitle(title: string, width: number, height: number, measureRaw: Measure): FitResult {
+  const measure = withSoftHyphen(measureRaw)
+  const text = title.trim().replace(/\s+/g, ' ')
+  const fits = (n: number, size: number) => n * size * LINE_HEIGHT <= height
+
+  // 1. Largest size that fits without breaking words.
+  for (let size = MAX_SIZE; size >= MIN_SIZE; size -= STEP) {
+    const { lines, broke } = wrap(text, size, width, measure)
+    if (!broke && fits(lines.length, size)) return { lines, size, truncated: false }
+  }
+  // 2. At the minimum size, allow hyphenated breaks; 3. then truncate.
+  const size = MIN_SIZE
+  const { lines } = wrap(text, size, width, measure)
+  if (fits(lines.length, size)) return { lines, size, truncated: false }
+  const max = Math.max(1, Math.floor(height / (size * LINE_HEIGHT)))
+  const kept = lines.slice(0, max)
+  kept[max - 1] = truncate(`${kept[max - 1].replace(/\u00AD$/, '')} ${lines.slice(max).join(' ')}`, size, width, measure)
+  return { lines: kept, size, truncated: true }
 }
 
 /** Longest prefix (preferring a word boundary) that fits with an ellipsis. */
@@ -79,6 +113,9 @@ export function truncate(text: string, size: number, length: number, measure: Me
 }
 
 /** Canvas-based measurer using the spine title font (Helvetica 500). Results are cached. */
+/** Wraps a measurer so a trailing soft hyphen is measured as a visible hyphen. */
+export const withSoftHyphen = (m: Measure): Measure => (t, s) => m(t.endsWith(SOFT_HYPHEN) ? t.slice(0, -1) + '-' : t, s)
+
 export function canvasMeasure(): Measure {
   const ctx = document.createElement('canvas').getContext('2d')
   const cache = new Map<string, number>()

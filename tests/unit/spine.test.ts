@@ -11,7 +11,7 @@ describe('renderSpine', () => {
   it('sizes the spine from stored fractions and shelf height', () => {
     const el = document.createElement('button')
     renderSpine(el, { id: 'a', title: 'Emma', spine, started: false }, 300, measure)
-    expect(el.style.width).toBe('48px')
+    expect(el.style.width).toBe('73px')
     expect(el.style.height).toBe('270px')
     expect(el.querySelector('svg.spine-art')).not.toBeNull()
   })
@@ -43,6 +43,16 @@ describe('renderSpine', () => {
     expect(t.textContent).toBe('Middlemarch')
     expect(parseFloat(t.style.top)).toBeGreaterThan(0)
     expect(parseFloat(t.style.top) + parseFloat(t.style.height)).toBeLessThan(270)
+  })
+
+  it('keeps the title text identical to the book title across lines', () => {
+    for (const title of ['The Remains of the Day', 'The Victorian Chaise-Longue', 'Supercalifragilisticexpialidocious Tales']) {
+      const el = document.createElement('button')
+      renderSpine(el, { id: 'a', title, spine, started: false }, 300, measure)
+      const t = el.querySelector<HTMLElement>('.spine-title')!
+      expect(t.querySelectorAll('.spine-title-line').length).toBeGreaterThan(1)
+      expect(t.textContent).toBe(title)
+    }
   })
 
   it('keeps the ribbon visible against the dark back wall', () => {
