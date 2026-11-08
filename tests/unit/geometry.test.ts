@@ -15,7 +15,7 @@ describe('spine geometry', () => {
       expect(h).toBeGreaterThanOrEqual(MIN_H)
       expect(h).toBeLessThanOrEqual(MAX_H)
       for (const pages of [1, 50, 300, 1000, 50000]) {
-        const w = spineWidth(id, pages, i % 3 === 0 ? 'frame' : 'arch')
+        const w = spineWidth(id, pages)
         expect(w).toBeGreaterThanOrEqual(MIN_W)
         expect(w).toBeLessThanOrEqual(MAX_W)
       }

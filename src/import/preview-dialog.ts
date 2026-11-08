@@ -1,4 +1,4 @@
-import { TRIM_DESIGNS, type SpineSettings, type TrimDesign } from '../storage/manifest'
+import type { SpineSettings } from '../storage/manifest'
 import { pickTitleInk } from '../spines/contrast'
 import { spineHeight, spineWidth } from '../spines/geometry'
 import { generatePalette, type Pair } from '../spines/palette'
@@ -22,16 +22,16 @@ export interface PreviewResult {
   spine: SpineSettings
 }
 
-export type SourceChoice = 'cover' | TrimDesign
-export const DESIGN_LABEL: Record<SourceChoice, string> = { cover: 'From cover', frame: 'Frame', medallion: 'Medallion', arch: 'Arch' }
-
-/** Builds spine settings for a source choice. */
-export function spineFor(id: string, pages: number, choice: SourceChoice, cover: CoverColors | null, trimPair: Pair): SpineSettings {
-  if (choice === 'cover' && cover) {
-    return { source: 'cover', bg: cover.dominant, trim: cover.accent, ink: pickTitleInk(cover.dominant, cover.accent), h: spineHeight(id), w: spineWidth(id, pages) }
+/** Spine settings for a color pair. `fromCover` records where the colors came from. */
+export function spineFor(id: string, pages: number, pair: Pair, fromCover: boolean): SpineSettings {
+  return {
+    source: fromCover ? 'cover' : 'trim',
+    bg: pair.bg,
+    trim: pair.trim,
+    ink: pickTitleInk(pair.bg, pair.trim),
+    h: spineHeight(id),
+    w: spineWidth(id, pages),
   }
-  const design = choice === 'cover' ? 'frame' : choice
-  return { source: 'trim', design, bg: trimPair.bg, trim: trimPair.trim, ink: pickTitleInk(trimPair.bg, trimPair.trim), h: spineHeight(id), w: spineWidth(id, pages, design) }
 }
 
 /** The same shelf height the shelf uses: clamp(14rem, 42vh, 24rem). */
@@ -40,14 +40,12 @@ export function shelfHeightPx(): number {
   return Math.round(Math.min(24 * rem, Math.max(14 * rem, innerHeight * 0.42)))
 }
 
-const randomDesign = (): TrimDesign => TRIM_DESIGNS[Math.floor(Math.random() * TRIM_DESIGNS.length)]
-
 export function openPreviewDialog(input: PreviewInput): Promise<PreviewResult | null> {
-  const choices: SourceChoice[] = input.cover ? ['cover', ...TRIM_DESIGNS] : [...TRIM_DESIGNS]
-  let choice: SourceChoice = input.cover ? 'cover' : randomDesign()
-  let pair = generatePalette()
+  const coverPair: Pair | null = input.cover ? { bg: input.cover.dominant, trim: input.cover.accent } : null
+  let pair: Pair = coverPair ?? generatePalette()
   let title = input.title
   const measure = canvasMeasure()
+  const isCover = () => !!coverPair && pair.bg === coverPair.bg && pair.trim === coverPair.trim
 
   const d = createDialog('preview-title', 'preview-dialog')
   d.innerHTML = `
@@ -67,17 +65,14 @@ export function openPreviewDialog(input: PreviewInput): Promise<PreviewResult | 
             <input class="input" id="p-title" name="title" autocomplete="off" required aria-describedby="p-title-error">
             <p class="field-error" id="p-title-error" aria-live="polite"></p>
           </div>
-          <div class="field">
-            <span class="label" id="p-source-label">Spine</span>
-            <div class="segmented" role="tablist" aria-labelledby="p-source-label">
-              <span class="segmented-indicator" aria-hidden="true"></span>
-              ${choices.map((c) => `<button type="button" role="tab" id="tab-${c}" data-choice="${c}" aria-controls="p-trim-panel">${DESIGN_LABEL[c]}</button>`).join('')}
-            </div>
-          </div>
-          <div class="preview-colors" id="p-trim-panel" role="tabpanel">
+          <div class="preview-colors">
             <div class="color-field"><label for="p-bg">Background</label><input class="color-input" type="color" id="p-bg"></div>
-            <div class="color-field"><label for="p-trim">Trim</label><input class="color-input" type="color" id="p-trim"></div>
-            <button type="button" class="btn btn-secondary btn-small" data-shuffle>Shuffle colors</button>
+            <div class="color-field"><label for="p-trim">Bands</label><input class="color-input" type="color" id="p-trim"></div>
+            <div class="preview-color-actions">
+              <button type="button" class="btn btn-secondary btn-small" data-shuffle>Shuffle colors</button>
+              ${coverPair ? '<button type="button" class="btn btn-secondary btn-small" data-cover>Use cover colors</button>' : ''}
+            </div>
+            <p class="fine preview-source" aria-live="polite"></p>
           </div>
         </div>
       </div>
@@ -91,60 +86,23 @@ export function openPreviewDialog(input: PreviewInput): Promise<PreviewResult | 
   const titleInput = d.querySelector<HTMLInputElement>('#p-title')!
   const titleError = d.querySelector<HTMLElement>('#p-title-error')!
   const preview = d.querySelector<HTMLElement>('[data-preview]')!
-  const stage = d.querySelector<HTMLElement>('.preview-stage')!
-  const tabs = Array.from(d.querySelectorAll<HTMLButtonElement>('[role="tab"]'))
-  const panel = d.querySelector<HTMLElement>('#p-trim-panel')!
   const bgInput = d.querySelector<HTMLInputElement>('#p-bg')!
   const trimInput = d.querySelector<HTMLInputElement>('#p-trim')!
+  const source = d.querySelector<HTMLElement>('.preview-source')!
+  const coverBtn = d.querySelector<HTMLButtonElement>('[data-cover]')
   titleInput.value = title
 
-  const current = () => spineFor(input.id, input.pages, choice, input.cover, pair)
-
-  const indicator = d.querySelector<HTMLElement>('.segmented-indicator')!
-  const moveIndicator = () => {
-    const t = tabs.find((x) => x.dataset.choice === choice)
-    if (!t || !t.offsetWidth) return
-    indicator.style.width = `${t.offsetWidth}px`
-    indicator.style.height = `${t.offsetHeight}px`
-    indicator.style.transform = `translate(${t.offsetLeft}px, ${t.offsetTop}px)`
-  }
-  new ResizeObserver(moveIndicator).observe(d.querySelector('.segmented')!)
+  const current = () => spineFor(input.id, input.pages, pair, isCover())
 
   const render = () => {
     const spine = current()
-    tabs.forEach((t) => {
-      const sel = t.dataset.choice === choice
-      t.setAttribute('aria-selected', String(sel))
-      t.tabIndex = sel ? 0 : -1
-    })
-    moveIndicator()
-    panel.hidden = choice === 'cover'
-    panel.setAttribute('aria-labelledby', `tab-${choice}`)
     bgInput.value = spine.bg.toLowerCase()
     trimInput.value = spine.trim.toLowerCase()
     renderSpine(preview, { id: input.id, title: title || ' ', spine, started: false }, shelfHeightPx(), measure)
-    stage.setAttribute('aria-label', `Spine preview: ${DESIGN_LABEL[choice]}`)
+    source.textContent = isCover() ? 'Colors from the book’s cover.' : coverPair ? 'Custom colors.' : 'This book has no cover, so these colors were picked for it.'
+    if (coverBtn) coverBtn.hidden = isCover()
   }
 
-  const select = (c: SourceChoice, focus = false) => {
-    choice = c
-    render()
-    if (focus) tabs.find((t) => t.dataset.choice === c)?.focus()
-  }
-
-  tabs.forEach((t) => t.addEventListener('click', () => select(t.dataset.choice as SourceChoice)))
-  d.querySelector('[role="tablist"]')!.addEventListener('keydown', (e) => {
-    const ke = e as KeyboardEvent
-    const i = choices.indexOf(choice)
-    let n = i
-    if (ke.key === 'ArrowRight' || ke.key === 'ArrowDown') n = (i + 1) % choices.length
-    else if (ke.key === 'ArrowLeft' || ke.key === 'ArrowUp') n = (i - 1 + choices.length) % choices.length
-    else if (ke.key === 'Home') n = 0
-    else if (ke.key === 'End') n = choices.length - 1
-    else return
-    ke.preventDefault()
-    select(choices[n], true)
-  })
   titleInput.addEventListener('input', () => {
     title = titleInput.value
     if (title.trim()) titleError.textContent = ''
@@ -153,6 +111,7 @@ export function openPreviewDialog(input: PreviewInput): Promise<PreviewResult | 
   bgInput.addEventListener('input', () => { pair = { ...pair, bg: bgInput.value }; render() })
   trimInput.addEventListener('input', () => { pair = { ...pair, trim: trimInput.value }; render() })
   d.querySelector('[data-shuffle]')!.addEventListener('click', () => { pair = generatePalette(); render() })
+  coverBtn?.addEventListener('click', () => { if (coverPair) pair = { ...coverPair }; render() })
 
   let result: PreviewResult | null = null
   d.querySelector('[data-cancel]')!.addEventListener('click', () => d.close('cancel'))

@@ -56,7 +56,7 @@ npm run check:size   # fail if the shelf's JavaScript is 150 KB gzipped or more
 | Path | What lives there |
 |---|---|
 | `src/shelf/` | Shelf view, wheel-to-horizontal scrolling |
-| `src/spines/` | Spine art: three parametric trim SVGs, cover-derived spine, palette, contrast, title fitting |
+| `src/spines/` | Spine art (one plain design), cover colors, palette, contrast, title fitting |
 | `src/import/` | Drag overlay, file sniffing, DRM detection, metadata, preview dialog, queue |
 | `src/reader/` | Reader view, pdf.js renderer, foliate-js adapter, spread logic |
 | `src/storage/` | Manifest model, IndexedDB cache, GitHub Git Data client, sync |
@@ -69,7 +69,7 @@ pdf.js and foliate-js load only when the reader or the import preview opens, so 
 
 The interface follows `STYLEGUIDE.md`. These deviations are deliberate:
 
-- **Spines and bookmark ribbons are illustrations.** They use colors outside the token palette (cover-derived or randomly generated), ornament, and star motifs (the Medallion trim). They are flat, with rounded corners and no shadows or gradients. A single flat tone band, 3% lighter than the spine color, echoes the reference artwork. Ribbons are darkened when needed so they stay visible (3:1) on the paper background. Spine titles use the trim color when it reaches 4.5:1. Otherwise they use paper or ink, and pure white or black only when neither of those reaches 4.5:1.
+- **Spines and bookmark ribbons are illustrations.** Every spine uses one plain design: a flat color with two accent bands and a wide title panel. Colors come from the book's cover, or are generated when there's no cover, so they fall outside the token palette. Spines are flat, with rounded corners and no shadows or gradients. A single flat tone band, 3% lighter than the spine color, adds a little depth. (The three ornamental trims from `design/spine-trims.png` were removed because they made titles hard to read.) Ribbons are darkened when needed so they stay visible (3:1) on the paper background. Spine titles use the band color when it reaches 4.5:1. Otherwise they use paper or ink, and pure white or black only when neither of those reaches 4.5:1.
 - **The bookcase** is illustration too: flat wood tones for the side walls, top board, back panel, and plank (`src/shelf/bookcase.css`). There's no texture, gradient, or shadow. The styleguide has no wood colors and forbids borders and hairlines, but a shelf needs to look like one. About one book in ten leans on its neighbour.
 - **The drag overlay** uses a dashed outline, despite the "no borders" rule, so the drop target reads clearly.
 - **Helvetica instead of Inter.** All sans text, including spine titles, uses `Helvetica, "Helvetica Neue", Arial`. Helvetica is licensed and can't be self-hosted, so it's a system font: Macs and iPhones show Helvetica, and Windows and most Android phones show Arial. Only Instrument Serif is downloaded.

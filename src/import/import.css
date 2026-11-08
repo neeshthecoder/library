@@ -59,7 +59,8 @@ dialog.preview-dialog { width: min(100% - 2rem, 48rem); }
 }
 .preview-controls { display: grid; gap: var(--space-5); }
 .preview-colors { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); align-items: end; }
-.preview-colors .btn { grid-column: 1 / -1; justify-self: start; }
+.preview-color-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.preview-source { grid-column: 1 / -1; margin: 0; }
 .preview-queue { margin: 0 0 var(--space-2); }
 
 @media (max-width: 40rem) {

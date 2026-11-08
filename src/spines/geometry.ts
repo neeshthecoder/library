@@ -1,5 +1,3 @@
-import type { TrimDesign } from '../storage/manifest'
-
 /** FNV-1a 32-bit hash → [0, 1). Stable across devices. */
 export function hash01(id: string, salt = ''): number {
   let h = 0x811c9dc5
@@ -30,13 +28,11 @@ export function spineHeight(id: string): number {
 
 /**
  * Width as a fraction of shelf height. Grows with log(pages) between 50 and
- * 1000 pages, plus a small stable jitter. Frame trims bias wider since their
- * native proportions are broader.
+ * 1000 pages, plus a small stable jitter.
  */
-export function spineWidth(id: string, pages: number, design?: TrimDesign): number {
+export function spineWidth(id: string, pages: number): number {
   const t = Math.min(1, Math.max(0, Math.log10(Math.max(1, pages) / 50) / Math.log10(20)))
   let w = 0.13 + 0.07 * t + (hash01(id, 'w') - 0.5) * 0.02
-  if (design === 'frame') w += 0.02
   return round(Math.min(MAX_W, Math.max(MIN_W, w)))
 }
 

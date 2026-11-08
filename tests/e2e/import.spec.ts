@@ -107,39 +107,31 @@ test.describe('import', () => {
     }
   })
 
-  test('preview: cover option, live updates, trims, shuffle, validation, focus', async ({ page }) => {
+  test('preview: cover colors, live updates, shuffle, validation, focus', async ({ page }) => {
     await ready(page)
     await page.getByRole('button', { name: 'Add book' }).focus()
     await drop(page, 'sample.epub')
     const d = preview(page)
     await expect(d.getByLabel('Title')).toBeFocused()
-    const tabs = d.getByRole('tab')
-    await expect(tabs).toHaveText(['From cover', 'Frame', 'Medallion', 'Arch'])
-    await expect(d.getByRole('tab', { name: 'From cover' })).toHaveAttribute('aria-selected', 'true')
-    await expect(d.getByLabel('Background')).toBeHidden()
-    // cover colors: green background, orange accent
+    await expect(d.getByRole('tab')).toHaveCount(0) // no design choices any more
+    await expect(d).toContainText('Colors from the book’s cover.')
+    // cover colors: green background, orange bands
     const bg = await d.locator('[data-preview]').evaluate((e) => getComputedStyle(e).getPropertyValue('--bg'))
     expect(bg.trim()).toMatch(/^#(2[0-9a-f]|3[0-9a-f])[3-4][0-9a-f]/i)
+    await expect(d.locator('[data-preview] svg circle, [data-preview] svg polygon, [data-preview] svg path')).toHaveCount(0)
 
     await d.getByLabel('Title').fill('A New Title')
     await expect(d.locator('[data-preview] .spine-title')).toHaveText('A New Title')
 
-    await d.getByRole('tab', { name: 'From cover' }).focus()
-    await page.keyboard.press('ArrowRight')
-    await expect(d.getByRole('tab', { name: 'Frame' })).toHaveAttribute('aria-selected', 'true')
-    await expect(d.getByRole('tab', { name: 'Frame' })).toBeFocused()
-    await expect(d.getByLabel('Background')).toBeVisible()
-    await expect(d.getByRole('button', { name: 'Shuffle colors' })).toBeVisible()
-
-    const colors = async () => ({
-      bg: await d.getByLabel('Background').inputValue(),
-      trim: await d.getByLabel('Trim').inputValue(),
-    })
-    const before = await colors()
+    const colors = async () => ({ bg: await d.getByLabel('Background').inputValue(), trim: await d.getByLabel('Bands').inputValue() })
+    const cover = await colors()
     await d.getByRole('button', { name: 'Shuffle colors' }).click()
     const after = await colors()
-    expect(after).not.toEqual(before)
+    expect(after).not.toEqual(cover)
     expect(contrast(after.bg, after.trim)).toBeGreaterThanOrEqual(3)
+    await d.getByRole('button', { name: 'Use cover colors' }).click()
+    expect(await colors()).toEqual(cover)
+    await expect(d.getByRole('button', { name: 'Use cover colors' })).toBeHidden()
 
     await d.getByLabel('Background').fill('#808080')
     const ink = await d.locator('[data-preview]').evaluate((e) => getComputedStyle(e).getPropertyValue('--title-ink').trim())
@@ -156,10 +148,14 @@ test.describe('import', () => {
     await expect(page.getByRole('button', { name: 'Add book' })).toBeFocused()
   })
 
-  test('files without a cover offer only trims', async ({ page }) => {
+  test('books without a cover get generated colors', async ({ page }) => {
     await ready(page)
     await drop(page, 'nocover.epub')
-    await expect(preview(page).getByRole('tab')).toHaveText(['Frame', 'Medallion', 'Arch'])
+    const d = preview(page)
+    await expect(d).toContainText('This book has no cover')
+    await expect(d.getByRole('button', { name: 'Use cover colors' })).toHaveCount(0)
+    const c = { bg: await d.getByLabel('Background').inputValue(), trim: await d.getByLabel('Bands').inputValue() }
+    expect(contrast(c.bg, c.trim)).toBeGreaterThanOrEqual(3)
   })
 
   test('rejects unsupported, DRM, password, and oversized files with plain messages', async ({ page }) => {

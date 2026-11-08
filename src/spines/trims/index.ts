@@ -1,8 +1,5 @@
 import type { SpineSettings } from '../../storage/manifest'
-import { arch } from './arch'
 import { coverSpine } from './cover'
-import { frame } from './frame'
-import { medallion } from './medallion'
 import type { TrimDrawing } from './common'
 
 export const LOW_DETAIL_PX = 56
@@ -14,16 +11,14 @@ export interface SpineArt {
   panel: { x: number; y: number; width: number; height: number }
 }
 
-export function drawingFor(spine: Pick<SpineSettings, 'source' | 'design'>, H: number, lowDetail: boolean): TrimDrawing {
-  if (spine.source === 'cover') return coverSpine({ H, lowDetail })
-  switch (spine.design) {
-    case 'medallion':
-      return medallion({ H, lowDetail })
-    case 'arch':
-      return arch({ H, lowDetail })
-    default:
-      return frame({ H, lowDetail })
-  }
+/**
+ * Every spine uses the same plain design: a flat color with two accent bands
+ * and a wide title panel. Colors come from the cover when there is one, or are
+ * generated otherwise. (The ornamental trims were removed: they made titles
+ * hard to read. Old manifest entries with a `design` render the same way.)
+ */
+export function drawingFor(_spine: Pick<SpineSettings, 'source' | 'design'>, H: number, lowDetail: boolean): TrimDrawing {
+  return coverSpine({ H, lowDetail })
 }
 
 /** Renders spine art as an SVG string sized to the given pixel box. */
