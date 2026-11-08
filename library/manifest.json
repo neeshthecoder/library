@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T02:30:44.837Z",
+  "updatedAt": "2026-11-08T02:30:49.009Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -54,6 +54,32 @@
         "trim": "#ad7100",
         "ink": "#F8F6F1",
         "h": 0.828,
+        "w": 0.145
+      },
+      "position": null
+    },
+    {
+      "id": "bahdfningm",
+      "title": "The Houseguest",
+      "format": "epub",
+      "file": "library/books/bahdfningm.epub",
+      "size": 779717,
+      "addedAt": "2026-11-08T02:20:04.845Z",
+      "length": {
+        "pages": 96,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#4ea955",
+        "accent": "#161913"
+      },
+      "spine": {
+        "source": "trim",
+        "design": "arch",
+        "bg": "#b2d6eb",
+        "trim": "#4667b8",
+        "ink": "#232C32",
+        "h": 0.863,
         "w": 0.145
       },
       "position": null
