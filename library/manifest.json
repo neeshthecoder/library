@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T02:59:30.148Z",
+  "updatedAt": "2026-11-08T03:07:30.278Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -362,6 +362,29 @@
         "ink": "#F8F6F1",
         "h": 0.775,
         "w": 0.213
+      },
+      "position": null
+    },
+    {
+      "id": "zn6c33qw4h",
+      "title": "A Mathematician's Apology",
+      "format": "epub",
+      "file": "library/books/zn6c33qw4h.epub",
+      "size": 22043541,
+      "addedAt": "2026-11-08T03:07:23.539Z",
+      "length": {
+        "pages": 5,
+        "estimated": true
+      },
+      "cover": null,
+      "spine": {
+        "source": "trim",
+        "design": "arch",
+        "bg": "#c3dde9",
+        "trim": "#b84e4c",
+        "ink": "#232C32",
+        "h": 0.966,
+        "w": 0.126
       },
       "position": null
     }
