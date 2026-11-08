@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:50:18.174Z",
+  "updatedAt": "2026-11-08T03:50:31.562Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -805,6 +805,31 @@
         "ink": "#543801",
         "h": 0.904,
         "w": 0.199
+      },
+      "position": null
+    },
+    {
+      "id": "tui4ypawnq",
+      "title": "Democracy in America",
+      "format": "mobi",
+      "file": "library/books/tui4ypawnq.mobi",
+      "size": 1490341,
+      "addedAt": "2026-11-08T03:50:29.486Z",
+      "length": {
+        "pages": 1056,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#fdfdfd",
+        "accent": "#000000"
+      },
+      "spine": {
+        "source": "trim",
+        "bg": "#323800",
+        "trim": "#797fe7",
+        "ink": "#F8F6F1",
+        "h": 0.878,
+        "w": 0.198
       },
       "position": null
     }
