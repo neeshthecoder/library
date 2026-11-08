@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:07:30.278Z",
+  "updatedAt": "2026-11-08T03:10:23.160Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -385,6 +385,31 @@
         "ink": "#232C32",
         "h": 0.966,
         "w": 0.126
+      },
+      "position": null
+    },
+    {
+      "id": "lbos7liplw",
+      "title": "The hitchhiker's guide to the galaxy",
+      "format": "epub",
+      "file": "library/books/lbos7liplw.epub",
+      "size": 424304,
+      "addedAt": "2026-11-08T03:10:21.614Z",
+      "length": {
+        "pages": 234,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#4b5b72",
+        "accent": "#d3bb9e"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#4b5b72",
+        "trim": "#d3bb9e",
+        "ink": "#F8F6F1",
+        "h": 0.821,
+        "w": 0.17
       },
       "position": null
     }
