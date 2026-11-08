@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T02:48:27.128Z",
+  "updatedAt": "2026-11-08T02:48:43.391Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -173,6 +173,32 @@
         "ink": "#F8F6F1",
         "h": 0.838,
         "w": 0.191
+      },
+      "position": null
+    },
+    {
+      "id": "z53ie2rcds",
+      "title": "Euclid's Elements of Geometry",
+      "format": "pdf",
+      "file": "library/books/z53ie2rcds.pdf",
+      "size": 4905710,
+      "addedAt": "2026-11-08T02:48:39.634Z",
+      "length": {
+        "pages": 545,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#ffffff",
+        "accent": "#7c8dc1"
+      },
+      "spine": {
+        "source": "trim",
+        "design": "medallion",
+        "bg": "#30455d",
+        "trim": "#d18b3e",
+        "ink": "#F8F6F1",
+        "h": 0.889,
+        "w": 0.179
       },
       "position": null
     }
