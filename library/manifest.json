@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:27:56.588Z",
+  "updatedAt": "2026-11-08T03:28:27.561Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -626,6 +626,31 @@
         "ink": "#F8F6F1",
         "h": 0.893,
         "w": 0.158
+      },
+      "position": null
+    },
+    {
+      "id": "gglrz4ukb4",
+      "title": "Plato: Complete Works",
+      "format": "epub",
+      "file": "library/books/gglrz4ukb4.epub",
+      "size": 1680910,
+      "addedAt": "2026-11-08T03:28:25.353Z",
+      "length": {
+        "pages": 1770,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#f3f3f3",
+        "accent": "#000000"
+      },
+      "spine": {
+        "source": "trim",
+        "bg": "#2c3b5b",
+        "trim": "#9e9300",
+        "ink": "#F8F6F1",
+        "h": 0.787,
+        "w": 0.201
       },
       "position": null
     }
