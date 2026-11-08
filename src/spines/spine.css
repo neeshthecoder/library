@@ -41,8 +41,10 @@
   overflow: hidden;
   text-align: center;
   color: var(--title-ink);
-  font-family: var(--font-sans);
-  font-weight: 500;
+  /* the headline serif, by request (a documented styleguide exception) */
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-feature-settings: "kern";
   pointer-events: none;
 }
 .spine-title-line {

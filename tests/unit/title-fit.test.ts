@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { fitTitle, LINE_HEIGHT, MAX_SIZE, MIN_SIZE, SOFT_HYPHEN, truncate, wrap, withSoftHyphen } from '../../src/spines/title-fit'
 
-// Fake measurer: every character is 0.55em wide.
-const measure = (t: string, s: number) => t.length * s * 0.55
+// Fake measurer: every character is 0.45em wide (close to the condensed serif).
+const measure = (t: string, s: number) => t.length * s * 0.45
 const fitsBox = (r: { lines: string[]; size: number }, w: number, h: number) => {
   for (const l of r.lines) expect(withSoftHyphen(measure)(l, r.size)).toBeLessThanOrEqual(w)
   expect(r.lines.length * r.size * LINE_HEIGHT).toBeLessThanOrEqual(h)
@@ -58,7 +58,7 @@ describe('fitTitle (horizontal, like a spine label)', () => {
   })
 
   it('wraps greedily', () => {
-    expect(wrap('aa bb cc', 10, 28, measure).lines).toEqual(['aa bb', 'cc'])
+    expect(wrap('aa bb cc', 10, 23, measure).lines).toEqual(['aa bb', 'cc'])
   })
 
   it('prefers word boundaries when truncating', () => {

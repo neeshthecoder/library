@@ -10,9 +10,10 @@ const shelf = async (page: Page) => {
 }
 const bg = (page: Page) => page.evaluate(() => getComputedStyle(document.body).backgroundColor)
 
-test('sans text and spine titles use Helvetica', async ({ page }) => {
+test('sans text uses Helvetica; spine titles use the headline serif', async ({ page }) => {
   await shelf(page)
-  for (const sel of ['body', '.spine-title', '.shelf-footer .link-btn', '.shelf-subtitle']) {
+  expect(await page.locator('.spine-title').first().evaluate((e) => getComputedStyle(e).fontFamily)).toMatch(/^"?Instrument Serif/)
+  for (const sel of ['body', '.shelf-footer .link-btn', '.shelf-subtitle']) {
     const ff = await page.locator(sel).first().evaluate((e) => getComputedStyle(e).fontFamily)
     expect(ff, sel).toMatch(/^Helvetica/)
   }

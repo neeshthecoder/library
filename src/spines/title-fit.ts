@@ -11,9 +11,9 @@ export interface FitResult {
 /** Marks a hyphen the fitter inserted (not part of the title). Rendered via CSS. */
 export const SOFT_HYPHEN = '\u00AD'
 
-export const MAX_SIZE = 17
-export const MIN_SIZE = 10
-export const LINE_HEIGHT = 1.2
+export const MAX_SIZE = 20
+export const MIN_SIZE = 12
+export const LINE_HEIGHT = 1.1
 const STEP = 0.5
 const HYPHEN = '-' // measured width of an inserted hyphen
 
@@ -112,7 +112,7 @@ export function truncate(text: string, size: number, length: number, measure: Me
   return (cut || text.slice(0, Math.max(1, lo))) + ell
 }
 
-/** Canvas-based measurer using the spine title font (Helvetica 500). Results are cached. */
+/** Canvas-based measurer using the spine title font (Instrument Serif 400). Results are cached. */
 /** Wraps a measurer so a trailing soft hyphen is measured as a visible hyphen. */
 export const withSoftHyphen = (m: Measure): Measure => (t, s) => m(t.endsWith(SOFT_HYPHEN) ? t.slice(0, -1) + '-' : t, s)
 
@@ -124,7 +124,7 @@ export function canvasMeasure(): Measure {
     let w = cache.get(key)
     if (w === undefined) {
       if (!ctx) return text.length * size * 0.55
-      ctx.font = `500 ${size}px Helvetica, "Helvetica Neue", Arial, sans-serif`
+      ctx.font = `400 ${size}px "Instrument Serif", "Instrument Serif fallback", "Times New Roman", Georgia, serif`
       w = ctx.measureText(text).width
       cache.set(key, w)
     }
