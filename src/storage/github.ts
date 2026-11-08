@@ -97,6 +97,8 @@ export class GitHub {
         method,
         headers: this.#headers(body ? { 'Content-Type': 'application/json' } : {}),
         body: body ? JSON.stringify(body) : undefined,
+        // GitHub sends max-age=60; a cached ref would make every retry stale
+        cache: 'no-store',
       })
     } catch {
       throw new GitHubError(0, 'The network request failed.')
@@ -227,7 +229,10 @@ export class GitHub {
         await this.#json('PATCH', `/git/refs/heads/${enc(this.#s.branch)}`, { sha: commit.sha, force: false })
         return { commitSha: commit.sha, manifest: next }
       } catch (e) {
-        if (e instanceof ConflictError && attempt < retries) continue
+        if (e instanceof ConflictError && attempt < retries) {
+          await new Promise((r) => setTimeout(r, 300 * (attempt + 1)))
+          continue
+        }
         throw e
       }
     }

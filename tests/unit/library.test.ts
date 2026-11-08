@@ -160,6 +160,42 @@ describe('GitHub writes', () => {
   })
 })
 
+describe('duplicate uploads', () => {
+  it('never sends cacheable API requests', async () => {
+    const seen: (RequestCache | undefined)[] = []
+    const api = new FakeGitHubApi()
+    const gh = new GitHub(settings, (u, i) => { seen.push(i?.cache); return api.fetch(u, i) }, null)
+    await gh.commit((m) => m, [], 'x')
+    expect(seen.length).toBeGreaterThan(3)
+    expect(seen.every((c) => c === 'no-store')).toBe(true)
+  })
+
+  it('shares one upload when Retry is pressed twice', async () => {
+    const api = new FakeGitHubApi()
+    const t = setup({ api, connected: true })
+    await t.init()
+    await t.lib.add(book('a'), new Blob(['x']))
+    await Promise.all([t.lib.upload('a'), t.lib.upload('a')])
+    expect(api.pushes).toEqual(['Add "Title a"'])
+    expect(t.lib.store.get().pending[0].state).toBe('committed')
+  })
+
+  it('recognizes a book that already landed and stops showing it as not uploaded', async () => {
+    const api = new FakeGitHubApi()
+    const t = setup({ api, connected: true })
+    await t.init()
+    await t.lib.add(book('a'), new Blob(['x']))
+    // the earlier attempt reported failure, but its commit landed
+    await t.cache.putPending({ ...t.lib.store.get().pending[0], state: 'failed', error: 'Update is not a fast forward' })
+    api.externalCommit(addBook(emptyManifest(), book('a')))
+    const lib2 = new Library({ cache: t.cache, fetch: api.fetch, base: '/base/', github: (s) => new GitHub(s, api.fetch, null) })
+    await lib2.init()
+    expect(lib2.store.get().pending[0].state).toBe('committed')
+    await lib2.upload('a')
+    expect(api.pushes).toEqual([]) // nothing re-uploaded
+  })
+})
+
 describe('deletion', () => {
   it('removes the file and manifest entry in one commit and clears the cache', async () => {
     const api = new FakeGitHubApi()

@@ -85,6 +85,7 @@ export class Library {
   #gh: (s: Settings) => GitHub
   #now: () => Date
   #syncing: Promise<void> | null = null
+  #uploading = new Map<string, Promise<void>>()
 
   constructor(deps: LibraryDeps) {
     this.cache = deps.cache
@@ -155,7 +156,12 @@ export class Library {
   async #prune(remote: Manifest): Promise<void> {
     const keep: PendingOp[] = []
     const now = this.#now().getTime()
-    for (const p of this.store.get().pending) {
+    for (let p of this.store.get().pending) {
+      // an add that failed locally but landed anyway (e.g. a duplicate attempt) is done
+      if (p.state === 'failed' && p.op.type === 'add' && isReflected(remote, p.op) && !this.#uploading.has(p.op.book.id)) {
+        p = { ...p, state: 'committed', committedAt: now, error: undefined }
+        await this.cache.putPending(p)
+      }
       const settled = p.state === 'committed' && now - (p.committedAt ?? 0) > COMMIT_GRACE_MS
       if (settled && isReflected(remote, p.op)) await this.cache.deletePending(p.key)
       else keep.push(p)
@@ -196,10 +202,21 @@ export class Library {
     this.#setPending(p)
   }
 
-  /** Uploads (or retries) a locally added book. Throws NotConnectedError if needed. */
-  async upload(id: string): Promise<void> {
+  /**
+   * Uploads (or retries) a locally added book. Concurrent calls for the same
+   * book share one upload. Throws NotConnectedError if needed.
+   */
+  upload(id: string): Promise<void> {
+    const running = this.#uploading.get(id)
+    if (running) return running
+    const task = this.#upload(id).finally(() => this.#uploading.delete(id))
+    this.#uploading.set(id, task)
+    return task
+  }
+
+  async #upload(id: string): Promise<void> {
     const p = this.store.get().pending.find((x) => x.key === `add:${id}`)
-    if (!p || p.op.type !== 'add') return
+    if (!p || p.op.type !== 'add' || p.state === 'committed') return
     const book = p.op.book
     const settings = this.store.get().settings
     const fail = async (error: string) => {
@@ -218,6 +235,15 @@ export class Library {
       const blob = await this.cache.getFile(id, false)
       if (!blob) throw new Error('The file is no longer on this device. Add it again.')
       const gh = this.#gh(settings)
+      // a previous attempt may have landed even though it reported a failure
+      const remote = await gh.readManifest().catch(() => null)
+      if (remote?.books.some((b) => b.id === id)) {
+        const done: PendingOp = { ...uploading, state: 'committed', committedAt: this.#now().getTime() }
+        await this.cache.putPending(done)
+        this.#setPending(done)
+        this.store.set({ published: remote })
+        return
+      }
       const sha = await gh.createBlob(blob, (f) => this.#setProgress(id, f * 0.95))
       const res = await gh.commit((m) => addBook(m, book, this.#now().toISOString()), [{ path: book.file, sha }], `Add "${book.title}"`)
       this.#setProgress(id, 1)
