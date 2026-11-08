@@ -84,7 +84,7 @@ export class ShelfView {
       <div class="night-sky" aria-hidden="true">${NIGHT_SKY}</div>
       <div class="day-sky" aria-hidden="true">${DAY_SKY}</div>
       <header class="shelf-header">
-        <h1 class="display display-xl headline-enter">The bookshelf<button type="button" class="period-toggle" role="switch" aria-label="Night mode" title="Day / night"></button></h1>
+        <h1 class="display display-xl headline-enter">The bookshelf.</h1>
         <p class="fine shelf-subtitle">Books Avaneesh is (or should be) reading.</p>
       </header>
       <section class="shelf" aria-label="Shelf">
@@ -93,7 +93,7 @@ export class ShelfView {
             <div class="bookcase-back">
               <ul class="shelf-books" role="list"></ul>
             </div>
-            <div class="bookcase-top" aria-hidden="true"></div>
+            <div class="bookcase-top"></div>
             <div class="bookcase-plank" aria-hidden="true"><p class="plank-engraving">Finished</p></div>
             <div class="drop-zone-hint reading-zone-hint" aria-hidden="true"></div>
             <div class="drop-zone-hint finished-zone-hint" aria-hidden="true"></div>
@@ -125,15 +125,15 @@ export class ShelfView {
     this.el.querySelector('[data-action="add"]')!.addEventListener('click', () => cb.onAddBook())
     this.el.querySelector('[data-action="settings"]')!.addEventListener('click', () => cb.onSettings())
     this.el.querySelector('[data-action="signin"]')!.addEventListener('click', () => cb.onSignIn())
-    // The switch standing in for the headline's period: flip day/night and keep it.
-    const toggle = this.el.querySelector('.period-toggle')!
-    toggle.addEventListener('click', () => {
-      setThemeOverride(document.documentElement.dataset.theme === 'night' ? 'day' : 'night')
+    // The first squirrel (with its "Click Me!" sign) is the day/night toggle:
+    // flip the theme and keep it. The squirrel is re-created on each render, so
+    // the click is delegated and its switch state kept in step with the theme.
+    this.#top.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('.critter-toggle')) {
+        setThemeOverride(document.documentElement.dataset.theme === 'night' ? 'day' : 'night')
+      }
     })
-    // Keep the knob in step with the theme, however it changed (click or clock).
-    const syncToggle = () => toggle.setAttribute('aria-checked', String(document.documentElement.dataset.theme === 'night'))
-    syncToggle()
-    this.#themeObserver = new MutationObserver(syncToggle)
+    this.#themeObserver = new MutationObserver(() => this.#syncToggle())
     this.#themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
     this.#status.addEventListener('click', (e) => {
       const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-retry]')
@@ -307,14 +307,20 @@ export class ShelfView {
     if (!finished.length) spacer.dataset.empty = ''
     this.#list.append(spacer)
 
-    this.#top.replaceChildren(...critters.map((c) => {
-      const el = critterItem(c.kind, this.#shelfPx)
+    this.#top.replaceChildren(...critters.map((c, idx) => {
+      const el = critterItem(c.kind, this.#shelfPx, idx === 0) // the first squirrel toggles the theme
       el.dataset.over = c.id
       return el
     }))
+    this.#syncToggle()
 
     if (focusedId) this.#button(focusedId)?.focus({ preventScroll: true })
     requestAnimationFrame(() => this.#layoutDecor())
+  }
+
+  /** Reflects the live theme on the squirrel toggle (role="switch"). */
+  #syncToggle(): void {
+    this.#top.querySelector('.critter-toggle')?.setAttribute('aria-checked', String(document.documentElement.dataset.theme === 'night'))
   }
 
   /** Places the engraving and the drop-zone hints relative to the bookend. */

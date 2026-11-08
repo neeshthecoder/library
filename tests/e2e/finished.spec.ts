@@ -168,10 +168,13 @@ for (const theme of ['day', 'night'] as const) {
 }
 
 test('critters and the Finished label keep their place after reading a book and returning', async ({ page }) => {
-  // enough books for several critters (after books 3, 9, 15)
-  const many = Array.from({ length: 15 }, (_, i) => makeBook({ id: `m${i + 1}`, title: `Title ${i + 1}` }))
-  const files = Object.fromEntries(many.map((b) => [`${b.id}.epub`, fixture('sample.epub')]))
-  await asOwner(page, many, files) // owner, so reading positions are saved
+  // enough books for several critters (after books 3, 9, 15); the first is a PDF
+  // so its page-turn progress is deterministic in the reader.
+  const many = [
+    makeBook({ id: 'm1', title: 'Title 1', format: 'pdf', length: { pages: 9, estimated: false } }),
+    ...Array.from({ length: 14 }, (_, i) => makeBook({ id: `m${i + 2}`, title: `Title ${i + 2}` })),
+  ]
+  await asOwner(page, many, { 'm1.pdf': fixture('sample.pdf') }) // owner, so reading positions are saved
   await page.locator('.critter').first().waitFor()
 
   const critterXs = () => page.locator('.critter').evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().x)))
@@ -181,8 +184,8 @@ test('critters and the Finished label keep their place after reading a book and 
   expect(before.length).toBeGreaterThanOrEqual(2)
   expect(Math.max(...before) - Math.min(...before)).toBeGreaterThan(100) // genuinely spread out
 
-  await page.locator('.spine').first().click()
-  await expect(page).toHaveURL(/#\/read/)
+  await page.getByRole('button', { name: 'Title 1', exact: true }).click()
+  await expect(page.locator('.reader-progress')).toHaveText('1 of 9') // reader mounted and the book loaded
   // Turning a page saves a position: that updates the shelf's store while it is
   // off-screen, which used to re-lay out the decor against zero geometry.
   await turnPages(page, 2)

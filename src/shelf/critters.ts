@@ -109,15 +109,31 @@ export function critterAfter(n: number): CritterKind | null {
   return ORDER[((n - FIRST_AFTER) / BOOKS_PER_CRITTER) % ORDER.length]
 }
 
-/** A decorative element holding the critter, sized to the shelf. */
-export function critterItem(kind: CritterKind, shelfPx: number): HTMLElement {
+/**
+ * An element holding the critter, sized to the shelf. A plain decorative
+ * `<div>`, unless `interactive` is set — then it's a `role="switch"` button
+ * holding a "Click Me!" sign, used as the day/night toggle.
+ */
+export function critterItem(kind: CritterKind, shelfPx: number, interactive = false): HTMLElement {
   const c = CRITTERS[kind]
-  const li = document.createElement('div')
-  li.className = 'critter'
-  li.dataset.critter = kind
-  li.setAttribute('aria-hidden', 'true')
   const h = Math.max(14, Math.round(c.scale * shelfPx))
   const w = Math.round((h * c.w) / c.h)
-  li.innerHTML = `<svg class="critter-art" viewBox="0 0 ${c.w} ${c.h}" width="${w}" height="${h}" focusable="false">${c.svg}</svg>`
-  return li
+  const art = `<svg class="critter-art" viewBox="0 0 ${c.w} ${c.h}" width="${w}" height="${h}" focusable="false">${c.svg}</svg>`
+  if (interactive) {
+    const btn = document.createElement('button')
+    btn.type = 'button'
+    btn.className = 'critter critter-toggle'
+    btn.dataset.critter = kind
+    btn.setAttribute('role', 'switch')
+    btn.setAttribute('aria-checked', 'false')
+    btn.setAttribute('aria-label', 'Night mode')
+    btn.innerHTML = `<span class="critter-sign">Click Me!</span>${art}`
+    return btn
+  }
+  const el = document.createElement('div')
+  el.className = 'critter'
+  el.dataset.critter = kind
+  el.setAttribute('aria-hidden', 'true')
+  el.innerHTML = art
+  return el
 }

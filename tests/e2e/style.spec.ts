@@ -51,33 +51,49 @@ test('day: paper background, no night sky', async ({ page }) => {
   await expect(page.locator('.night-sky')).toBeHidden()
 })
 
-test('the period switch flips day/night, reflects state, and sticks across a reload', async ({ page }) => {
-  await shelf(page) // noon → day
-  const sw = page.locator('.period-toggle')
+// A shelf with enough books (≥3) that the first squirrel — the theme toggle — appears.
+const TOGGLE_BOOKS = Array.from({ length: 6 }, (_, i) => makeBook({ id: `t${i + 1}`, title: `Title ${i + 1}` }))
+const toggleShelf = async (page: Page) => {
+  await mockPublished(page, manifestOf(TOGGLE_BOOKS))
+  await page.goto('/')
+  await page.locator('.critter-toggle').waitFor()
+}
+
+test('the squirrel toggle flips day/night, reflects state, holds a sign, and sticks across a reload', async ({ page }) => {
+  await toggleShelf(page) // noon → day
+  const sw = page.locator('.critter-toggle')
   await expect(sw).toHaveRole('switch')
+  await expect(sw).toHaveAccessibleName('Night mode')
+  await expect(page.getByText('Click Me!')).toBeVisible()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'day')
   await expect(sw).toHaveAttribute('aria-checked', 'false')
   await sw.click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'night')
-  await expect(sw).toHaveAttribute('aria-checked', 'true') // knob slides to the night side
+  await expect(sw).toHaveAttribute('aria-checked', 'true')
   await expect(page.locator('.night-sky')).toBeVisible()
   await expect(page.locator('.day-sky')).toBeHidden()
   // the choice survives a reload (read before first paint)
   await page.reload()
-  await page.locator('.spine').first().waitFor()
+  await page.locator('.critter-toggle').waitFor()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'night')
   // and flips back
-  await page.locator('.period-toggle').click()
+  await page.locator('.critter-toggle').click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'day')
+})
+
+test('the plain period in the headline is not a control', async ({ page }) => {
+  await toggleShelf(page)
+  await expect(page.locator('h1')).toHaveText('The bookshelf.')
+  await expect(page.locator('h1 button')).toHaveCount(0)
 })
 
 test.describe('a forced theme ignores the clock', () => {
   test.use({ theme: 'night' }) // clock starts at 22:00
 
   test('forcing day at night stays day deeper into the night', async ({ page }) => {
-    await shelf(page)
+    await toggleShelf(page)
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'night')
-    await page.locator('.period-toggle').click()
+    await page.locator('.critter-toggle').click()
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'day')
     // 22:00 → +2h = midnight, which would normally be night; the override holds
     await page.clock.fastForward('02:00:00')
