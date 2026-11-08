@@ -6,7 +6,7 @@ import { libraryReadout } from '../ui/format'
 import { bindWheelScroll } from './wheel-scroll'
 import { NIGHT_SKY } from './night-sky'
 import { BOOKEND_SVG, BOOKEND_VIEWBOX } from './bookend'
-import { critterAfter, critterItem } from './critters'
+import { critterAfter, critterItem, type CritterKind } from './critters'
 
 export interface UploadStatus {
   state: 'uploading' | 'failed'
@@ -54,6 +54,7 @@ export class ShelfView {
   #finishedIds = new Set<string>()
   #bookcase!: HTMLElement
   #engraving!: HTMLElement
+  #top!: HTMLElement
   #onMove: (id: string, finished: boolean) => void
   #drag: {
     id: string
@@ -88,6 +89,7 @@ export class ShelfView {
             <div class="bookcase-back">
               <ul class="shelf-books" role="list"></ul>
             </div>
+            <div class="bookcase-top" aria-hidden="true"></div>
             <div class="bookcase-plank" aria-hidden="true"><p class="plank-engraving">Finished</p></div>
             <div class="drop-zone-hint reading-zone-hint" aria-hidden="true"></div>
             <div class="drop-zone-hint finished-zone-hint" aria-hidden="true"></div>
@@ -112,6 +114,7 @@ export class ShelfView {
     this.#descs = this.el.querySelector('.shelf-descs')!
     this.#bookcase = this.el.querySelector('.bookcase')!
     this.#engraving = this.el.querySelector('.plank-engraving')!
+    this.#top = this.el.querySelector('.bookcase-top')!
     this.#onMove = cb.onMove
     this.#bindDrag()
 
@@ -224,14 +227,15 @@ export class ShelfView {
     const reading = this.#books.filter((b) => !this.#finishedIds.has(b.id))
     const finished = this.#books.filter((b) => this.#finishedIds.has(b.id))
 
+    const critters: { kind: CritterKind; id: string }[] = []
     const section = (books: Book[], isFinished: boolean, offset: number) => {
       let prevLeaned = false
       books.forEach((book, j) => {
         const i = offset + j
         const li = document.createElement('li')
         const critter = critterAfter(i + 1)
-        // a book never leans on a critter
-        const lean = spineLean(book.id, j === books.length - 1 || !!critter, prevLeaned)
+        if (critter) critters.push({ kind: critter, id: book.id })
+        const lean = spineLean(book.id, j === books.length - 1, prevLeaned)
         prevLeaned = lean > 0
         const px = spinePx(book.spine.h, book.spine.w, this.#shelfPx)
         li.style.marginRight = `${spineGap(book.id) + leanGap(px.height, px.width, lean)}px`
@@ -259,7 +263,6 @@ export class ShelfView {
         }
         li.append(btn)
         this.#list.append(li)
-        if (critter) this.#list.append(critterItem(critter, this.#shelfPx))
       })
     }
 
@@ -279,6 +282,12 @@ export class ShelfView {
     if (!finished.length) spacer.dataset.empty = ''
     this.#list.append(spacer)
 
+    this.#top.replaceChildren(...critters.map((c) => {
+      const el = critterItem(c.kind, this.#shelfPx)
+      el.dataset.over = c.id
+      return el
+    }))
+
     if (focusedId) this.#button(focusedId)?.focus({ preventScroll: true })
     requestAnimationFrame(() => this.#layoutDecor())
   }
@@ -295,6 +304,13 @@ export class ShelfView {
     Object.assign(this.#engraving.style, { left: `${finishedLeft}px`, width: `${finishedWidth}px` })
     const fin = this.#bookcase.querySelector<HTMLElement>('.finished-zone-hint')!
     Object.assign(fin.style, { left: `${finishedLeft}px`, width: `${finishedWidth}px` })
+    // critters stand on the top board, each centred over its book
+    for (const c of this.#top.querySelectorAll<HTMLElement>('.critter')) {
+      const book = this.#button(c.dataset.over!)?.parentElement
+      if (!book) continue
+      const b = book.getBoundingClientRect()
+      c.style.left = `${b.left + b.width / 2 - caseBox.left - c.offsetWidth / 2}px`
+    }
     const rd = this.#bookcase.querySelector<HTMLElement>('.reading-zone-hint')!
     Object.assign(rd.style, { left: `${back.left - caseBox.left}px`, width: `${endBox.left - back.left}px` })
   }

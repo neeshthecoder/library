@@ -30,6 +30,10 @@
   overscroll-behavior-x: contain;
   padding-inline: var(--gutter);
   padding-bottom: var(--space-3);
+  /* headroom for the critters on top of the bookcase; it overlaps the space above */
+  --critter-room: calc(var(--shelf-h) * 0.36);
+  padding-top: var(--critter-room);
+  margin-top: calc(-1 * var(--critter-room));
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--ink-muted) 40%, transparent) transparent;
 }

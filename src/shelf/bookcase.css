@@ -116,12 +116,17 @@
 .bookcase { position: relative; }
 
 /*
- * Critters on the plank (src/shelf/critters.ts): illustration with fixed
- * colors, the same day and night. Static, and never in the way of a click.
+ * Critters on the bookcase's top board (src/shelf/critters.ts): illustration
+ * with fixed colors, the same day and night. Static, never in the way of a
+ * click. Tall ones may overlap the subtitle above the shelf.
  */
-.shelf-books li.critter {
-  flex: none;
-  margin-inline: 0.25rem 0.5rem;
+.bookcase-top {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 0;
   pointer-events: none;
 }
+.bookcase-top .critter { position: absolute; bottom: 0; }
 .critter-art { display: block; overflow: visible; }

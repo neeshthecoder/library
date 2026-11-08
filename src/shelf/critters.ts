@@ -4,8 +4,8 @@
  * round-capped detail lines, no gradients or shadows. They're static and keep
  * the same colors day and night.
  *
- * One critter sits on the plank after every few books, so the shelf picks up
- * another one as it grows. Each SVG's viewBox bottom edge is the plank.
+ * They stand on the bookcase's top board, one over every few books, so the
+ * shelf picks up another as it grows. Each SVG's viewBox bottom edge is the board.
  */
 
 export type CritterKind = 'squirrel' | 'titmouse' | 'sparrow' | 'acorns' | 'acorn' | 'worm'
@@ -100,7 +100,7 @@ export const BOOKS_PER_CRITTER = 6
 const FIRST_AFTER = 3
 
 /**
- * Which critter (if any) sits after the `n`th book on the shelf (1-based).
+ * Which critter (if any) stands over the `n`th book on the shelf (1-based).
  * After book 3 comes the first; then one every six books, cycling through
  * the cast, so adding books only ever appends new critters.
  */
@@ -109,10 +109,10 @@ export function critterAfter(n: number): CritterKind | null {
   return ORDER[((n - FIRST_AFTER) / BOOKS_PER_CRITTER) % ORDER.length]
 }
 
-/** A decorative list item holding the critter, sized to the shelf. */
-export function critterItem(kind: CritterKind, shelfPx: number): HTMLLIElement {
+/** A decorative element holding the critter, sized to the shelf. */
+export function critterItem(kind: CritterKind, shelfPx: number): HTMLElement {
   const c = CRITTERS[kind]
-  const li = document.createElement('li')
+  const li = document.createElement('div')
   li.className = 'critter'
   li.dataset.critter = kind
   li.setAttribute('aria-hidden', 'true')
