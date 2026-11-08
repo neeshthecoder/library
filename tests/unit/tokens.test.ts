@@ -33,6 +33,11 @@ describe('design tokens', () => {
     expect(css).toMatch(/--shadow:\s*0 2px 8px rgba\(35, 44, 50, 0\.12\)/)
   })
 
+  it('keeps SHELF_BACK in sync with the bookcase back wall', async () => {
+    const { SHELF_BACK } = await import('../../src/spines/contrast')
+    expect(read('src/shelf/bookcase.css')).toMatch(new RegExp(`--back:\\s*${SHELF_BACK}`, 'i'))
+  })
+
   it('keeps tokens.ts in sync with tokens.css', () => {
     const map: Record<string, string> = { paper: '--paper', linen: '--linen', ink: '--ink', inkMuted: '--ink-muted', navy: '--navy', onDark: '--on-dark' }
     for (const [k, v] of Object.entries(TOKENS)) {

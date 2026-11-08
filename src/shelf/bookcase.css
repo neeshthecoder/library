@@ -5,10 +5,11 @@
  * face and darker front edge. It ends a short way past the last book.
  */
 .bookcase {
-  --wood: #8c6040;
-  --wood-top: #b08155;
-  --wood-edge: #6e4a30;
-  --back: #d6c3a5;
+  /* deep brown oak; the back wall sits in shadow, so it's darkest */
+  --wood: #5a3a24;
+  --wood-top: #7a5034;
+  --wood-edge: #3f2716;
+  --back: #2f1e13;
   --wall: 0.75rem;
 
   display: inline-flex;

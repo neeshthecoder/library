@@ -1,6 +1,6 @@
 import type { SpineSettings } from '../storage/manifest'
 import { hexToOklch, oklchToHex } from './color'
-import { ensureContrast, PAGE_BG } from './contrast'
+import { ensureContrast, SHELF_BACK } from './contrast'
 import { spinePx } from './geometry'
 import { renderSpineArt } from './trims'
 import { fitTitle, LINE_HEIGHT, type Measure } from './title-fit'
@@ -19,8 +19,8 @@ export function bandColor(bg: string): string {
   return oklchToHex([Math.min(1, L + 0.03), C, H])
 }
 
-/** Ribbon color: the trim, darkened if needed to stay visible on paper. */
-export const ribbonColor = (trim: string) => ensureContrast(trim, PAGE_BG, 3)
+/** Ribbon color: the band color, lightened if needed to stay visible against the dark back wall. */
+export const ribbonColor = (trim: string) => ensureContrast(trim, SHELF_BACK, 3)
 
 const RIBBON_SVG =
   '<svg viewBox="0 0 10 24" preserveAspectRatio="none" aria-hidden="true" focusable="false">' +

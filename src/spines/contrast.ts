@@ -4,6 +4,8 @@ import { hexToOklch, hexToRgb, oklchToHex, toLinear } from './color'
 export const LIGHT_INK = '#F8F6F1'
 export const DARK_INK = '#232C32'
 export const PAGE_BG = '#F8F6F1'
+/** The bookcase back wall that ribbons peek against. Keep in sync with --back in src/shelf/bookcase.css. */
+export const SHELF_BACK = '#2f1e13'
 
 export function luminance(hex: string): number {
   const [r, g, b] = hexToRgb(hex).map(toLinear)

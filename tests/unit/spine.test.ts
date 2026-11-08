@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest'
 import { applySpineColors, renderSpine, ribbonColor } from '../../src/spines/spine'
-import { contrast } from '../../src/spines/contrast'
+import { contrast, SHELF_BACK } from '../../src/spines/contrast'
 import type { SpineSettings } from '../../src/storage/manifest'
 
 const measure = (t: string, s: number) => t.length * s * 0.55
@@ -45,7 +45,8 @@ describe('renderSpine', () => {
     expect(parseFloat(t.style.top) + parseFloat(t.style.height)).toBeLessThan(270)
   })
 
-  it('keeps the ribbon visible on paper', () => {
-    expect(contrast(ribbonColor('#f6efc0'), '#F8F6F1')).toBeGreaterThanOrEqual(3)
+  it('keeps the ribbon visible against the dark back wall', () => {
+    expect(contrast(ribbonColor('#1a1a1a'), SHELF_BACK)).toBeGreaterThanOrEqual(3)
+    expect(ribbonColor('#f2a65a')).toBe('#f2a65a') // already visible: unchanged
   })
 })
