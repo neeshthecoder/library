@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:14:20.397Z",
+  "updatedAt": "2026-11-08T03:16:56.996Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -496,6 +496,31 @@
         "ink": "#231d10",
         "h": 0.973,
         "w": 0.166
+      },
+      "position": null
+    },
+    {
+      "id": "mvc5exfeas",
+      "title": "Darkness at Noon",
+      "format": "pdf",
+      "file": "library/books/mvc5exfeas.pdf",
+      "size": 6522634,
+      "addedAt": "2026-11-08T03:16:41.641Z",
+      "length": {
+        "pages": 225,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#2f2a27",
+        "accent": "#ab904c"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#2f2a27",
+        "trim": "#ab904c",
+        "ink": "#ab904c",
+        "h": 0.85,
+        "w": 0.171
       },
       "position": null
     }
