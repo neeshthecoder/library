@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T02:28:20.149Z",
+  "updatedAt": "2026-11-08T02:30:44.837Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -31,6 +31,32 @@
         "label": "0%",
         "updatedAt": "2026-11-08T02:18:43.594Z"
       }
+    },
+    {
+      "id": "stiyw4vs76",
+      "title": "The Victorian Chaise-Longue",
+      "format": "epub",
+      "file": "library/books/stiyw4vs76.epub",
+      "size": 380003,
+      "addedAt": "2026-11-08T02:19:47.244Z",
+      "length": {
+        "pages": 79,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#8e979e",
+        "accent": "#653b12"
+      },
+      "spine": {
+        "source": "trim",
+        "design": "medallion",
+        "bg": "#002e3f",
+        "trim": "#ad7100",
+        "ink": "#F8F6F1",
+        "h": 0.828,
+        "w": 0.145
+      },
+      "position": null
     }
   ]
 }
