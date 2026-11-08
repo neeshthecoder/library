@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:11:11.323Z",
+  "updatedAt": "2026-11-08T03:13:13.049Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -440,6 +440,32 @@
         "ink": "#110b0b",
         "h": 0.79,
         "w": 0.173
+      },
+      "position": null
+    },
+    {
+      "id": "cx6hews6zt",
+      "title": "The Brothers Karamazov",
+      "format": "mobi",
+      "file": "library/books/cx6hews6zt.mobi",
+      "size": 1523117,
+      "addedAt": "2026-11-08T03:13:09.842Z",
+      "length": {
+        "pages": 1031,
+        "estimated": true
+      },
+      "cover": {
+        "dominant": "#e3e7ec",
+        "accent": "#6f656a"
+      },
+      "spine": {
+        "source": "trim",
+        "design": "frame",
+        "bg": "#002d3c",
+        "trim": "#ad6e37",
+        "ink": "#F8F6F1",
+        "h": 0.807,
+        "w": 0.211
       },
       "position": null
     }
