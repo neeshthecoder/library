@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T03:42:37.313Z",
+  "updatedAt": "2026-11-08T03:42:49.724Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -750,6 +750,31 @@
         "ink": "#F8F6F1",
         "h": 0.871,
         "w": 0.183
+      },
+      "position": null
+    },
+    {
+      "id": "oxcrrxkns7",
+      "title": "The Path to Power",
+      "format": "pdf",
+      "file": "library/books/oxcrrxkns7.pdf",
+      "size": 10261868,
+      "addedAt": "2026-11-08T03:42:44.551Z",
+      "length": {
+        "pages": 1124,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#f0ebe5",
+        "accent": "#3a3a37"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#f0ebe5",
+        "trim": "#3a3a37",
+        "ink": "#3a3a37",
+        "h": 0.751,
+        "w": 0.204
       },
       "position": null
     }
