@@ -114,3 +114,14 @@
   transition: opacity var(--dur-state) var(--ease);
 }
 .bookcase { position: relative; }
+
+/*
+ * Critters on the plank (src/shelf/critters.ts): illustration with fixed
+ * colors, the same day and night. Static, and never in the way of a click.
+ */
+.shelf-books li.critter {
+  flex: none;
+  margin-inline: 0.25rem 0.5rem;
+  pointer-events: none;
+}
+.critter-art { display: block; overflow: visible; }

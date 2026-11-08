@@ -46,7 +46,7 @@ describe('design tokens', () => {
   })
 
   it('uses no raw hex colors outside tokens and spine illustrations', () => {
-    const allowed = [/^src\/styles\/tokens\.(css|ts)$/, /^src\/spines\//, /^src\/shelf\/bookcase\.css$/, /^src\/types\//]
+    const allowed = [/^src\/styles\/tokens\.(css|ts)$/, /^src\/spines\//, /^src\/shelf\/bookcase\.css$/, /^src\/shelf\/critters\.ts$/, /^src\/types\//]
     const offenders: string[] = []
     for (const file of walk(join(root, 'src'))) {
       const rel = relative(root, file).replaceAll('\\', '/')

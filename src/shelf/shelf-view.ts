@@ -6,6 +6,7 @@ import { libraryReadout } from '../ui/format'
 import { bindWheelScroll } from './wheel-scroll'
 import { NIGHT_SKY } from './night-sky'
 import { BOOKEND_SVG, BOOKEND_VIEWBOX } from './bookend'
+import { critterAfter, critterItem } from './critters'
 
 export interface UploadStatus {
   state: 'uploading' | 'failed'
@@ -228,7 +229,9 @@ export class ShelfView {
       books.forEach((book, j) => {
         const i = offset + j
         const li = document.createElement('li')
-        const lean = spineLean(book.id, j === books.length - 1, prevLeaned)
+        const critter = critterAfter(i + 1)
+        // a book never leans on a critter
+        const lean = spineLean(book.id, j === books.length - 1 || !!critter, prevLeaned)
         prevLeaned = lean > 0
         const px = spinePx(book.spine.h, book.spine.w, this.#shelfPx)
         li.style.marginRight = `${spineGap(book.id) + leanGap(px.height, px.width, lean)}px`
@@ -256,6 +259,7 @@ export class ShelfView {
         }
         li.append(btn)
         this.#list.append(li)
+        if (critter) this.#list.append(critterItem(critter, this.#shelfPx))
       })
     }
 
