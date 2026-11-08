@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-08T02:31:35.291Z",
+  "updatedAt": "2026-11-08T02:48:27.128Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -149,6 +149,32 @@
         "label": "2%",
         "updatedAt": "2026-11-08T02:22:00.519Z"
       }
+    },
+    {
+      "id": "sdrlrnumjp",
+      "title": "The 48 Laws of Power",
+      "format": "pdf",
+      "file": "library/books/sdrlrnumjp.pdf",
+      "size": 2811655,
+      "addedAt": "2026-11-08T02:48:24.202Z",
+      "length": {
+        "pages": 577,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#a70802",
+        "accent": "#00b6cb"
+      },
+      "spine": {
+        "source": "trim",
+        "design": "arch",
+        "bg": "#002b3a",
+        "trim": "#4976de",
+        "ink": "#F8F6F1",
+        "h": 0.838,
+        "w": 0.191
+      },
+      "position": null
     }
   ]
 }
