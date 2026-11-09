@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test'
+import { LEADERBOARD_TEST_URL } from './tests/e2e/leaderboard-url'
 
 const PORT = 4173
 
@@ -22,5 +23,7 @@ export default defineConfig({
     url: `http://localhost:${PORT}/`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
+    // Build with a (faked) leaderboard store so the acorns and CSP are exercised.
+    env: { VITE_LEADERBOARD_URL: LEADERBOARD_TEST_URL },
   },
 })

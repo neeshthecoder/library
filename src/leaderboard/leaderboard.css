@@ -1,0 +1,46 @@
+/* The reading leaderboard check-in (src/leaderboard/checkin-dialog.ts). */
+.leaderboard-dialog .lb-initial {
+  width: 5rem;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: var(--title);
+}
+.leaderboard-dialog .lb-select { appearance: auto; }
+.leaderboard-dialog .lb-peek { justify-self: start; }
+.leaderboard-dialog .lb-pages {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.lb-board {
+  list-style: none;
+  margin: 0 0 var(--space-6);
+  padding: 0;
+  display: grid;
+  gap: var(--space-5);
+}
+.lb-row { display: grid; gap: var(--space-2); }
+.lb-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+.lb-reader { font-family: var(--font-serif); font-size: var(--title); line-height: 1; }
+.lb-percent { font-weight: 600; font-variant-numeric: tabular-nums; }
+.lb-detail { margin: 0; overflow-wrap: anywhere; }
+.lb-bar {
+  height: 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--linen);
+  overflow: hidden;
+}
+.lb-bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--action);
+}
+.lb-nudge { margin: 0; font-style: italic; }
+.lb-tie { margin: 0 0 var(--space-5); }
+.leaderboard-dialog .lb-peek { min-height: 44px; }

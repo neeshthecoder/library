@@ -133,11 +133,12 @@
 .critter-art { display: block; overflow: visible; }
 
 /*
- * The first squirrel doubles as the day/night toggle (role="switch"), so it
- * alone is clickable and holds a "Click Me!" sign. The sign keeps fixed
- * illustration colors (a cream placard) so it reads in both themes.
+ * Two critters are controls. The first squirrel is the day/night toggle
+ * (role="switch") and holds a "Click Me!" sign; the sign keeps fixed
+ * illustration colors (a cream placard) so it reads in both themes. The first
+ * acorn pair opens the reading leaderboard and has no sign.
  */
-.critter-toggle {
+.critter-button {
   margin: 0;
   padding: 0;
   border: 0;
@@ -147,11 +148,11 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.critter-toggle .critter-art { transition: transform var(--dur-state) var(--ease); }
-.critter-toggle:hover .critter-art { transform: translateY(-3px) rotate(-2deg); }
-.critter-toggle:focus { outline: none; }
-.critter-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 8px; }
-@media (prefers-reduced-motion: reduce) { .critter-toggle .critter-art { transition: none; } }
+.critter-button .critter-art { transition: transform var(--dur-state) var(--ease); }
+.critter-button:hover .critter-art { transform: translateY(-3px) rotate(-2deg); }
+.critter-button:focus { outline: none; }
+.critter-button:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 8px; }
+@media (prefers-reduced-motion: reduce) { .critter-button .critter-art { transition: none; } }
 
 .critter-sign {
   position: absolute;
@@ -180,3 +181,12 @@
   transform: rotate(8deg);
 }
 .critter-toggle:hover .critter-sign { transform: rotate(-5deg) translateY(-2px); }
+
+/* The leaderboard acorns are tiny; keep a 44×44 tap target, art on the board. */
+.critter-leaderboard {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}

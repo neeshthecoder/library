@@ -8,7 +8,8 @@ import { bindWheelScroll } from './wheel-scroll'
 import { NIGHT_SKY } from './night-sky'
 import { DAY_SKY } from './day-sky'
 import { BOOKEND_SVG, BOOKEND_VIEWBOX } from './bookend'
-import { critterAfter, critterItem, type CritterKind } from './critters'
+import { critterAfter, critterItem, type CritterKind, type CritterRole } from './critters'
+import { LEADERBOARD_URL } from '../leaderboard/config'
 
 export interface UploadStatus {
   state: 'uploading' | 'failed'
@@ -33,6 +34,8 @@ export interface ShelfCallbacks {
   onSignIn(): void
   /** Owner dragged a book across the divider. */
   onMove(id: string, finished: boolean): void
+  /** The leaderboard acorns were clicked. */
+  onLeaderboard(): void
 }
 
 const SCROLL_KEY = 'shelf-scroll'
@@ -129,8 +132,11 @@ export class ShelfView {
     // flip the theme and keep it. The squirrel is re-created on each render, so
     // the click is delegated and its switch state kept in step with the theme.
     this.#top.addEventListener('click', (e) => {
-      if ((e.target as HTMLElement).closest('.critter-toggle')) {
+      const target = e.target as HTMLElement
+      if (target.closest('.critter-toggle')) {
         setThemeOverride(document.documentElement.dataset.theme === 'night' ? 'day' : 'night')
+      } else if (target.closest('.critter-leaderboard')) {
+        cb.onLeaderboard()
       }
     })
     this.#themeObserver = new MutationObserver(() => this.#syncToggle())
@@ -307,8 +313,12 @@ export class ShelfView {
     if (!finished.length) spacer.dataset.empty = ''
     this.#list.append(spacer)
 
+    // The first squirrel toggles the theme; the first acorn pair opens the
+    // reading leaderboard, when one is configured.
+    const acorns = LEADERBOARD_URL ? critters.findIndex((c) => c.kind === 'acorns') : -1
     this.#top.replaceChildren(...critters.map((c, idx) => {
-      const el = critterItem(c.kind, this.#shelfPx, idx === 0) // the first squirrel toggles the theme
+      const role: CritterRole | undefined = idx === 0 ? 'theme-toggle' : idx === acorns ? 'leaderboard' : undefined
+      const el = critterItem(c.kind, this.#shelfPx, role)
       el.dataset.over = c.id
       return el
     }))

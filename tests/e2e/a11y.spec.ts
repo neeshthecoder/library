@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { type Page } from '@playwright/test'
+import { LEADERBOARD_TEST_URL } from './leaderboard-url'
 import { dropFiles, FakeGitHub, fixture, makeBook, manifestOf, mockPublished, connect, expect, setTheme, test } from './helpers'
 
 const BOOKS = Array.from({ length: 12 }, (_, i) => makeBook({ id: `b${i + 1}`, title: ['Middlemarch', 'Emma', 'Beloved', 'Dune'][i % 4] + (i > 3 ? ` ${i}` : ''), format: i === 0 ? 'pdf' : 'epub' }))
@@ -14,6 +15,29 @@ async function axe(page: Page, include?: string) {
 }
 
 type View = { name: string; open(page: Page): Promise<void>; scope?: string }
+
+/** Opens the leaderboard check-in and walks it to a given step. */
+async function leaderboard(p: Page, upTo: 'initial' | 'soon' | 'book' | 'page' | 'board') {
+  await p.goto('/')
+  await p.getByRole('button', { name: 'Acorns' }).click()
+  const d = p.getByRole('dialog')
+  await d.waitFor()
+  if (upTo === 'initial') return
+  await p.getByLabel('Your initial').fill(upTo === 'soon' ? 'Q' : 'M')
+  await p.getByRole('button', { name: 'Next' }).click()
+  if (upTo === 'soon') return void (await d.getByRole('heading', { name: 'Feature Coming Soon!' }).waitFor())
+  if (upTo === 'book') return void (await p.getByLabel('Which book?').waitFor())
+  if (upTo === 'board') {
+    await p.getByRole('button', { name: 'Just show the board' }).click()
+    return void (await d.locator('.lb-board').waitFor())
+  }
+  await p.getByLabel('Which book?').selectOption('b2')
+  await p.getByRole('button', { name: 'Next' }).click()
+  await p.getByLabel('Last page read').waitFor()
+}
+const LEADERBOARD_STEPS: View[] = (['initial', 'soon', 'book', 'page', 'board'] as const).map((step) => ({
+  name: `leaderboard ${step}`, scope: 'dialog', open: (p) => leaderboard(p, step),
+}))
 const VIEWS: View[] = [
   { name: 'shelf', open: async (p) => { await p.goto('/'); await p.locator('.spine').first().waitFor() } },
   { name: 'empty shelf', open: async (p) => { await p.unroute('**/library/manifest.json*'); await mockPublished(p, manifestOf([])); await p.goto('/'); await p.getByText('No books on the shelf yet.').waitFor() } },
@@ -21,6 +45,7 @@ const VIEWS: View[] = [
   { name: 'preview dialog', scope: 'dialog', open: async (p) => { await p.goto('/'); await connect(p); await p.locator('.spine').first().waitFor(); await dropFiles(p, [{ name: 'sample.epub', buffer: fixture('sample.epub') }]); await p.getByRole('dialog', { name: 'Add to your shelf' }).waitFor() } },
   { name: 'connect dialog', scope: 'dialog', open: async (p) => { await p.goto('/'); await p.getByRole('button', { name: 'Sign in' }).click(); await p.getByRole('dialog', { name: 'Connect your library' }).waitFor() } },
   { name: 'settings dialog', scope: 'dialog', open: async (p) => { await p.goto('/'); await connect(p); await p.getByRole('button', { name: 'Library settings' }).click(); await p.getByRole('dialog', { name: 'Library settings' }).waitFor() } },
+  ...LEADERBOARD_STEPS,
   { name: 'delete dialog', scope: 'dialog', open: async (p) => {
     await p.goto('/'); await connect(p)
     await p.goto('/#/read/b1'); await p.locator('.reader-stage[data-ready]').waitFor(); await p.getByRole('button', { name: 'Delete book' }).click(); await p.getByRole('alertdialog').waitFor()
@@ -29,6 +54,10 @@ const VIEWS: View[] = [
 
 async function setup(page: Page) {
   await new FakeGitHub(manifestOf(BOOKS)).install(page)
+  const board = { A: { bookId: 'b2', title: 'Emma', page: 120, pages: 200, percent: 60, updatedAt: '2026-11-08T00:00:00Z' }, M: null }
+  await page.route(`${LEADERBOARD_TEST_URL}/**`, (route) =>
+    route.fulfill({ status: 200, headers: { 'access-control-allow-origin': '*' }, contentType: 'application/json', body: JSON.stringify(board) }),
+  )
   await mockPublished(page, manifestOf(BOOKS), FILES)
 }
 

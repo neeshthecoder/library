@@ -48,6 +48,8 @@ jobs:
         env:
           # Project sites live under /<repo>/; user sites (<owner>.github.io) at /.
           BASE_PATH: ${{ endsWith(github.event.repository.name, '.github.io') && '/' || format('/{0}/', github.event.repository.name) }}
+          # The reading leaderboard's Worker (README → Reading leaderboard). Unset: the acorns stay decoration.
+          VITE_LEADERBOARD_URL: ${{ vars.LEADERBOARD_URL }}
 
       - name: Check shelf JavaScript budget
         run: npm run check:size

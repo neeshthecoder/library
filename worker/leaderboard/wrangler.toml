@@ -1,0 +1,17 @@
+# The reading leaderboard's progress store. Deploy from this folder with
+# `npx wrangler deploy`. Deploying replaces the dashboard's bindings and
+# variables with what this file says, so keep the two in step.
+name = "library-leaderboard"
+main = "index.ts"
+compatibility_date = "2026-11-01"
+account_id = "722d4d650c7a143b92677d6c55e8e387"
+workers_dev = true
+preview_urls = false
+
+[vars]
+SITE_URL = "https://neeshthecoder.github.io/library/"
+ALLOWED_ORIGIN = "https://neeshthecoder.github.io"
+
+[[kv_namespaces]]
+binding = "BOARD"
+id = "d11732f769674e0aac6fe53d287c4c88"

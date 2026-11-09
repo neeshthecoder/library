@@ -44,7 +44,13 @@ const shelf = new ShelfView({
   onRetry: (id) => void startUpload(id),
   onSignIn: () => void signIn(),
   onMove: (id, finished) => void moveBook(id, finished),
+  onLeaderboard: () => void openLeaderboard(),
 })
+
+async function openLeaderboard(): Promise<void> {
+  const { openCheckIn } = await import('./leaderboard/checkin-dialog')
+  await openCheckIn(library.manifest.books)
+}
 
 function renderShelf(): void {
   const s = library.store.get()

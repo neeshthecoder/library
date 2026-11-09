@@ -110,24 +110,37 @@ export function critterAfter(n: number): CritterKind | null {
 }
 
 /**
- * An element holding the critter, sized to the shelf. A plain decorative
- * `<div>`, unless `interactive` is set — then it's a `role="switch"` button
- * holding a "Click Me!" sign, used as the day/night toggle.
+ * What a critter does when it's a control rather than decoration:
+ * - `theme-toggle`: the first squirrel, a `role="switch"` holding a "Click Me!" sign.
+ * - `leaderboard`: the first acorn pair, an unlabeled-looking button that opens
+ *   the reading leaderboard check-in.
  */
-export function critterItem(kind: CritterKind, shelfPx: number, interactive = false): HTMLElement {
+export type CritterRole = 'theme-toggle' | 'leaderboard'
+
+/**
+ * An element holding the critter, sized to the shelf. A plain decorative
+ * `<div>` unless a `role` is given, in which case it's a button.
+ */
+export function critterItem(kind: CritterKind, shelfPx: number, role?: CritterRole): HTMLElement {
   const c = CRITTERS[kind]
   const h = Math.max(14, Math.round(c.scale * shelfPx))
   const w = Math.round((h * c.w) / c.h)
-  const art = `<svg class="critter-art" viewBox="0 0 ${c.w} ${c.h}" width="${w}" height="${h}" focusable="false">${c.svg}</svg>`
-  if (interactive) {
+  const art = `<svg class="critter-art" viewBox="0 0 ${c.w} ${c.h}" width="${w}" height="${h}" focusable="false" aria-hidden="true">${c.svg}</svg>`
+  if (role) {
     const btn = document.createElement('button')
     btn.type = 'button'
-    btn.className = 'critter critter-toggle'
     btn.dataset.critter = kind
-    btn.setAttribute('role', 'switch')
-    btn.setAttribute('aria-checked', 'false')
-    btn.setAttribute('aria-label', 'Night mode')
-    btn.innerHTML = `<span class="critter-sign">Click Me!</span>${art}`
+    if (role === 'theme-toggle') {
+      btn.className = 'critter critter-button critter-toggle'
+      btn.setAttribute('role', 'switch')
+      btn.setAttribute('aria-checked', 'false')
+      btn.setAttribute('aria-label', 'Night mode')
+      btn.innerHTML = `<span class="critter-sign">Click Me!</span>${art}`
+    } else {
+      btn.className = 'critter critter-button critter-leaderboard'
+      btn.setAttribute('aria-label', 'Acorns')
+      btn.innerHTML = art
+    }
     return btn
   }
   const el = document.createElement('div')
