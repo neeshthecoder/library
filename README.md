@@ -36,31 +36,8 @@ The far right of the bookcase holds your **Finished** books, behind a bookend la
 
 Drag a book back to the left to move it back to reading. Each move is one small commit. Guests see both sections but can't move books.
 
-### Reading leaderboard
-
-The first pair of acorns on top of the bookcase is a hidden check-in for two readers, **A** and **M**, who don't need GitHub accounts. Click the acorns and type an initial:
-
-- **A** or **M**: pick the book, enter the last page read (the total is prefilled from the book and can be changed for a different edition), and save. The leaderboard then shows both readers' book, page and percent, with a playful nudge for whoever is behind. "Just show the board" checks the standings without saving.
-- Any other letter shows "Feature Coming Soon!".
-
-The acorns appear once the shelf has 9 or more books, and only when the site is built with a leaderboard Worker (below). Otherwise they're plain decoration.
-
-**Where check-ins go.** A tiny Cloudflare Worker (`worker/leaderboard/`) stores each reader's latest check-in in Workers KV. It accepts only a reader (A or M), a book id that's in the published manifest, a page and a total, under 1 KB. The title it stores comes from the manifest. The Worker has no GitHub token and can't change the site or this repository.
-
-**No passcode.** Anyone who finds the acorns, or the Worker's address in the site's JavaScript, can overwrite A's or M's entry. The damage is limited to those two entries, and checking in again fixes them.
-
-**Set it up:**
-
-1. In the Cloudflare dashboard (free plan), create a KV namespace and a Worker, bind the namespace to the Worker as `BOARD`, and add plain-text variables `SITE_URL` (the site's address, ending in `/`) and `ALLOWED_ORIGIN` (the site's origin, e.g. `https://<owner>.github.io`).
-2. Put the same values in `worker/leaderboard/wrangler.toml` (`account_id`, the KV namespace `id`, and `[vars]`). Deploying replaces the dashboard's bindings and variables with what the file says, so keep them in step.
-3. From `worker/leaderboard/`, run `npx wrangler login` once, then `npx wrangler deploy`.
-4. In the GitHub repository, add the Actions variable `LEADERBOARD_URL` (Settings → Secrets and variables → Actions → Variables) set to the Worker's `https://….workers.dev` address, and push. The next deploy turns the acorns on and allows that one address in the Content Security Policy.
-
-**Turn it off** by deleting the `LEADERBOARD_URL` variable and redeploying. Optionally run `npx wrangler delete` in `worker/leaderboard/` to remove the Worker.
-
 ### What to know before adding books
 
-- **Books are public.** Anyone with the site link can download every file in `library/books/`, and the repository is public too. File names are random, and the page carries a `noindex` tag, but that is not access control. On a project site (`<owner>.github.io/<repo>/`), crawlers ignore `robots.txt`, because they only read it at the domain root. Book files themselves can't carry `noindex`, since Pages can't set headers. To block crawlers from the whole domain, add a `robots.txt` with `Disallow: /` to your `<owner>.github.io` user-site repository. Only add books you are comfortable sharing, and remember that publishing purchased ebooks may breach their license.
 - **Deleting doesn't shrink the repository.** A deleted book is removed from the site, but it stays in git history and still counts toward GitHub's roughly 1 GB repository guideline. To purge it for real, rewrite history yourself. For example, run `git filter-repo --path library/books/<id>.<ext> --invert-paths`, then force-push.
 - **Limits.** Each file can be up to 100 MB, which is GitHub's hard limit. The shelf shows the live library total against about 1 GB.
 - **New books take a minute to reach other devices.** Each add, delete, or position sync is a commit, and the site redeploys in about 1–2 minutes. The device that made the change sees it immediately.
@@ -96,43 +73,4 @@ npm run check:size   # fail if the shelf's JavaScript is 150 KB gzipped or more
 | `src/leaderboard/` | Reading leaderboard check-in dialog, ranking and nudges, store client (loaded on acorn click) |
 | `worker/leaderboard/` | The leaderboard's Cloudflare Worker, its validation, and `wrangler.toml` |
 
-pdf.js and foliate-js load only when the reader or the import preview opens, so the shelf stays far under its JavaScript budget.
-
-## Styleguide exemptions
-
-The interface follows `STYLEGUIDE.md`. These deviations are deliberate:
-
-- **Spines and bookmark ribbons are illustrations.** Every spine uses one plain design: a flat color with two accent bands, and the title set horizontally in the middle like a printed spine label. Words wrap onto centered lines, as large as the spine allows, breaking at existing hyphens and only hyphenating a word when nothing else fits. Spines render chunkier than their stored width (60 px minimum) to make room. Colors come from the book's cover, or are generated when there's no cover, so they fall outside the token palette. Spines are flat, with rounded corners and no shadows or gradients. A single flat tone band, 3% lighter than the spine color, adds a little depth. (The three ornamental trims from `design/spine-trims.png` were removed because they made titles hard to read.) Ribbons are lightened when needed so they stay visible (3:1) against the bookcase's dark back wall. Spine titles use the band color when it reaches 4.5:1. Otherwise they use paper or ink, and pure white or black only when neither of those reaches 4.5:1.
-- **The bookcase** is illustration too: flat deep-brown oak tones for the side walls, top board, back panel (darkest, as if in shadow), and plank (`src/shelf/bookcase.css`). There's no texture, gradient, or shadow. The styleguide has no wood colors and forbids borders and hairlines, but a shelf needs to look like one. About one book in ten leans on its neighbour. The divider between reading and finished books is a flat, geometric bookend lamp (`src/shelf/bookend.ts`): a wooden block, slate pipes, and a translucent amber bulb that glows faintly at night. The carved "Finished" uses a crisp 1px lip, a flat text-shadow with no blur, as part of the illustration.
-- **Critters on the shelf.** A squirrel, two birds, acorns, and an inchworm stand on top of the bookcase (`src/shelf/critters.ts`). The first sits over the third book, then one more every six books, so the shelf gains a new one as it grows. They scroll with the shelf and may overlap the subtitle. They're flat illustrations like the spines, static, with the same colors day and night, and hidden from screen readers, except two: the first squirrel (the day/night toggle, below) and, when the leaderboard is configured, the first acorn pair, a button named "Acorns" with a 44 px tap area and no visible label (see Reading leaderboard).
-- **The leaderboard's initial prompt** (`src/leaderboard/leaderboard.css`) takes the letter on a plain underline instead of a filled field, despite the "no borders" rule, by request. Its headline and the typed letter are Instrument Serif at `display-md`; focus shows as a thicker underline in the focus color.
-- **The drag overlay** uses a dashed outline, despite the "no borders" rule, so the drop target reads clearly.
-- **Spine titles and the carved "Finished" in Instrument Serif.** They use the headline serif at 12–20 px, below the styleguide's `display-md` minimum, by request.
-- **Helvetica instead of Inter.** All other sans text uses `Helvetica, "Helvetica Neue", Arial`. Helvetica is licensed and can't be self-hosted, so it's a system font: Macs and iPhones show Helvetica, and Windows and most Android phones show Arial. Only Instrument Serif is downloaded.
-- **The drag overlay text** ("Drag file here") is set in Instrument Serif at `display-md`, the smallest size the styleguide allows for the serif.
-- **Night theme with a moon and stars.** From 19:00 to 07:00 local time, the page switches to the styleguide's inverse palette: midnight navy page, white text, and paper as the action fill. A small crescent moon and a few stars sit across the top of the shelf page. The styleguide otherwise bans stars as decoration. A tiny `public/theme.js` sets the theme before first paint, and the page switches live at 07:00 and 19:00. Book pages in the reader stay white. By day, a small smiling sun sits in the top right and a few flat pale blue-grey clouds sit behind the headline and subtitle (`src/shelf/day-sky.ts`). White clouds would vanish on the paper background. The first squirrel on the shelf is a day/night toggle: it holds a little "Click Me!" sign (Instrument Serif) and is a `role="switch"` button (`src/shelf/critters.ts`). Clicking it stores the choice on the device (`theme-override` in localStorage), which wins over the clock and stays put through the 07:00/19:00 switches until clicked again, so forcing day at 1 AM keeps it day. It's read before first paint in `public/theme.js`. The headline period is plain text.
-- **Book content** inside the reader keeps the publisher's typography. The serif and type-scale rules apply to interface chrome, not to the books themselves.
-
-## Security notes
-
-- The production build sets a strict Content Security Policy as a `<meta>` tag. Scripts may load only from the site itself, and connections may go only to the site, `api.github.com`, and (when `VITE_LEADERBOARD_URL` is set at build time) the reading leaderboard's Worker origin. The build refuses a leaderboard address that isn't `https`. This also stops scripts embedded in EPUBs from running: foliate-js renders book sections in same-origin iframes, and they inherit this policy. That matters because the GitHub token lives on this origin.
-- Book titles are inserted with `textContent` or escaped. Book content is never put into the main document.
-- GitHub Pages can't send HTTP headers, so `frame-ancestors` (clickjacking protection) can't be set.
-
-## Testing notes
-
-Automated coverage is in `tests/unit` and `tests/e2e`. Manual results (screen readers, real devices, Lighthouse) are recorded below as they are run.
-
-### 2026-11-08: first deploy (https://neeshthecoder.github.io/library/)
-
-- **Deploy:** the GitHub Actions workflow ran unit tests, built the site, passed the budget check, and deployed. Shelf JavaScript: 19.5 KB gzipped (budget 150 KB).
-- **Live smoke test:** current Chromium, WebKit, and Firefox (Playwright, desktop). The shelf loads with the CSP meta in place, and fonts and the manifest load under `/library/`. No HTTP or JavaScript errors.
-- **Lighthouse 12.6.1** (mobile, simulated 4G, Chrome for Testing):
-
-  | Library | Performance | Accessibility | Best practices | LCP | CLS | TBT |
-  |---|---|---|---|---|---|---|
-  | Live site, empty shelf | 100 | 100 | 100 | 1.3 s | 0 | 0 ms |
-  | Local build, 30-book manifest | 100 | 100 | 100 | 1.4 s | 0 | 0 ms |
-
-  INP can't be measured in a page-load audit. Total blocking time is the lab proxy.
-- **Not yet done:** screen-reader passes (VoiceOver on macOS and iOS, NVDA), and testing on real iOS and Android devices.
+pdf.js and foliate-js load only when the reader or the import preview opens, so the shelf stays far under its JavaScript budget
