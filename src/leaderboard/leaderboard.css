@@ -1,10 +1,36 @@
 /* The reading leaderboard check-in (src/leaderboard/checkin-dialog.ts). */
-.leaderboard-dialog .lb-initial {
-  width: 5rem;
+/* The initial step: a serif headline, a centered Helvetica label, and an
+   underline (not a filled field) that takes the letter in the serif. */
+.lb-step-initial { text-align: center; }
+.lb-step-initial .dialog-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--display-md);
+  line-height: 1.05;
+  letter-spacing: normal;
+  text-wrap: balance;
+  margin: 0;
+}
+.lb-step-initial .field { justify-items: center; }
+.lb-step-initial .field label { font-family: var(--font-sans); }
+.lb-initial {
+  width: 4.5rem;
+  height: 3.75rem;
+  padding: 0;
+  border: 0;
+  border-bottom: 2px solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-serif);
+  font-size: 2.75rem;
+  line-height: 1;
   text-align: center;
   text-transform: uppercase;
-  font-size: var(--title);
 }
+/* Focus shows as a thicker underline in the focus color. */
+.lb-initial:focus-visible { outline: none; border-bottom: 4px solid var(--focus); }
+.lb-actions-split { justify-content: space-between; margin-top: var(--space-4); }
+.lb-actions-split .btn { font-family: var(--font-sans); }
 .leaderboard-dialog .lb-select { appearance: auto; }
 .leaderboard-dialog .lb-peek { justify-self: start; }
 .leaderboard-dialog .lb-pages {

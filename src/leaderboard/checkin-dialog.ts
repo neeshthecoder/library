@@ -70,18 +70,20 @@ export async function openCheckIn(books: readonly Book[], deps: CheckInDeps = de
   }
 
   function stepInitial(): HTMLElement {
-    const form = el('form', 'dialog-form')
+    const form = el('form', 'dialog-form lb-step-initial')
     form.noValidate = true
     const field = el('div', 'field')
     const label = el('label', '', 'Your initial')
     label.htmlFor = 'lb-initial'
-    const input = el('input', 'input lb-initial')
+    const input = el('input', 'lb-initial')
     Object.assign(input, { id: 'lb-initial', maxLength: 1, autocomplete: 'off', spellcheck: false })
     input.setAttribute('autocapitalize', 'characters')
     field.append(label, input)
     const err = el('p', 'field-error')
     err.setAttribute('role', 'alert')
-    form.append(title('Who’s checking in?'), field, err, actions(cancel(), button('Next', 'btn btn-primary', 'submit')))
+    const buttons = actions(cancel(), button('Next', 'btn btn-primary', 'submit'))
+    buttons.classList.add('lb-actions-split')
+    form.append(title('Who’s checking in?'), field, err, buttons)
     form.addEventListener('submit', (e) => {
       e.preventDefault()
       const v = input.value.trim().toUpperCase()
