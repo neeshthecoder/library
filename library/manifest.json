@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:57:19.036Z",
+  "updatedAt": "2026-11-11T19:57:25.767Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -793,7 +793,8 @@
         "trim": "#7a3e48",
         "ink": "#232C32",
         "h": 0.753,
-        "w": 0.188
+        "w": 0.188,
+        "font": "crimson-pro"
       },
       "position": null,
       "author": "James C. Scott"
