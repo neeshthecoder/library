@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:48:08.718Z",
+  "updatedAt": "2026-11-11T19:48:23.878Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -115,10 +115,10 @@
         "accent": "#e1ddce"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#065f5c",
-        "trim": "#e1ddce",
-        "ink": "#e1ddce",
+        "source": "trim",
+        "bg": "#e0b44c",
+        "trim": "#6b4a1f",
+        "ink": "#232C32",
         "h": 0.852,
         "w": 0.146,
         "font": "crimson-pro"
