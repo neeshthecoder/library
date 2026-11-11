@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:47:04.272Z",
+  "updatedAt": "2026-11-11T19:47:10.406Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -335,8 +335,8 @@
       "spine": {
         "source": "trim",
         "design": "medallion",
-        "bg": "#d5cbb3",
-        "trim": "#0069b8",
+        "bg": "#b9dcc6",
+        "trim": "#3f6f57",
         "ink": "#232C32",
         "h": 0.865,
         "w": 0.194
@@ -346,7 +346,8 @@
         "fraction": 0.004005655746770814,
         "label": "0%",
         "updatedAt": "2026-11-08T05:43:21.605Z"
-      }
+      },
+      "author": "Sylvia Nasar"
     },
     {
       "id": "lyn3cw6vh6",
