@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:26.568Z",
+  "updatedAt": "2026-11-11T19:46:29.749Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -214,13 +214,14 @@
       "spine": {
         "source": "trim",
         "design": "medallion",
-        "bg": "#30455d",
-        "trim": "#d18b3e",
-        "ink": "#F8F6F1",
+        "bg": "#3f7c7a",
+        "trim": "#f2c879",
+        "ink": "#FFFFFF",
         "h": 0.889,
         "w": 0.179
       },
-      "position": null
+      "position": null,
+      "author": "Euclid"
     },
     {
       "id": "w5vox6my6j",
