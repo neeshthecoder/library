@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:36.180Z",
+  "updatedAt": "2026-11-11T19:46:39.626Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -499,9 +499,9 @@
       "spine": {
         "source": "trim",
         "design": "frame",
-        "bg": "#002d3c",
-        "trim": "#ad6e37",
-        "ink": "#F8F6F1",
+        "bg": "#9cc0d9",
+        "trim": "#2f4a6d",
+        "ink": "#2f4a6d",
         "h": 0.807,
         "w": 0.211
       },
@@ -510,7 +510,8 @@
         "fraction": 0.01120897633330916,
         "label": "1%",
         "updatedAt": "2026-11-08T03:13:22.146Z"
-      }
+      },
+      "author": "Fyodor Dostoevsky"
     },
     {
       "id": "tsamjtf4xb",
