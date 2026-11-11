@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:29.749Z",
+  "updatedAt": "2026-11-11T19:46:33.243Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -392,13 +392,14 @@
       "spine": {
         "source": "trim",
         "design": "frame",
-        "bg": "#002a3f",
-        "trim": "#be6200",
-        "ink": "#F8F6F1",
+        "bg": "#f1e3b5",
+        "trim": "#c96f4a",
+        "ink": "#232C32",
         "h": 0.775,
         "w": 0.213
       },
-      "position": null
+      "position": null,
+      "author": "Avinash Dixit & Barry Nalebuff"
     },
     {
       "id": "zn6c33qw4h",
