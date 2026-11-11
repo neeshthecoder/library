@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:47:16.261Z",
+  "updatedAt": "2026-11-11T19:47:19.196Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -667,13 +667,14 @@
       },
       "spine": {
         "source": "trim",
-        "bg": "#002529",
-        "trim": "#00856f",
-        "ink": "#F8F6F1",
+        "bg": "#b9dcc6",
+        "trim": "#3f6f57",
+        "ink": "#232C32",
         "h": 0.893,
         "w": 0.158
       },
-      "position": null
+      "position": null,
+      "author": "Marcus Aurelius"
     },
     {
       "id": "gglrz4ukb4",
