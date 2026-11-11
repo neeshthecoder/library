@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:04.390Z",
+  "updatedAt": "2026-11-11T19:46:07.740Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1087,14 +1087,15 @@
       },
       "spine": {
         "source": "trim",
-        "bg": "#4b4326",
-        "trim": "#ca8e49",
-        "ink": "#F8F6F1",
+        "bg": "#e0b44c",
+        "trim": "#6b4a1f",
+        "ink": "#232C32",
         "h": 0.847,
         "w": 0.19
       },
       "position": null,
-      "finishedAt": null
+      "finishedAt": null,
+      "author": "Daniel Kahneman"
     },
     {
       "id": "vv54ggox5v",
