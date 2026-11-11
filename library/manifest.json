@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:57:36.062Z",
+  "updatedAt": "2026-11-11T19:57:39.442Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -897,7 +897,8 @@
         "trim": "#4b3a6e",
         "ink": "#232C32",
         "h": 0.878,
-        "w": 0.198
+        "w": 0.198,
+        "font": "eb-garamond"
       },
       "position": null,
       "author": "Alexis de Tocqueville"
