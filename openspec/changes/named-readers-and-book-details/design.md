@@ -50,9 +50,9 @@ A new `src/spines/fonts.ts` exports `SPINE_FONTS`, a fixed ordered list of `{ id
 
 ### 3. Author line layout
 `fitTitle` stays as it is. When there's an author, `renderSpine`:
-1. Sets the author at a fixed `AUTHOR_SIZE` of 11 px, smaller than the title's 12 px minimum, so the author always reads as secondary. If the author's single line is wider than the panel, it's truncated with an ellipsis using the same measurer.
-2. Reserves `authorSize × LINE_HEIGHT + 4 px` at the bottom of the panel and fits the title into the rest.
-3. If the remaining height can't hold one title line at `MIN_SIZE`, drops the author line and fits the title into the full panel.
+1. Wraps the author with the title's `wrap()` at 11 px (smaller than the title's 12 px minimum, so it reads as secondary), onto as many lines as it needs. It never truncates the author.
+2. Reserves `lines × size × LINE_HEIGHT + 4 px` at the bottom of the panel and fits the title into the rest.
+3. If that would truncate a title that fits on its own, it retries at 10 px, then 9 px, and otherwise drops the author and fits the title into the full panel. The owner asked for no ellipsis on authors, so an author is left off rather than cut.
 
 The title and author are positioned as one block, centered vertically in the panel. The author is a sibling `span.spine-author` styled like `.spine-title` (same ink, same font, `aria-hidden`). When there's an author, the spine button's `aria-label` becomes `"<title>, <author>"` and its `title` tooltip `"<title> by <author>"`. The accessible name can't use "by": axe's label-in-name rule (WCAG 2.5.3) needs the name to contain the visible text, which reads "<title> <author>".
 

@@ -57,9 +57,13 @@
 .spine-author {
   display: block;
   max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
 }
+.spine-author-line {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+}
+.spine-author-line.soft-break::after { content: "-"; }
 
 .spine-ribbon {
   position: absolute;

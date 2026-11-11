@@ -5,10 +5,12 @@ import { spinePx } from './geometry'
 import { renderSpineArt } from './trims'
 import { fontFor } from './fonts'
 import { cleanAuthor } from '../storage/manifest'
-import { fitTitle, LINE_HEIGHT, MIN_SIZE, SOFT_HYPHEN, truncate, type Measure } from './title-fit'
+import { fitTitle, LINE_HEIGHT, SOFT_HYPHEN, wrap, type FitResult, type Measure } from './title-fit'
 
-/** The author line's size (px): below the title's minimum, so it always reads as secondary. */
+/** The author's size (px): below the title's minimum, so it always reads as secondary. */
 export const AUTHOR_SIZE = 11
+/** Smaller sizes tried, in order, when a wrapped author doesn't leave the title enough room. */
+export const AUTHOR_SIZES = [AUTHOR_SIZE, 10, 9]
 /** Space between the title and the author line (px). */
 export const AUTHOR_GAP = 4
 
@@ -55,14 +57,7 @@ export function renderSpine(el: HTMLElement, model: SpineModel, shelfPx: number,
   el.style.height = `${height}px`
   applySpineColors(el, model.spine)
   const art = renderSpineArt(model.spine, width, height)
-  // Reserve one author line under the title, unless the panel is too short
-  // for both: then the author is left off (it stays in the accessible name).
-  let author = cleanAuthor(model.author)
-  let titleHeight = art.panel.height
-  const reserve = AUTHOR_SIZE * LINE_HEIGHT + AUTHOR_GAP
-  if (author && titleHeight - reserve >= MIN_SIZE * LINE_HEIGHT) titleHeight -= reserve
-  else author = null
-  const fit = fitTitle(model.title, art.panel.width, titleHeight, measure)
+  const { fit, author } = layoutTitleAndAuthor(model.title, cleanAuthor(model.author), art.panel.width, art.panel.height, measure)
 
   el.innerHTML = ''
   if (model.started) {
@@ -90,26 +85,55 @@ export function renderSpine(el: HTMLElement, model: SpineModel, shelfPx: number,
   title.style.fontFamily = font.stack
   title.style.fontWeight = String(font.weight)
   el.dataset.font = font.id
-  fit.lines.forEach((text, i) => {
-    const soft = text.endsWith(SOFT_HYPHEN)
-    // Real spaces between lines keep the text matching the title for
-    // assistive tech; none after a hyphen, real or inserted.
-    const prev = fit.lines[i - 1]
-    if (prev && !prev.endsWith('-') && !prev.endsWith(SOFT_HYPHEN)) title.append(' ')
-    const line = document.createElement('span')
-    line.className = soft ? 'spine-title-line soft-break' : 'spine-title-line'
-    line.textContent = soft ? text.slice(0, -1) : text
-    title.append(line)
-  })
+  appendLines(title, fit.lines, 'spine-title-line')
   if (author) {
     const by = document.createElement('span')
     by.className = 'spine-author'
-    by.style.fontSize = `${AUTHOR_SIZE}px`
+    by.style.fontSize = `${author.size}px`
     by.style.marginTop = `${AUTHOR_GAP}px`
-    by.textContent = truncate(author, AUTHOR_SIZE, art.panel.width, measure)
+    appendLines(by, author.lines, 'spine-author-line')
     title.append(' ', by) // a real space, so the visible text reads "Title Author"
-
   }
   el.append(title)
   el.dataset.truncated = String(fit.truncated)
+}
+
+/** Appends wrapped lines as block spans; a trailing SOFT_HYPHEN shows as "-". */
+function appendLines(parent: HTMLElement, lines: string[], cls: string): void {
+  lines.forEach((text, i) => {
+    const soft = text.endsWith(SOFT_HYPHEN)
+    // Real spaces between lines keep the text matching the original for
+    // assistive tech; none after a hyphen, real or inserted.
+    const prev = lines[i - 1]
+    if (prev && !prev.endsWith('-') && !prev.endsWith(SOFT_HYPHEN)) parent.append(' ')
+    const line = document.createElement('span')
+    line.className = soft ? `${cls} soft-break` : cls
+    line.textContent = soft ? text.slice(0, -1) : text
+    parent.append(line)
+  })
+}
+
+export interface TitleAndAuthor {
+  fit: FitResult
+  /** The author wrapped onto lines at `size` px, or null when it's left off. */
+  author: { lines: string[]; size: number } | null
+}
+
+/**
+ * Fits the title with the author wrapped onto as many lines as it needs
+ * underneath, never shortening either with an ellipsis because of the other.
+ * The author tries 11, then 10, then 9 px; if even 9 px would cut the title
+ * short, the author is left off the spine (it stays in the accessible name).
+ */
+export function layoutTitleAndAuthor(title: string, author: string | null, width: number, height: number, measure: Measure): TitleAndAuthor {
+  const alone = fitTitle(title, width, height, measure)
+  if (!author) return { fit: alone, author: null }
+  for (const size of AUTHOR_SIZES) {
+    const { lines } = wrap(author, size, width, measure)
+    const titleHeight = height - lines.length * size * LINE_HEIGHT - AUTHOR_GAP
+    if (titleHeight <= 0) continue
+    const fit = fitTitle(title, width, titleHeight, measure)
+    if (!fit.truncated) return { fit, author: { lines, size } }
+  }
+  return { fit: alone, author: null }
 }
