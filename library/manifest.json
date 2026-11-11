@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:45:25.046Z",
+  "updatedAt": "2026-11-11T19:45:28.625Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -52,9 +52,9 @@
       "spine": {
         "source": "trim",
         "design": "medallion",
-        "bg": "#002e3f",
-        "trim": "#ad7100",
-        "ink": "#F8F6F1",
+        "bg": "#d8a1a4",
+        "trim": "#7a3e48",
+        "ink": "#232C32",
         "h": 0.828,
         "w": 0.145,
         "font": "cardo"
