@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T18:58:30.702Z",
+  "updatedAt": "2026-11-11T19:45:07.159Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -149,18 +149,20 @@
       "spine": {
         "source": "trim",
         "design": "arch",
-        "bg": "#00384a",
-        "trim": "#c66f5d",
-        "ink": "#F8F6F1",
+        "bg": "#8fae8b",
+        "trim": "#f3e9d2",
+        "ink": "#232C32",
         "h": 0.859,
-        "w": 0.162
+        "w": 0.162,
+        "font": "eb-garamond"
       },
       "position": {
         "locator": "epubcfi(/6/16!/4[haushofer_wall_text-6]/2[_idContainer002],/2,/12/1:536)",
         "fraction": 0.024172195724025073,
         "label": "2%",
         "updatedAt": "2026-11-08T02:22:00.519Z"
-      }
+      },
+      "author": "Marlen Haushofer"
     },
     {
       "id": "sdrlrnumjp",
