@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:57:39.442Z",
+  "updatedAt": "2026-11-11T19:57:42.956Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -924,7 +924,8 @@
         "trim": "#f2c879",
         "ink": "#FFFFFF",
         "h": 0.93,
-        "w": 0.165
+        "w": 0.165,
+        "font": "cardo"
       },
       "position": null,
       "author": "Thomas Hobbes"
