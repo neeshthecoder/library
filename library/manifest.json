@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:45:36.842Z",
+  "updatedAt": "2026-11-11T19:45:39.832Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -523,14 +523,15 @@
         "accent": "#231d10"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#9f874e",
-        "trim": "#231d10",
-        "ink": "#231d10",
+        "source": "trim",
+        "bg": "#c96f4a",
+        "trim": "#f4d8b8",
+        "ink": "#000000",
         "h": 0.973,
         "w": 0.166
       },
-      "position": null
+      "position": null,
+      "author": "J. M. Coetzee"
     },
     {
       "id": "mvc5exfeas",
