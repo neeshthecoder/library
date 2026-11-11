@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:45.696Z",
+  "updatedAt": "2026-11-11T19:46:48.872Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -689,8 +689,8 @@
       },
       "spine": {
         "source": "trim",
-        "bg": "#2c3b5b",
-        "trim": "#9e9300",
+        "bg": "#7d4e6d",
+        "trim": "#f0c9d6",
         "ink": "#F8F6F1",
         "h": 0.787,
         "w": 0.201
@@ -700,7 +700,8 @@
         "fraction": 0.005130115881164858,
         "label": "1%",
         "updatedAt": "2026-11-08T03:33:29.134Z"
-      }
+      },
+      "author": "Plato"
     },
     {
       "id": "2wdnfx44y7",
