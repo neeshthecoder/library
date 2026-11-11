@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:57:29.270Z",
+  "updatedAt": "2026-11-11T19:57:36.062Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -870,7 +870,8 @@
         "trim": "#f4d8b8",
         "ink": "#000000",
         "h": 0.904,
-        "w": 0.199
+        "w": 0.199,
+        "font": "cormorant-garamond"
       },
       "position": null,
       "author": "Hannah Arendt"
