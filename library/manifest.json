@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:47:01.041Z",
+  "updatedAt": "2026-11-11T19:47:04.272Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1048,13 +1048,14 @@
       },
       "spine": {
         "source": "trim",
-        "bg": "#003450",
-        "trim": "#737dd6",
-        "ink": "#F8F6F1",
+        "bg": "#8fae8b",
+        "trim": "#f3e9d2",
+        "ink": "#232C32",
         "h": 0.95,
         "w": 0.142
       },
-      "position": null
+      "position": null,
+      "author": "Bertrand Russell"
     },
     {
       "id": "join5xdcup",
