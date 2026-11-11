@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:47:22.111Z",
+  "updatedAt": "2026-11-11T19:47:24.982Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -241,9 +241,9 @@
       "spine": {
         "source": "trim",
         "design": "frame",
-        "bg": "#3e1c48",
-        "trim": "#7b76bb",
-        "ink": "#F8F6F1",
+        "bg": "#f2b5a0",
+        "trim": "#8a4b3b",
+        "ink": "#232C32",
         "h": 0.917,
         "w": 0.197
       },
@@ -253,7 +253,8 @@
         "label": "2–3 of 306",
         "updatedAt": "2026-11-08T06:18:47.989Z"
       },
-      "finishedAt": "2026-11-08T07:37:41.717Z"
+      "finishedAt": "2026-11-08T07:37:41.717Z",
+      "author": "David Goggins"
     },
     {
       "id": "ojoefappso",
