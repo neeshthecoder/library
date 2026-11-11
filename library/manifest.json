@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-09T08:02:50.104Z",
+  "updatedAt": "2026-11-11T03:35:08.273Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1120,6 +1120,31 @@
       },
       "position": null,
       "finishedAt": null
+    },
+    {
+      "id": "lz5jc5m4c5",
+      "title": "How China Works",
+      "format": "pdf",
+      "file": "library/books/lz5jc5m4c5.pdf",
+      "size": 7555391,
+      "addedAt": "2026-11-11T03:34:58.766Z",
+      "length": {
+        "pages": 358,
+        "estimated": false
+      },
+      "cover": {
+        "dominant": "#6e5150",
+        "accent": "#c99f97"
+      },
+      "spine": {
+        "source": "cover",
+        "bg": "#6e5150",
+        "trim": "#c99f97",
+        "ink": "#F8F6F1",
+        "h": 0.782,
+        "w": 0.166
+      },
+      "position": null
     }
   ]
 }
