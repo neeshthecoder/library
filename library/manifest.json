@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:07.740Z",
+  "updatedAt": "2026-11-11T19:46:11.335Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1190,14 +1190,15 @@
         "accent": "#141c25"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#5e92ba",
-        "trim": "#141c25",
-        "ink": "#141c25",
+        "source": "trim",
+        "bg": "#3f7c7a",
+        "trim": "#f2c879",
+        "ink": "#FFFFFF",
         "h": 0.939,
         "w": 0.16
       },
-      "position": null
+      "position": null,
+      "author": "Peter Thiel & Blake Masters"
     }
   ]
 }
