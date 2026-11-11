@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:39.626Z",
+  "updatedAt": "2026-11-11T19:46:42.638Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -637,14 +637,15 @@
         "accent": "#867653"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#e7d8ab",
-        "trim": "#867653",
-        "ink": "#232C32",
+        "source": "trim",
+        "bg": "#2f4a6d",
+        "trim": "#e8c26a",
+        "ink": "#e8c26a",
         "h": 0.845,
         "w": 0.166
       },
-      "position": null
+      "position": null,
+      "author": "Aristotle"
     },
     {
       "id": "tetoobh4hr",
