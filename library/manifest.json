@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:57:59.982Z",
+  "updatedAt": "2026-11-11T19:58:03.646Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1086,7 +1086,8 @@
         "trim": "#f3e9d2",
         "ink": "#232C32",
         "h": 0.95,
-        "w": 0.142
+        "w": 0.142,
+        "font": "eb-garamond"
       },
       "position": null,
       "author": "Bertrand Russell"
