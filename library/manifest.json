@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:57:05.314Z",
+  "updatedAt": "2026-11-11T19:57:08.700Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -658,7 +658,8 @@
         "trim": "#e8c26a",
         "ink": "#e8c26a",
         "h": 0.845,
-        "w": 0.166
+        "w": 0.166,
+        "font": "cardo"
       },
       "position": null,
       "author": "Aristotle"
