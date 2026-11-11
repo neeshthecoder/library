@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:47:33.490Z",
+  "updatedAt": "2026-11-11T19:47:36.884Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -977,14 +977,15 @@
         "accent": "#120402"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#ee542f",
-        "trim": "#120402",
-        "ink": "#120402",
+        "source": "trim",
+        "bg": "#b9dcc6",
+        "trim": "#3f6f57",
+        "ink": "#232C32",
         "h": 0.79,
         "w": 0.164
       },
-      "position": null
+      "position": null,
+      "author": "David Brooks"
     },
     {
       "id": "tgrntlhplf",
