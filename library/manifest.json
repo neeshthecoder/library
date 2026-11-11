@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T18:58:14.778Z",
+  "updatedAt": "2026-11-11T18:58:30.702Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -128,7 +128,8 @@
         "fraction": 0.0017811988876000407,
         "label": "0%",
         "updatedAt": "2026-11-11T18:58:12.846Z"
-      }
+      },
+      "author": "Kaori Fujio"
     },
     {
       "id": "xk3ihufpll",
