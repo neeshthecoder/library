@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:58:20.651Z",
+  "updatedAt": "2026-11-11T19:59:25.367Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -747,7 +747,8 @@
         "w": 0.193,
         "font": "crimson-pro"
       },
-      "position": null
+      "position": null,
+      "author": "Daron Acemoglu & James A. Robinson"
     },
     {
       "id": "uvr76ripcm",
