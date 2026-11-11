@@ -107,6 +107,69 @@ test.describe('import', () => {
     }
   })
 
+  test('prefills the author from metadata', async ({ page }) => {
+    await ready(page)
+    const cases: [string, string][] = [
+      ['authors.epub', 'Terry Pratchett, Neil Gaiman'],
+      ['authored.pdf', 'George Eliot'],
+      ['sample.epub', ''],
+      ['magi.mobi', 'O. Henry'],
+    ]
+    for (const [file, author] of cases) {
+      await drop(page, file)
+      const d = preview(page)
+      await expect(d).toBeVisible({ timeout: 15000 })
+      await expect(d.getByLabel('Author')).toHaveValue(author)
+      if (author) await expect(d.locator('[data-preview] .spine-author')).toBeAttached()
+      await d.getByRole('button', { name: 'Cancel' }).click()
+      await expect(d).toBeHidden()
+    }
+  })
+
+  test('adds a book with an author and a chosen font', async ({ page }) => {
+    const gh = await ready(page)
+    const fonts: string[] = []
+    page.on('request', (r) => { if (r.url().includes('/fonts/')) fonts.push(new URL(r.url()).pathname.split('/').pop()!) })
+    await drop(page, 'sample.epub')
+    const d = preview(page)
+    const group = d.getByRole('group', { name: 'Font' })
+    await expect(group.getByRole('radio')).toHaveCount(6)
+    await expect(group.getByRole('radio', { name: 'Instrument Serif' })).toBeChecked()
+    // each option is set in its own font
+    const family = (name: string) => group.locator('label', { hasText: name }).evaluate((e) => getComputedStyle(e).fontFamily)
+    expect(await family('Cardo')).toMatch(/^"?Cardo/)
+    expect(await family('TeX Gyre Pagella')).toMatch(/^"?TeX Gyre Pagella/)
+
+    await group.getByText('EB Garamond').click()
+    await expect(group.getByRole('radio', { name: 'EB Garamond' })).toBeChecked()
+    await expect(d.locator('[data-preview]')).toHaveAttribute('data-font', 'eb-garamond')
+    await expect.poll(() => fonts).toContain('eb-garamond-latin-400.woff2')
+    // arrow keys move between options
+    await page.keyboard.press('ArrowRight')
+    await expect(group.getByRole('radio', { name: 'Cardo' })).toBeChecked()
+    await page.keyboard.press('ArrowLeft')
+
+    // short enough to fit even the narrowest spine, so it's never truncated
+    await d.getByLabel('Author').fill('  Mary   Ann ')
+    await expect(d.locator('[data-preview] .spine-author')).toHaveText('Mary Ann')
+    await d.getByRole('button', { name: 'Add to shelf' }).click()
+    await expect(page.getByRole('button', { name: 'Middlemarch, Mary Ann' })).toBeVisible()
+    await expect.poll(() => gh.pushes).toEqual(['Add "Middlemarch"'])
+    const b = gh.manifest().books[0]
+    expect(b.author).toBe('Mary Ann')
+    expect(b.spine.font).toBe('eb-garamond')
+  })
+
+  test('a book added without an author stores none', async ({ page }) => {
+    const gh = await ready(page)
+    await drop(page, 'sample.epub')
+    await preview(page).getByRole('button', { name: 'Add to shelf' }).click()
+    await expect.poll(() => gh.pushes).toEqual(['Add "Middlemarch"'])
+    const b = gh.manifest().books[0]
+    expect(b.author ?? null).toBeNull()
+    expect(b.spine.font).toBe('instrument-serif')
+  })
+
   test('preview: cover colors, live updates, shuffle, validation, focus', async ({ page }) => {
     await ready(page)
     await page.getByRole('button', { name: 'Add book' }).focus()

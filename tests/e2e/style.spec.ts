@@ -171,3 +171,11 @@ test.describe('night', () => {
     expect((await new AxeBuilder({ page }).withTags(tags).exclude('.textLayer').analyze()).violations.map((v) => v.id)).toEqual([])
   })
 })
+
+test('a shelf in the default font downloads no other spine font', async ({ page }) => {
+  const fonts: string[] = []
+  page.on('request', (r) => { if (r.url().includes('/fonts/')) fonts.push(new URL(r.url()).pathname.split('/').pop()!) })
+  await shelf(page)
+  await page.evaluate(() => document.fonts.ready)
+  expect(fonts.filter((f) => !f.startsWith('instrument-serif'))).toEqual([])
+})

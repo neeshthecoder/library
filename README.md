@@ -27,6 +27,21 @@ There is no server. Book files and a manifest (`library/manifest.json`) live in 
 - **Sign-in is locked** to this site's own repository. Even with sign-in in place, writing to the library still needs a token with write access to your repo, which only you can create.
 - **Disconnecting** a device (Library settings → Disconnect) syncs your place, then removes the token, cached books, and positions. It refuses while a book is still waiting to upload.
 
+### Adding and editing books
+
+Drop a file anywhere on the page (or use **Add book**) to open the preview. Besides the title and colors you can set:
+
+- **Author** (optional). It's filled in from the file when the file names one, and shows in smaller text under the title on the spine.
+- **Font** for the spine's title and author. Instrument Serif is the default. The others are free stand-ins for classic book faces: EB Garamond (Garamond), Cardo (Bembo), TeX Gyre Pagella (Palatino), Cormorant Garamond (Sabon) and Crimson Pro (Minion).
+
+To change a book that's already on the shelf, as the owner:
+
+- **Mouse:** right-click its spine and choose **Edit**.
+- **Keyboard:** focus the spine and press Shift+F10 (or the context-menu key).
+- **Touch:** press and hold the spine, then lift your finger without moving it. (Holding and then dragging still moves the book to Finished.)
+
+Edit opens the same dialog with the book's current title, author, font and colors. **Save** records the change as one small commit. The book's file, size, reading position and section stay as they are. Guests don't get the menu. The reading leaderboard keeps the title a reader checked in with, so after a rename it shows the old title until their next check-in on that book.
+
 ### Finished books
 
 The far right of the bookcase holds your **Finished** books, behind a bookend lamp, with "Finished" carved into the shelf. As the owner you can:
@@ -56,7 +71,7 @@ npm run check:size   # fail if the shelf's JavaScript is 150 KB gzipped or more
 
 - Run `npx playwright install chromium webkit firefox` once before the browser tests.
 - The dev server doesn't apply the Content Security Policy, so scripts inside EPUBs can run there. Only open books you trust in `npm run dev`. The built site blocks them.
-- `npm run fonts` re-copies the WOFF2 files from Fontsource after a font upgrade.
+- `npm run fonts` re-copies the WOFF2 files from Fontsource after a font upgrade. TeX Gyre Pagella is the exception: it is committed by hand, and `scripts/copy-fonts.mjs` says how it was built.
 - `node scripts/make-fixtures.mjs` regenerates the test books.
 
 ### Project layout
@@ -64,8 +79,8 @@ npm run check:size   # fail if the shelf's JavaScript is 150 KB gzipped or more
 | Path | What lives there |
 |---|---|
 | `src/shelf/` | Shelf view, wheel-to-horizontal scrolling |
-| `src/spines/` | Spine art (one plain design), cover colors, palette, contrast, title fitting |
-| `src/import/` | Drag overlay, file sniffing, DRM detection, metadata, preview dialog, queue |
+| `src/spines/` | Spine art (one plain design), cover colors, palette, contrast, title and author fitting, spine fonts (`fonts.ts`) |
+| `src/import/` | Drag overlay, file sniffing, DRM detection, metadata (title and author), add/edit book dialog, queue |
 | `src/reader/` | Reader view, pdf.js renderer, foliate-js adapter, spread logic |
 | `src/storage/` | Manifest model, IndexedDB cache, GitHub Git Data client, sync |
 | `vendor/foliate-js/` | Vendored foliate-js at a pinned commit (MIT); see `VENDOR.md` |

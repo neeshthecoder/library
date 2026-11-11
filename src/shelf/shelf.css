@@ -121,3 +121,31 @@
 .sky-cloud-3 { left: 55%; top: 16%; width: clamp(7rem, 16vw, 15rem); }
 .sky-cloud-4 { left: 44%; top: 70%; width: clamp(4rem, 8vw, 7rem); }
 .sky-cloud-5 { left: 74%; top: 56%; width: clamp(5rem, 10vw, 9rem); }
+
+/* Owner-only spine context menu: one "Edit" item. */
+.spine-menu {
+  position: fixed;
+  z-index: 70;
+  min-width: 8rem;
+  padding: var(--space-2);
+  border-radius: var(--radius-input);
+  background: var(--paper);
+  box-shadow: var(--shadow);
+}
+.spine-menu-item {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: calc(var(--radius-input) - var(--space-2));
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--ui);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+.spine-menu-item:hover,
+.spine-menu-item:focus-visible { background: var(--linen); }

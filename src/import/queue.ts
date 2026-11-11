@@ -88,6 +88,7 @@ export async function processFiles(files: File[], deps: QueueDeps): Promise<Book
     const res = await deps.preview({
       id,
       title: chooseTitle(c.info.title, c.file.name),
+      author: c.info.author,
       pages: c.info.pages,
       cover: c.colors,
       queueLabel: accepted.length > 1 ? `Book ${i + 1} of ${accepted.length}` : '',
@@ -97,6 +98,7 @@ export async function processFiles(files: File[], deps: QueueDeps): Promise<Book
     const book: Book = {
       id,
       title: res.title,
+      ...(res.author ? { author: res.author } : {}),
       format: c.format,
       file: bookPath(id, c.format),
       size: c.file.size,

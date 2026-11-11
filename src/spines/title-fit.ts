@@ -1,3 +1,5 @@
+import { fontFor, fontShorthand, type SpineFont } from './fonts'
+
 /** Measures the advance width of `text` at `size` px. */
 export type Measure = (text: string, size: number) => number
 
@@ -112,11 +114,12 @@ export function truncate(text: string, size: number, length: number, measure: Me
   return (cut || text.slice(0, Math.max(1, lo))) + ell
 }
 
-/** Canvas-based measurer using the spine title font (Instrument Serif 400). Results are cached. */
 /** Wraps a measurer so a trailing soft hyphen is measured as a visible hyphen. */
 export const withSoftHyphen = (m: Measure): Measure => (t, s) => m(t.endsWith(SOFT_HYPHEN) ? t.slice(0, -1) + '-' : t, s)
 
-export function canvasMeasure(): Measure {
+/** Canvas-based measurer for one spine font (Instrument Serif by default). Results are cached. */
+
+export function canvasMeasure(font: SpineFont = fontFor()): Measure {
   const ctx = document.createElement('canvas').getContext('2d')
   const cache = new Map<string, number>()
   return (text, size) => {
@@ -124,10 +127,31 @@ export function canvasMeasure(): Measure {
     let w = cache.get(key)
     if (w === undefined) {
       if (!ctx) return text.length * size * 0.55
-      ctx.font = `400 ${size}px "Instrument Serif", "Instrument Serif fallback", "Times New Roman", Georgia, serif`
+      ctx.font = fontShorthand(font, size)
       w = ctx.measureText(text).width
       cache.set(key, w)
     }
     return w
   }
 }
+
+/**
+ * One measurer per font, made on first use. `reset` drops a font's measurer
+ * (and its cached widths) once the real font has loaded.
+ */
+export function fontMeasures(make: (font: SpineFont) => Measure = canvasMeasure) {
+  const byId = new Map<string, Measure>()
+  return {
+    get(fontId?: string | null): Measure {
+      const f = fontFor(fontId)
+      let m = byId.get(f.id)
+      if (!m) byId.set(f.id, (m = make(f)))
+      return m
+    },
+    reset(fontId?: string | null): void {
+      if (fontId === undefined) byId.clear()
+      else byId.delete(fontFor(fontId).id)
+    },
+  }
+}
+export type FontMeasures = ReturnType<typeof fontMeasures>

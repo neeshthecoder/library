@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest'
-import { applySpineColors, renderSpine, ribbonColor } from '../../src/spines/spine'
+import { applySpineColors, AUTHOR_SIZE, renderSpine, ribbonColor } from '../../src/spines/spine'
 import { contrast, SHELF_BACK } from '../../src/spines/contrast'
 import type { SpineSettings } from '../../src/storage/manifest'
 
@@ -58,5 +58,67 @@ describe('renderSpine', () => {
   it('keeps the ribbon visible against the dark back wall', () => {
     expect(contrast(ribbonColor('#1a1a1a'), SHELF_BACK)).toBeGreaterThanOrEqual(3)
     expect(ribbonColor('#f2a65a')).toBe('#f2a65a') // already visible: unchanged
+  })
+})
+
+describe('spine fonts', () => {
+  it('sets the title in the book\'s font', () => {
+    const el = document.createElement('button')
+    renderSpine(el, { id: 'a', title: 'Emma', spine: { ...spine, font: 'eb-garamond' }, started: false }, 300, measure)
+    const title = el.querySelector<HTMLElement>('.spine-title')!
+    expect(title.style.fontFamily).toMatch(/^"?EB Garamond/)
+    expect(el.dataset.font).toBe('eb-garamond')
+  })
+
+  it('renders an unknown or missing font exactly like the default', () => {
+    const html = (font?: string) => {
+      const el = document.createElement('button')
+      renderSpine(el, { id: 'a', title: 'The Left Hand of Darkness', spine: { ...spine, font }, started: false }, 300, measure)
+      return el.outerHTML
+    }
+    expect(html('comic-sans')).toBe(html(undefined))
+    expect(html(undefined)).toBe(html('instrument-serif'))
+    expect(html(undefined)).toMatch(/Instrument Serif/)
+  })
+})
+
+describe('author line', () => {
+  const render = (author: string | null | undefined, title = 'The Left Hand of Darkness', shelfPx = 300, s: SpineSettings = spine) => {
+    const el = document.createElement('button')
+    renderSpine(el, { id: 'a', title, author, spine: s, started: false }, shelfPx, measure)
+    return el
+  }
+
+  it('renders a book without an author exactly as before', () => {
+    const plain = render(undefined)
+    expect(plain.querySelector('.spine-author')).toBeNull()
+    expect(render(null).outerHTML).toBe(plain.outerHTML)
+    expect(render('   ').outerHTML).toBe(plain.outerHTML)
+    expect(plain.outerHTML).toMatchSnapshot()
+  })
+
+  it('shows the author under the title, smaller, inside the title block', () => {
+    const el = render('Le Guin')
+    const by = el.querySelector<HTMLElement>('.spine-title > .spine-author')!
+    expect(by.textContent).toBe('Le Guin')
+    expect(by.style.fontSize).toBe(`${AUTHOR_SIZE}px`)
+    expect(by.previousElementSibling?.classList.contains('spine-title-line')).toBe(true)
+    // the title still fits: it was fitted into the panel minus the author line
+    expect(parseFloat(el.querySelector<HTMLElement>('.spine-title')!.style.fontSize)).toBeGreaterThan(AUTHOR_SIZE)
+  })
+
+  it('leaves the title smaller or equal when an author takes room', () => {
+    const size = (el: HTMLElement) => parseFloat(el.querySelector<HTMLElement>('.spine-title')!.style.fontSize)
+    expect(size(render('Ursula K. Le Guin'))).toBeLessThanOrEqual(size(render(null)))
+  })
+
+  it('truncates a long author with an ellipsis', () => {
+    const narrow: SpineSettings = { ...spine, w: 0.1 }
+    const by = render('Gabriel García Márquez and Friends of the Library', 'Emma', 300, narrow).querySelector('.spine-author')!
+    expect(by.textContent).toMatch(/…$/)
+  })
+
+  it('leaves the author off a spine too short for both', () => {
+    expect(render('Ursula K. Le Guin', 'Emma', 40).querySelector('.spine-author')).toBeNull()
   })
 })

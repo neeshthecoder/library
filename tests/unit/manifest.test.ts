@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  addBook, setFinished, shelfSections, applyOp, bookPath, isReflected, ManifestVersionError, merge, newBookId, parseManifest, removeBook, setPosition, shelfOrder, totalSize,
+  addBook, cleanAuthor, editBook, setFinished, shelfSections, applyOp, bookPath, isReflected, ManifestVersionError, merge, newBookId, parseManifest, removeBook, setPosition, shelfOrder, totalSize,
   type Book, type Manifest,
 } from '../../src/storage/manifest'
 
@@ -77,6 +77,47 @@ describe('manifest', () => {
   it('treats books from older manifests as still reading', () => {
     const old = parseManifest({ version: 1, updatedAt: 'x', books: [book('a')] })
     expect(shelfSections(old.books).reading).toHaveLength(1)
+  })
+
+  it('parses older manifests without author or font', () => {
+    const m = parseManifest({ version: 1, updatedAt: 'x', books: [book('a')] })
+    expect(m.books[0].author).toBeUndefined()
+    expect(m.books[0].spine.font).toBeUndefined()
+  })
+
+  it('edits only the given fields', () => {
+    let m = addBook(m0, { ...book('a'), position: pos('5', '2026-01-02T00:00:00Z'), finishedAt: '2026-01-03T00:00:00Z' })
+    m = editBook(m, 'a', { title: 'Middlemarch', author: 'George Eliot', spine: { font: 'eb-garamond', bg: '#112233' } }, 'now')
+    const b = m.books[0]
+    expect(b).toMatchObject({ title: 'Middlemarch', author: 'George Eliot', position: { locator: '5' }, finishedAt: '2026-01-03T00:00:00Z' })
+    expect(b.spine).toMatchObject({ font: 'eb-garamond', bg: '#112233', trim: '#ffffff', h: 0.8, w: 0.15 })
+    expect(m.updatedAt).toBe('now')
+    expect(editBook(m, 'a', { author: null }).books[0].author).toBeNull()
+  })
+
+  it('returns the same manifest for a no-op edit', () => {
+    const m = addBook(m0, book('a'))
+    expect(editBook(m, 'a', { title: 'a', spine: { bg: '#000000' } })).toBe(m)
+    expect(editBook(m, 'a', {})).toBe(m)
+    expect(editBook(m, 'missing', { title: 'x' })).toBe(m)
+    expect(editBook(m, 'a', { author: null })).toBe(m) // absent author counts as none
+  })
+
+  it('keeps a newer position when an edit is merged on top', () => {
+    const remote = setPosition(addBook(m0, book('a')), 'a', pos('9', '2026-02-01T00:00:00Z'))
+    const op = { type: 'edit' as const, id: 'a', changes: { title: 'New' } }
+    expect(isReflected(remote, op)).toBe(false)
+    const m = merge(remote, [op])
+    expect(m.books[0]).toMatchObject({ title: 'New', position: { locator: '9' } })
+    expect(isReflected(m, op)).toBe(true)
+    expect(isReflected(removeBook(m, 'a'), op)).toBe(true)
+  })
+
+  it('cleans authors', () => {
+    expect(cleanAuthor('  Ursula   K.\nLe Guin ')).toBe('Ursula K. Le Guin')
+    expect(cleanAuthor('   ')).toBeNull()
+    expect(cleanAuthor(null)).toBeNull()
+    expect(cleanAuthor('x'.repeat(200))).toHaveLength(120)
   })
 
   it('makes 10-character base32 ids', () => {

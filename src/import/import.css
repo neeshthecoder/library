@@ -63,6 +63,26 @@ dialog.preview-dialog { width: min(100% - 2rem, 48rem); }
 .preview-source { grid-column: 1 / -1; margin: 0; }
 .preview-queue { margin: 0 0 var(--space-2); }
 
+/* Font choice: each option is set in its own font. */
+.font-field { margin: 0; padding: 0; border: 0; min-width: 0; }
+.font-field legend { padding: 0; margin-bottom: var(--space-2); }
+.font-options { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: var(--space-2); }
+.font-option {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-input);
+  background: var(--linen);
+  color: var(--ink);
+  font-size: 1.125rem;
+  line-height: 1.1;
+  cursor: pointer;
+  transition: background-color var(--dur-move) var(--ease), color var(--dur-move) var(--ease);
+}
+.font-option:has(input:checked) { background: var(--action); color: var(--on-action); }
+.font-option:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+
 @media (max-width: 40rem) {
   .preview-grid { grid-template-columns: 1fr; }
   .preview-stage { justify-self: stretch; }

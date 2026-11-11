@@ -3,7 +3,7 @@ import { type Page } from '@playwright/test'
 import { LEADERBOARD_TEST_URL } from './leaderboard-url'
 import { dropFiles, FakeGitHub, fixture, makeBook, manifestOf, mockPublished, connect, expect, setTheme, test } from './helpers'
 
-const BOOKS = Array.from({ length: 12 }, (_, i) => makeBook({ id: `b${i + 1}`, title: ['Middlemarch', 'Emma', 'Beloved', 'Dune'][i % 4] + (i > 3 ? ` ${i}` : ''), format: i === 0 ? 'pdf' : 'epub' }))
+const BOOKS = Array.from({ length: 12 }, (_, i) => makeBook({ id: `b${i + 1}`, title: ['Middlemarch', 'Emma', 'Beloved', 'Dune'][i % 4] + (i > 3 ? ` ${i}` : ''), format: i === 0 ? 'pdf' : 'epub', ...(i === 1 ? { author: 'Jane Austen', spine: { ...makeBook({ id: 'x' }).spine, font: 'eb-garamond' } } : {}) }))
 const FILES = { 'b1.pdf': fixture('sample.pdf'), ...Object.fromEntries(BOOKS.slice(1).map((b) => [`${b.id}.epub`, fixture('sample.epub')])) }
 
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
@@ -98,3 +98,12 @@ for (const view of VIEWS) {
     })
   }
 }
+
+test('a spine with an author names it in its accessible name and tooltip', async ({ page }) => {
+  await setup(page)
+  await page.goto('/')
+  const spine = page.getByRole('button', { name: 'Emma, Jane Austen', exact: true })
+  await expect(spine).toHaveAttribute('title', 'Emma by Jane Austen')
+  await expect(spine.locator('.spine-author')).toHaveText('Jane Austen')
+  await expect(page.getByRole('button', { name: 'Middlemarch', exact: true })).toHaveCount(1) // no author: just the title
+})

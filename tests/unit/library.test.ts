@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { Cache } from '../../src/storage/cache'
 import { GitHub, type FetchLike } from '../../src/storage/github'
 import { COMMIT_GRACE_MS, Library } from '../../src/storage/library'
-import { addBook, bookPath, emptyManifest, type Book, type Manifest } from '../../src/storage/manifest'
+import { addBook, bookPath, emptyManifest, setPosition, type Book, type Manifest } from '../../src/storage/manifest'
 import { FakeGitHubApi } from './fake-github'
 
 let n = 0
@@ -335,5 +335,60 @@ describe('disconnecting', () => {
     await expect(t.lib.upload('a')).rejects.toThrow()
     await expect(t.lib.disconnect()).rejects.toThrow(/Title a/)
     expect(await t.cache.getSettings()).not.toBeNull()
+  })
+})
+
+describe('editing books', () => {
+  it('commits one change and shows it immediately', async () => {
+    const api = new FakeGitHubApi(addBook(emptyManifest(), book('a')))
+    const t = setup({ api, connected: true })
+    await t.init()
+    const p = t.lib.editBook('a', { title: 'Middlemarch', author: 'George Eliot', spine: { font: 'eb-garamond' } })
+    expect(t.lib.manifest.books[0]).toMatchObject({ title: 'Middlemarch', author: 'George Eliot' }) // optimistic
+    await expect(p).resolves.toBe(true)
+    expect(api.pushes).toEqual(['Edit "Middlemarch"'])
+    expect(api.manifest().books[0]).toMatchObject({ title: 'Middlemarch', author: 'George Eliot', spine: { font: 'eb-garamond', h: 0.8 } })
+  })
+
+  it('makes no commit when nothing changes', async () => {
+    const api = new FakeGitHubApi(addBook(emptyManifest(), book('a')))
+    const t = setup({ api, connected: true })
+    await t.init()
+    await expect(t.lib.editBook('a', { title: 'Title a' })).resolves.toBe(false)
+    expect(api.pushes).toEqual([])
+  })
+
+  it('keeps a position synced from another device meanwhile', async () => {
+    const api = new FakeGitHubApi(addBook(emptyManifest(), book('a')))
+    const t = setup({ api, connected: true })
+    await t.init()
+    api.externalCommit(setPosition(api.manifest(), 'a', { locator: '42', fraction: 0.4, label: '40%', updatedAt: '2026-03-01T00:00:00Z' }))
+    await t.lib.editBook('a', { title: 'Renamed' })
+    expect(api.manifest().books[0]).toMatchObject({ title: 'Renamed', position: { locator: '42' } })
+  })
+
+  it('reverts if the commit fails', async () => {
+    const api = new FakeGitHubApi(addBook(emptyManifest(), book('a')))
+    const t = setup({ api, connected: true })
+    await t.init()
+    api.authOk = false
+    await expect(t.lib.editBook('a', { title: 'Nope' })).rejects.toThrow()
+    expect(t.lib.manifest.books[0].title).toBe('Title a')
+  })
+
+  it('carries an earlier edit into a second one', async () => {
+    const api = new FakeGitHubApi(addBook(emptyManifest(), book('a')))
+    const t = setup({ api, connected: true })
+    await t.init()
+    await t.lib.editBook('a', { author: 'Someone' })
+    await t.lib.editBook('a', { title: 'Second' })
+    expect(t.lib.manifest.books[0]).toMatchObject({ title: 'Second', author: 'Someone' })
+    expect(api.manifest().books[0]).toMatchObject({ title: 'Second', author: 'Someone' })
+  })
+
+  it('is owner-only', async () => {
+    const t = setup({ published: addBook(emptyManifest(), book('a')) })
+    await t.init()
+    await expect(t.lib.editBook('a', { title: 'x' })).rejects.toThrow(/Connect/)
   })
 })
