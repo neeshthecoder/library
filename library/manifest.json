@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:57:46.216Z",
+  "updatedAt": "2026-11-11T19:57:49.728Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -978,7 +978,8 @@
         "trim": "#e8c26a",
         "ink": "#e8c26a",
         "h": 0.861,
-        "w": 0.16
+        "w": 0.16,
+        "font": "eb-garamond"
       },
       "position": null,
       "author": "Leo Tolstoy"
