@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:57:49.728Z",
+  "updatedAt": "2026-11-11T19:57:53.441Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1005,7 +1005,8 @@
         "trim": "#3f6f57",
         "ink": "#232C32",
         "h": 0.79,
-        "w": 0.164
+        "w": 0.164,
+        "font": "crimson-pro"
       },
       "position": null,
       "author": "David Brooks"
