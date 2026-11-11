@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:45:31.264Z",
+  "updatedAt": "2026-11-11T19:45:34.122Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -361,14 +361,15 @@
         "accent": "#b9a96e"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#57585c",
-        "trim": "#b9a96e",
+        "source": "trim",
+        "bg": "#7d4e6d",
+        "trim": "#f0c9d6",
         "ink": "#F8F6F1",
         "h": 0.912,
         "w": 0.164
       },
-      "position": null
+      "position": null,
+      "author": "Ken Binmore"
     },
     {
       "id": "q77dehmjx7",
