@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:57:25.767Z",
+  "updatedAt": "2026-11-11T19:57:29.270Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -817,7 +817,8 @@
         "trim": "#6b4a1f",
         "ink": "#232C32",
         "h": 0.871,
-        "w": 0.183
+        "w": 0.183,
+        "font": "eb-garamond"
       },
       "position": null,
       "author": "John Rawls"
