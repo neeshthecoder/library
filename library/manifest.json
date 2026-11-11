@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:45:47.674Z",
+  "updatedAt": "2026-11-11T19:45:50.427Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -831,14 +831,15 @@
         "accent": "#543801"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#fea805",
-        "trim": "#543801",
-        "ink": "#543801",
+        "source": "trim",
+        "bg": "#c96f4a",
+        "trim": "#f4d8b8",
+        "ink": "#000000",
         "h": 0.904,
         "w": 0.199
       },
-      "position": null
+      "position": null,
+      "author": "Hannah Arendt"
     },
     {
       "id": "tui4ypawnq",
