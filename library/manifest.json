@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:01.793Z",
+  "updatedAt": "2026-11-11T19:46:04.390Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1163,14 +1163,15 @@
         "accent": "#c99f97"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#6e5150",
-        "trim": "#c99f97",
-        "ink": "#F8F6F1",
+        "source": "trim",
+        "bg": "#b3a4d1",
+        "trim": "#4b3a6e",
+        "ink": "#232C32",
         "h": 0.782,
         "w": 0.166
       },
-      "position": null
+      "position": null,
+      "author": "Xiaohuan Lan"
     },
     {
       "id": "jv6ax45obq",
