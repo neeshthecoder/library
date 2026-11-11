@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:54.948Z",
+  "updatedAt": "2026-11-11T19:46:57.927Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -944,14 +944,15 @@
         "accent": "#354551"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#39bbdd",
-        "trim": "#354551",
-        "ink": "#232C32",
+        "source": "trim",
+        "bg": "#2f4a6d",
+        "trim": "#e8c26a",
+        "ink": "#e8c26a",
         "h": 0.861,
         "w": 0.16
       },
-      "position": null
+      "position": null,
+      "author": "Leo Tolstoy"
     },
     {
       "id": "6xwidj3fug",
