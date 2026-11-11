@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:47:19.196Z",
+  "updatedAt": "2026-11-11T19:47:22.111Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -795,13 +795,14 @@
       "cover": null,
       "spine": {
         "source": "trim",
-        "bg": "#003d40",
-        "trim": "#009e73",
-        "ink": "#F8F6F1",
+        "bg": "#e0b44c",
+        "trim": "#6b4a1f",
+        "ink": "#232C32",
         "h": 0.871,
         "w": 0.183
       },
-      "position": null
+      "position": null,
+      "author": "John Rawls"
     },
     {
       "id": "oxcrrxkns7",
