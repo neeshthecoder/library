@@ -3,6 +3,7 @@ import { Cache, type LocalPosition, type PendingOp, type Settings } from './cach
 import { GitHub, type FetchLike } from './github'
 import {
   addBook,
+  editBook,
   emptyManifest,
   isReflected,
   merge,
@@ -13,6 +14,7 @@ import {
   setPosition,
   totalSize,
   type Book,
+  type BookChanges,
   type Manifest,
   type Position,
 } from './manifest'
@@ -340,6 +342,43 @@ export class Library {
       await this.cache.putPending(done)
       this.#setPending(done)
       this.store.set({ published: res.manifest })
+    } catch (e) {
+      this.store.set((st) => ({ pending: [...st.pending.filter((x) => x.key !== key), ...(previous ? [previous] : [])] }))
+      throw e
+    }
+  }
+
+  /**
+   * Changes a book's title, author, font or colors. Shows immediately; one
+   * commit records it, applied on top of the latest library so other changes
+   * made meanwhile are kept. Reverts and rethrows if the commit fails.
+   * Resolves to false (and commits nothing) when nothing would change.
+   */
+  async editBook(id: string, changes: BookChanges): Promise<boolean> {
+    const s = this.store.get()
+    if (!s.settings) throw new NotConnectedError()
+    const current = this.manifest
+    if (editBook(current, id, changes) === current) return false
+    const key = `edit:${id}`
+    const previous = s.pending.find((x) => x.key === key)
+    // A second edit before the first lands carries the first's changes too.
+    const prior = previous?.op.type === 'edit' ? previous.op.changes : {}
+    const merged: BookChanges = { ...prior, ...changes, spine: { ...prior.spine, ...changes.spine } }
+    if (!Object.keys(merged.spine!).length) delete merged.spine
+    const p: PendingOp = { key, op: { type: 'edit', id, changes: merged }, state: 'uploading', createdAt: this.#now().toISOString() }
+    this.#setPending(p)
+    try {
+      const title = merged.title ?? this.book(id)?.title ?? 'book'
+      const res = await this.#gh(s.settings).commit(
+        (m) => editBook(m, id, merged, this.#now().toISOString()),
+        [],
+        `Edit "${title}"`,
+      )
+      const done: PendingOp = { ...p, state: 'committed', committedAt: this.#now().getTime() }
+      await this.cache.putPending(done)
+      this.#setPending(done)
+      this.store.set({ published: res.manifest })
+      return true
     } catch (e) {
       this.store.set((st) => ({ pending: [...st.pending.filter((x) => x.key !== key), ...(previous ? [previous] : [])] }))
       throw e

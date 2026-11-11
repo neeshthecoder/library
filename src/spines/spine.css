@@ -53,6 +53,13 @@
   white-space: nowrap;
 }
 .spine-title-line.soft-break::after { content: "-"; }
+/* Inside .spine-title, so the title and author center together as one block. */
+.spine-author {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+}
 
 .spine-ribbon {
   position: absolute;

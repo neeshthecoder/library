@@ -44,7 +44,7 @@ function coverPng(w = 120, h = 180) {
 const para = (n) =>
   `<p>This is paragraph ${n} of the sample book. It exists so the reader has enough text to paginate across several spreads, and so that reading positions can be saved and restored in tests.</p>`
 
-function epub({ title, chapters = 12, cover = true, extraFiles = {}, script = false }) {
+function epub({ title, chapters = 12, cover = true, extraFiles = {}, script = false, creators = [] }) {
   const items = []
   const spine = []
   const files = {}
@@ -76,7 +76,7 @@ function epub({ title, chapters = 12, cover = true, extraFiles = {}, script = fa
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="uid">
 <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
 <dc:identifier id="uid">urn:uuid:12345678-1234-1234-1234-1234567890ab</dc:identifier>
-<dc:title>${title}</dc:title><dc:language>en</dc:language>
+<dc:title>${title}</dc:title>${creators.map((c) => `<dc:creator>${c}</dc:creator>`).join('')}<dc:language>en</dc:language>
 <meta property="dcterms:modified">2026-01-01T00:00:00Z</meta>
 ${cover ? '<meta name="cover" content="cover-image"/>' : ''}
 </metadata><manifest>${items.join('')}</manifest><spine>${spine.join('')}</spine></package>`)
@@ -100,11 +100,12 @@ writeFileSync(out('fonts.epub'), epub({ title: 'Book With Fonts', chapters: 2, e
   'META-INF/encryption.xml': encXml('http://www.idpf.org/2008/embedding', 'OEBPS/font.otf'),
   'OEBPS/font.otf': strToU8('not really a font'),
 } }))
+writeFileSync(out('authors.epub'), epub({ title: 'Good Omens', chapters: 2, creators: ['Terry Pratchett', 'Neil Gaiman'] }))
 writeFileSync(out('book.zip'), readFileSync(out('sample.epub')))
 writeFileSync(out('notes.docx'), zipSync({ '[Content_Types].xml': strToU8('<Types/>'), 'word/document.xml': strToU8('<w:document/>') }))
 
 // --- PDF ---------------------------------------------------------------
-function pdf({ pages = 9, title }) {
+function pdf({ pages = 9, title, author }) {
   const objs = []
   const add = (s) => (objs.push(s), objs.length)
   const catalog = add('') // placeholder 1
@@ -118,7 +119,7 @@ function pdf({ pages = 9, title }) {
   }
   objs[catalog - 1] = `<< /Type /Catalog /Pages ${pagesId} 0 R >>`
   objs[pagesId - 1] = `<< /Type /Pages /Kids [${kids.map((k) => `${k} 0 R`).join(' ')}] /Count ${pages} >>`
-  const info = add(`<< /Title (${title}) /Producer (fixtures) >>`)
+  const info = add(`<< /Title (${title})${author ? ` /Author (${author})` : ''} /Producer (fixtures) >>`)
   let body = '%PDF-1.4\n%\xe2\xe3\xcf\xd3\n'
   const offsets = []
   objs.forEach((o, i) => {
@@ -131,6 +132,7 @@ function pdf({ pages = 9, title }) {
   return Buffer.from(body, 'latin1')
 }
 writeFileSync(out('sample.pdf'), pdf({ title: 'A Sample PDF' }))
+writeFileSync(out('authored.pdf'), pdf({ pages: 2, title: 'Middlemarch', author: '  George   Eliot ' }))
 writeFileSync(out('the_left-hand_of_darkness (2).pdf'), pdf({ pages: 2, title: 'Microsoft Word - draft3.docx' }))
 // A PDF claiming an Adobe ADEPT security handler
 writeFileSync(out('adept.pdf'), Buffer.concat([pdf({ pages: 1, title: 'Adept' }), Buffer.from('\n% trailer2\n<< /Encrypt << /Filter /EBX_HANDLER /V 2 >> >>\n', 'latin1')]))

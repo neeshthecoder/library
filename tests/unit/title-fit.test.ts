@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { fitTitle, LINE_HEIGHT, MAX_SIZE, MIN_SIZE, SOFT_HYPHEN, truncate, wrap, withSoftHyphen } from '../../src/spines/title-fit'
+import { fitTitle, LINE_HEIGHT, MAX_SIZE, MIN_SIZE, SOFT_HYPHEN, truncate, wrap, withSoftHyphen, fontMeasures } from '../../src/spines/title-fit'
 
 // Fake measurer: every character is 0.45em wide (close to the condensed serif).
 const measure = (t: string, s: number) => t.length * s * 0.45
@@ -63,5 +63,26 @@ describe('fitTitle (horizontal, like a spine label)', () => {
 
   it('prefers word boundaries when truncating', () => {
     expect(truncate('Pride and Prejudice and Zombies', 10, measure('Pride and Prejudice…', 10) + 2, measure)).toBe('Pride and Prejudice…')
+  })
+})
+
+describe('fontMeasures', () => {
+  it('makes one measurer per font and falls back to the default', () => {
+    const made: string[] = []
+    const m = fontMeasures((f) => { made.push(f.id); return (t, s) => t.length * s })
+    expect(m.get('cardo')).toBe(m.get('cardo'))
+    expect(m.get(undefined)).toBe(m.get('no-such-font'))
+    expect(made).toEqual(['cardo', 'instrument-serif'])
+  })
+
+  it('makes a fresh measurer after a reset', () => {
+    const m = fontMeasures(() => (t, s) => t.length * s)
+    const before = m.get('cardo')
+    const other = m.get('pagella')
+    m.reset('cardo')
+    expect(m.get('cardo')).not.toBe(before)
+    expect(m.get('pagella')).toBe(other)
+    m.reset()
+    expect(m.get('pagella')).not.toBe(other)
   })
 })

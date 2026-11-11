@@ -45,7 +45,24 @@ const shelf = new ShelfView({
   onSignIn: () => void signIn(),
   onMove: (id, finished) => void moveBook(id, finished),
   onLeaderboard: () => void openLeaderboard(),
+  onEdit: (id) => void editBook(id),
 })
+
+/** Edits a shelved book's title, author, font and colors (one commit). */
+async function editBook(id: string): Promise<void> {
+  const book = library.book(id)
+  if (!book || !library.isOwner) return
+  const { openBookDialog, editChanges } = await import('./import/preview-dialog')
+  const res = await openBookDialog({ mode: 'edit', id, title: book.title, author: book.author, cover: book.cover, spine: book.spine })
+  if (!res) return
+  const changes = editChanges(book, res)
+  if (!Object.keys(changes).length) return
+  try {
+    await library.editBook(id, changes)
+  } catch (e) {
+    showMessages([`${book.title}: changes couldn’t be saved. ${e instanceof Error ? e.message : ''}`.trim()])
+  }
+}
 
 async function openLeaderboard(): Promise<void> {
   const { openCheckIn } = await import('./leaderboard/checkin-dialog')

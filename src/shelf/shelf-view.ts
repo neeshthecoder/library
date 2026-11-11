@@ -1,7 +1,8 @@
-import { shelfSections, type Book } from '../storage/manifest'
+import { cleanAuthor, shelfSections, type Book } from '../storage/manifest'
 import { leanGap, spineGap, spineLean, spinePx } from '../spines/geometry'
 import { renderSpine } from '../spines/spine'
-import { canvasMeasure, type Measure } from '../spines/title-fit'
+import { fontMeasures } from '../spines/title-fit'
+import { fontFor, loadFont } from '../spines/fonts'
 import { libraryReadout } from '../ui/format'
 import { setThemeOverride } from '../theme'
 import { bindWheelScroll } from './wheel-scroll'
@@ -36,6 +37,8 @@ export interface ShelfCallbacks {
   onMove(id: string, finished: boolean): void
   /** The leaderboard acorns were clicked. */
   onLeaderboard(): void
+  /** Owner chose "Edit" from a spine's context menu. */
+  onEdit?(id: string): void
 }
 
 const SCROLL_KEY = 'shelf-scroll'
@@ -50,7 +53,9 @@ export class ShelfView {
   #status: HTMLElement
   #descs: HTMLElement
   #shelfPx = 0
-  #measure: Measure
+  #measures = fontMeasures()
+  /** Fonts already loaded, or loading with a re-fit queued. */
+  #fontsSeen = new Set<string>()
   #books: Book[] = []
   #renderedKey = ''
   #focusIndex = 0
@@ -62,6 +67,9 @@ export class ShelfView {
   #engraving!: HTMLElement
   #top!: HTMLElement
   #onMove: (id: string, finished: boolean) => void
+  #onEdit?: (id: string) => void
+  /** The open spine context menu, and the spine it belongs to. */
+  #menu: { el: HTMLElement; spine: HTMLButtonElement; dispose: () => void } | null = null
   #drag: {
     id: string
     btn: HTMLButtonElement
@@ -75,12 +83,13 @@ export class ShelfView {
     ghost?: HTMLElement
     offX: number
     offY: number
+    /** Farthest the pointer has moved from the press, in px. */
+    moved?: number
   } | null = null
   #suppressClick = false
   #raf = 0
 
   constructor(cb: ShelfCallbacks) {
-    this.#measure = canvasMeasure()
     this.el = document.createElement('main')
     this.el.className = 'shelf-page'
     this.el.innerHTML = `
@@ -123,7 +132,9 @@ export class ShelfView {
     this.#engraving = this.el.querySelector('.plank-engraving')!
     this.#top = this.el.querySelector('.bookcase-top')!
     this.#onMove = cb.onMove
+    this.#onEdit = cb.onEdit
     this.#bindDrag()
+    this.#bindMenu()
 
     this.el.querySelector('[data-action="add"]')!.addEventListener('click', () => cb.onAddBook())
     this.el.querySelector('[data-action="settings"]')!.addEventListener('click', () => cb.onSettings())
@@ -163,6 +174,7 @@ export class ShelfView {
       if (btn) this.#setRoving(this.#indexOf(btn.dataset.id!))
     })
     this.#scroller.addEventListener('scroll', () => {
+      this.closeMenu(false)
       try { sessionStorage.setItem(SCROLL_KEY, String(this.#scroller.scrollLeft)) } catch { /* ignore */ }
     }, { passive: true })
 
@@ -182,7 +194,7 @@ export class ShelfView {
     })
     this.#ro.observe(this.#list)
     document.fonts?.ready.then(() => {
-      this.#measure = canvasMeasure()
+      this.#measures.reset()
       this.#renderedKey = ''
       this.#renderBooks()
     })
@@ -242,13 +254,28 @@ export class ShelfView {
     return Math.max(0, this.#books.findIndex((b) => b.id === id))
   }
 
+  /** Re-fits a font's spines once that font arrives; each font is waited on once. */
+  #loadFonts(): void {
+    for (const book of this.#books) {
+      const f = fontFor(book.spine.font)
+      if (this.#fontsSeen.has(f.id)) continue
+      this.#fontsSeen.add(f.id)
+      loadFont(f)?.then(() => {
+        this.#measures.reset(f.id)
+        this.#renderedKey = ''
+        this.#renderBooks()
+      })
+    }
+  }
+
   #renderBooks(): void {
     if (!this.#shelfPx) return
     const key = this.#shelfPx + '|' + this.#books
-      .map((b) => [b.id, b.title, JSON.stringify(b.spine), !!b.position, b.position?.label, this.#finishedIds.has(b.id)].join('~'))
+      .map((b) => [b.id, b.title, b.author ?? '', JSON.stringify(b.spine), !!b.position, b.position?.label, this.#finishedIds.has(b.id)].join('~'))
       .join('|')
     if (key === this.#renderedKey) return
     this.#renderedKey = key
+    this.closeMenu(false)
     const hadFocus = this.#list.contains(document.activeElement)
     const focusedId = hadFocus ? (document.activeElement as HTMLElement).dataset.id : undefined
 
@@ -276,8 +303,11 @@ export class ShelfView {
         btn.dataset.id = book.id
         btn.dataset.section = isFinished ? 'finished' : 'reading'
         btn.draggable = false
-        btn.setAttribute('aria-label', book.title)
-        btn.title = book.title
+        const author = cleanAuthor(book.author)
+        // The name must contain the visible text ("Emma" + "Jane Austen") for
+        // speech input, so the author follows a comma; the tooltip says "by".
+        btn.setAttribute('aria-label', author ? `${book.title}, ${author}` : book.title)
+        btn.title = author ? `${book.title} by ${author}` : book.title
         btn.tabIndex = i === this.#focusIndex ? 0 : -1
         const descText = isFinished ? 'Finished' : book.position ? `In progress, ${book.position.label}` : ''
         if (descText) {
@@ -287,7 +317,7 @@ export class ShelfView {
           this.#descs.append(desc)
           btn.setAttribute('aria-describedby', desc.id)
         }
-        renderSpine(btn, { id: book.id, title: book.title, spine: book.spine, started: !isFinished && !!book.position }, this.#shelfPx, this.#measure)
+        renderSpine(btn, { id: book.id, title: book.title, author, spine: book.spine, started: !isFinished && !!book.position }, this.#shelfPx, this.#measures.get(book.spine.font))
         if (lean) {
           btn.style.setProperty('--lean', `${lean}deg`)
           btn.dataset.lean = 'true'
@@ -297,6 +327,7 @@ export class ShelfView {
       })
     }
 
+    this.#loadFonts()
     section(reading, false, 0)
     const end = document.createElement('li')
     end.className = 'bookend'
@@ -383,6 +414,7 @@ export class ShelfView {
         if (!this.#drag?.active) return
       }
       d.x = e.clientX
+      d.moved = Math.max(d.moved ?? 0, dist)
       this.#moveGhost(e.clientX, e.clientY)
       this.#bookcase.dataset.drop = this.#targetFinished(e.clientX) ? 'finished' : 'reading'
     })
@@ -402,6 +434,98 @@ export class ShelfView {
     // once a touch drag has started, stop the shelf from scrolling under it
     this.#scroller.addEventListener('touchmove', (e) => { if (this.#drag?.active) e.preventDefault() }, { passive: false })
     this.#list.addEventListener('contextmenu', (e) => { if (this.#drag) e.preventDefault() })
+  }
+
+  // Spine context menu (owner only) -----------------------------------------
+
+  #bindMenu(): void {
+    this.#list.addEventListener('contextmenu', (e) => {
+      if (this.#drag || !this.#owner || !this.#onEdit) return // guests get the browser's menu
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.spine')
+      if (!btn) return
+      e.preventDefault()
+      // A keyboard-opened menu has no pointer position: anchor it to the spine.
+      const fromPointer = e.clientX !== 0 || e.clientY !== 0
+      this.#openMenu(btn, fromPointer ? { x: e.clientX, y: e.clientY } : undefined)
+    })
+    this.#list.addEventListener('keydown', (e) => {
+      if (!((e.key === 'F10' && e.shiftKey) || e.key === 'ContextMenu')) return
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.spine')
+      if (!btn || !this.#owner || !this.#onEdit) return
+      e.preventDefault()
+      this.#openMenu(btn)
+    })
+  }
+
+  /** Opens the one-item menu ("Edit") next to a spine, or at the pointer. */
+  #openMenu(spine: HTMLButtonElement, at?: { x: number; y: number }): void {
+    if (!this.#owner || !this.#onEdit) return
+    this.closeMenu(false)
+    const id = spine.dataset.id!
+    const el = document.createElement('div')
+    el.className = 'spine-menu'
+    el.setAttribute('role', 'menu')
+    el.setAttribute('aria-label', spine.getAttribute('aria-label') ?? '')
+    const item = document.createElement('button')
+    item.type = 'button'
+    item.className = 'spine-menu-item'
+    item.setAttribute('role', 'menuitem')
+    item.textContent = 'Edit'
+    el.append(item)
+    document.body.append(el)
+
+    // Next to the pointer, or just right of the spine's middle; kept on screen.
+    const r = spine.getBoundingClientRect()
+    const m = el.getBoundingClientRect()
+    const x = at?.x ?? r.right + 4
+    const y = at?.y ?? r.top + r.height / 2 - m.height / 2
+    el.style.left = `${Math.max(8, Math.min(x, innerWidth - m.width - 8))}px`
+    el.style.top = `${Math.max(8, Math.min(y, innerHeight - m.height - 8))}px`
+
+    item.addEventListener('click', () => {
+      this.closeMenu(true)
+      this.#onEdit?.(id)
+    })
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        e.stopPropagation()
+        this.closeMenu(true)
+      } else if (e.key === 'Tab') {
+        e.preventDefault()
+        this.closeMenu(true)
+      }
+    })
+    const outside = (e: PointerEvent) => {
+      if (!el.contains(e.target as Node)) this.closeMenu(!(e.target as HTMLElement).closest?.('button, a, input, [tabindex]'))
+    }
+    const away = () => this.closeMenu(false)
+    // Listen after this event finishes, so the opening press doesn't close it.
+    const t = window.setTimeout(() => window.addEventListener('pointerdown', outside, true))
+    window.addEventListener('resize', away)
+    window.addEventListener('blur', away)
+    this.#menu = {
+      el,
+      spine,
+      dispose: () => {
+        window.clearTimeout(t)
+        window.removeEventListener('pointerdown', outside, true)
+        window.removeEventListener('resize', away)
+        window.removeEventListener('blur', away)
+      },
+    }
+    item.focus()
+  }
+
+  /** Closes the spine menu, if open. `restoreFocus` puts focus back on its spine. */
+  closeMenu(restoreFocus = true): void {
+    const menu = this.#menu
+    if (!menu) return
+    this.#menu = null
+    menu.dispose()
+    const hadFocus = menu.el.contains(document.activeElement)
+    menu.el.remove()
+    if ((restoreFocus || hadFocus) && menu.spine.isConnected) menu.spine.focus()
   }
 
   #startDrag(): void {
@@ -461,6 +585,8 @@ export class ShelfView {
     // book. Cleared on the next press.
     this.#suppressClick = true
     if (!drop) return
+    // Press-and-hold, then lift without moving: the context menu, not a drop.
+    if (d.touch && (d.moved ?? 0) < 8) return this.#openMenu(d.btn)
     const toFinished = this.#targetFinished(d.x)
     if (toFinished !== this.#finishedIds.has(d.id)) this.#onMove(d.id, toFinished)
   }

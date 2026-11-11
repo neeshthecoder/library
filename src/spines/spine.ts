@@ -3,11 +3,20 @@ import { hexToOklch, oklchToHex } from './color'
 import { ensureContrast, SHELF_BACK } from './contrast'
 import { spinePx } from './geometry'
 import { renderSpineArt } from './trims'
-import { fitTitle, LINE_HEIGHT, SOFT_HYPHEN, type Measure } from './title-fit'
+import { fontFor } from './fonts'
+import { cleanAuthor } from '../storage/manifest'
+import { fitTitle, LINE_HEIGHT, MIN_SIZE, SOFT_HYPHEN, truncate, type Measure } from './title-fit'
+
+/** The author line's size (px): below the title's minimum, so it always reads as secondary. */
+export const AUTHOR_SIZE = 11
+/** Space between the title and the author line (px). */
+export const AUTHOR_GAP = 4
 
 export interface SpineModel {
   id: string
   title: string
+  /** Shown under the title when set. */
+  author?: string | null
   spine: SpineSettings
   /** Show the bookmark ribbon. */
   started: boolean
@@ -38,6 +47,7 @@ export function applySpineColors(el: HTMLElement, s: Pick<SpineSettings, 'bg' | 
 /**
  * Renders spine art, title and optional ribbon into `el` (usually a button).
  * Sizes come from the stored height/width fractions and the shelf height.
+ * `measure` must measure in the spine's font (see fontMeasures).
  */
 export function renderSpine(el: HTMLElement, model: SpineModel, shelfPx: number, measure: Measure): void {
   const { width, height } = spinePx(model.spine.h, model.spine.w, shelfPx)
@@ -45,7 +55,14 @@ export function renderSpine(el: HTMLElement, model: SpineModel, shelfPx: number,
   el.style.height = `${height}px`
   applySpineColors(el, model.spine)
   const art = renderSpineArt(model.spine, width, height)
-  const fit = fitTitle(model.title, art.panel.width, art.panel.height, measure)
+  // Reserve one author line under the title, unless the panel is too short
+  // for both: then the author is left off (it stays in the accessible name).
+  let author = cleanAuthor(model.author)
+  let titleHeight = art.panel.height
+  const reserve = AUTHOR_SIZE * LINE_HEIGHT + AUTHOR_GAP
+  if (author && titleHeight - reserve >= MIN_SIZE * LINE_HEIGHT) titleHeight -= reserve
+  else author = null
+  const fit = fitTitle(model.title, art.panel.width, titleHeight, measure)
 
   el.innerHTML = ''
   if (model.started) {
@@ -69,6 +86,10 @@ export function renderSpine(el: HTMLElement, model: SpineModel, shelfPx: number,
     fontSize: `${fit.size}px`,
     lineHeight: String(LINE_HEIGHT),
   })
+  const font = fontFor(model.spine.font)
+  title.style.fontFamily = font.stack
+  title.style.fontWeight = String(font.weight)
+  el.dataset.font = font.id
   fit.lines.forEach((text, i) => {
     const soft = text.endsWith(SOFT_HYPHEN)
     // Real spaces between lines keep the text matching the title for
@@ -80,6 +101,15 @@ export function renderSpine(el: HTMLElement, model: SpineModel, shelfPx: number,
     line.textContent = soft ? text.slice(0, -1) : text
     title.append(line)
   })
+  if (author) {
+    const by = document.createElement('span')
+    by.className = 'spine-author'
+    by.style.fontSize = `${AUTHOR_SIZE}px`
+    by.style.marginTop = `${AUTHOR_GAP}px`
+    by.textContent = truncate(author, AUTHOR_SIZE, art.panel.width, measure)
+    title.append(' ', by) // a real space, so the visible text reads "Title Author"
+
+  }
   el.append(title)
   el.dataset.truncated = String(fit.truncated)
 }

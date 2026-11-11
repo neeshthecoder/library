@@ -15,6 +15,8 @@ export interface SpineSettings {
   h: number
   /** Width as a fraction of shelf height (before the 44 px floor). */
   w: number
+  /** Title font id (see src/spines/fonts.ts). Absent or unknown: Instrument Serif. */
+  font?: string
 }
 
 export interface Position {
@@ -28,6 +30,8 @@ export interface Position {
 export interface Book {
   id: string
   title: string
+  /** Shown under the title on the spine. Absent or null: no author. */
+  author?: string | null
   format: Format
   file: string
   size: number
@@ -51,6 +55,26 @@ export type Op =
   | { type: 'delete'; id: string }
   | { type: 'positions'; positions: Record<string, Position> }
   | { type: 'finish'; id: string; finishedAt: string | null }
+  | { type: 'edit'; id: string; changes: BookChanges }
+
+/** Spine fields an edit may change. Dimensions (h, w) never change. */
+export type SpineChanges = Partial<Pick<SpineSettings, 'source' | 'design' | 'bg' | 'trim' | 'ink' | 'font'>>
+
+/** What an edit changes. Only the fields present are touched. */
+export interface BookChanges {
+  title?: string
+  author?: string | null
+  spine?: SpineChanges
+}
+
+/** The longest author kept, in characters. */
+export const MAX_AUTHOR = 120
+
+/** Collapses whitespace and caps the length; empty becomes null. */
+export function cleanAuthor(author: string | null | undefined): string | null {
+  const a = (author ?? '').replace(/\s+/g, ' ').trim().slice(0, MAX_AUTHOR).trim()
+  return a || null
+}
 
 export class ManifestVersionError extends Error {
   constructor(public found: unknown) {
@@ -119,8 +143,45 @@ export function setFinished(m: Manifest, id: string, finishedAt: string | null, 
   return changed ? { ...m, updatedAt: now, books } : m
 }
 
+/** The changes that would actually alter `b`; empty when it already matches. */
+function effectiveChanges(b: Book, changes: BookChanges): BookChanges {
+  const out: BookChanges = {}
+  if (changes.title !== undefined && changes.title !== b.title) out.title = changes.title
+  if (changes.author !== undefined && (changes.author ?? null) !== (b.author ?? null)) out.author = changes.author
+  if (changes.spine) {
+    const spine: SpineChanges = {}
+    for (const [k, v] of Object.entries(changes.spine) as [keyof SpineChanges, string | undefined][]) {
+      if (v !== undefined && v !== b.spine[k]) (spine as Record<string, string>)[k] = v
+    }
+    if (Object.keys(spine).length) out.spine = spine
+  }
+  return out
+}
+
+/**
+ * Merges only the given fields into one book. Its file, length, position,
+ * finished state and spine dimensions are left alone. Returns `m` itself
+ * when nothing would change.
+ */
+export function editBook(m: Manifest, id: string, changes: BookChanges, now = new Date().toISOString()): Manifest {
+  let changed = false
+  const books = m.books.map((b) => {
+    if (b.id !== id) return b
+    const c = effectiveChanges(b, changes)
+    if (!Object.keys(c).length) return b
+    changed = true
+    const next: Book = { ...b, spine: { ...b.spine, ...c.spine } }
+    if (c.title !== undefined) next.title = c.title
+    if (c.author !== undefined) next.author = c.author
+    return next
+  })
+  return changed ? { ...m, updatedAt: now, books } : m
+}
+
 export function applyOp(m: Manifest, op: Op, now?: string): Manifest {
   switch (op.type) {
+    case 'edit':
+      return editBook(m, op.id, op.changes, now)
     case 'finish':
       return setFinished(m, op.id, op.finishedAt, now)
     case 'add':
@@ -140,6 +201,10 @@ export function merge(remote: Manifest, ops: readonly Op[]): Manifest {
 /** True when the manifest already reflects the operation. */
 export function isReflected(m: Manifest, op: Op): boolean {
   switch (op.type) {
+    case 'edit': {
+      const b = m.books.find((x) => x.id === op.id)
+      return !b || !Object.keys(effectiveChanges(b, op.changes)).length
+    }
     case 'finish': {
       const b = m.books.find((x) => x.id === op.id)
       return !b || (b.finishedAt ?? null) === op.finishedAt

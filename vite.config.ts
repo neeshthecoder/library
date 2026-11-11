@@ -54,6 +54,11 @@ export default defineConfig({
     FontaineTransform.vite({
       fallbacks: {
         'Instrument Serif': ['Times New Roman', 'Georgia'],
+        'EB Garamond': ['Times New Roman', 'Georgia'],
+        Cardo: ['Times New Roman', 'Georgia'],
+        'TeX Gyre Pagella': ['Palatino', 'Georgia'],
+        'Cormorant Garamond': ['Times New Roman', 'Georgia'],
+        'Crimson Pro': ['Times New Roman', 'Georgia'],
       },
       resolvePath: (id: string) => new URL(`./public${id.replace(base, '/')}`, import.meta.url),
     }),
