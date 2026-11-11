@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:57:42.956Z",
+  "updatedAt": "2026-11-11T19:57:46.216Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -951,7 +951,8 @@
         "trim": "#8a4b3b",
         "ink": "#232C32",
         "h": 0.942,
-        "w": 0.166
+        "w": 0.166,
+        "font": "cormorant-garamond"
       },
       "position": null,
       "author": "Alissa M. Ardito"
