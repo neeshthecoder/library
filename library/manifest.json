@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:22.706Z",
+  "updatedAt": "2026-11-11T19:46:26.568Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -301,10 +301,10 @@
         "accent": "#00cad3"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#a83e43",
-        "trim": "#00cad3",
-        "ink": "#F8F6F1",
+        "source": "trim",
+        "bg": "#2f4a6d",
+        "trim": "#e8c26a",
+        "ink": "#e8c26a",
         "h": 0.967,
         "w": 0.176
       },
@@ -313,7 +313,8 @@
         "fraction": 0.05362776025236593,
         "label": "18–19 of 318",
         "updatedAt": "2026-11-08T05:44:10.945Z"
-      }
+      },
+      "author": "Adam Brandenburger & Barry Nalebuff"
     },
     {
       "id": "74xad4odub",
