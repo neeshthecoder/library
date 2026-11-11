@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:57.927Z",
+  "updatedAt": "2026-11-11T19:47:01.041Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1125,14 +1125,15 @@
         "accent": "#600610"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#f9f9f9",
-        "trim": "#600610",
-        "ink": "#600610",
+        "source": "trim",
+        "bg": "#9cc0d9",
+        "trim": "#2f4a6d",
+        "ink": "#2f4a6d",
         "h": 0.845,
         "w": 0.15
       },
-      "position": null
+      "position": null,
+      "author": "Anthony Weston"
     },
     {
       "id": "gk6okoles4",
