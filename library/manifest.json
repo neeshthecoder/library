@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:33.243Z",
+  "updatedAt": "2026-11-11T19:46:36.180Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -554,14 +554,15 @@
         "accent": "#ab904c"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#2f2a27",
-        "trim": "#ab904c",
-        "ink": "#ab904c",
+        "source": "trim",
+        "bg": "#b3a4d1",
+        "trim": "#4b3a6e",
+        "ink": "#232C32",
         "h": 0.85,
         "w": 0.171
       },
-      "position": null
+      "position": null,
+      "author": "Arthur Koestler"
     },
     {
       "id": "fmvlznihyl",
