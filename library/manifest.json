@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:45:39.832Z",
+  "updatedAt": "2026-11-11T19:45:42.227Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -604,14 +604,15 @@
         "accent": "#aac4d9"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#075ba9",
-        "trim": "#aac4d9",
-        "ink": "#F8F6F1",
+        "source": "trim",
+        "bg": "#f2b5a0",
+        "trim": "#8a4b3b",
+        "ink": "#232C32",
         "h": 0.897,
         "w": 0.175
       },
-      "position": null
+      "position": null,
+      "author": "Friedrich Nietzsche"
     },
     {
       "id": "f5bff4kcpe",
