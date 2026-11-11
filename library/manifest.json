@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:48.872Z",
+  "updatedAt": "2026-11-11T19:46:51.489Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -867,13 +867,14 @@
       },
       "spine": {
         "source": "trim",
-        "bg": "#323800",
-        "trim": "#797fe7",
-        "ink": "#F8F6F1",
+        "bg": "#b3a4d1",
+        "trim": "#4b3a6e",
+        "ink": "#232C32",
         "h": 0.878,
         "w": 0.198
       },
-      "position": null
+      "position": null,
+      "author": "Alexis de Tocqueville"
     },
     {
       "id": "j6pr2cqwqr",
