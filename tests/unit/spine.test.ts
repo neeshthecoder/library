@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest'
-import { applySpineColors, AUTHOR_SIZE, renderSpine, ribbonColor } from '../../src/spines/spine'
+import { applySpineColors, AUTHOR_SIZE, AUTHOR_SIZES, renderSpine, ribbonColor } from '../../src/spines/spine'
 import { contrast, SHELF_BACK } from '../../src/spines/contrast'
 import type { SpineSettings } from '../../src/storage/manifest'
 
@@ -112,10 +112,25 @@ describe('author line', () => {
     expect(size(render('Ursula K. Le Guin'))).toBeLessThanOrEqual(size(render(null)))
   })
 
-  it('truncates a long author with an ellipsis', () => {
+  it('wraps a long author onto several lines, never with an ellipsis', () => {
     const narrow: SpineSettings = { ...spine, w: 0.1 }
-    const by = render('Gabriel García Márquez and Friends of the Library', 'Emma', 300, narrow).querySelector('.spine-author')!
-    expect(by.textContent).toMatch(/…$/)
+    const by = render('Gabriel García Márquez', 'Emma', 300, narrow).querySelector('.spine-author')!
+    expect(by.querySelectorAll('.spine-author-line').length).toBeGreaterThan(1)
+    expect(by.textContent).toBe('Gabriel García Márquez')
+    expect(by.textContent).not.toContain('…')
+  })
+
+  it('shrinks the author before letting it cut the title short', () => {
+    const narrow: SpineSettings = { ...spine, w: 0.1 }
+    for (const shelfPx of [120, 160, 200, 300]) {
+      const el = render('Gabriel García Márquez', 'One Hundred Years of Solitude', shelfPx, narrow)
+      const alone = render(null, 'One Hundred Years of Solitude', shelfPx, narrow)
+      // the author never shortens the title: it's only cut when it's cut anyway
+      expect(el.dataset.truncated).toBe(alone.dataset.truncated)
+      expect(el.querySelector('.spine-author')?.textContent ?? 'Gabriel García Márquez').toBe('Gabriel García Márquez')
+      const by = el.querySelector<HTMLElement>('.spine-author')
+      if (by) expect(AUTHOR_SIZES.map((n) => `${n}px`)).toContain(by.style.fontSize)
+    }
   })
 
   it('leaves the author off a spine too short for both', () => {

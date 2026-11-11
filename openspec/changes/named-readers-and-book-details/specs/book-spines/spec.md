@@ -46,7 +46,7 @@ When a book has an author, the spine SHALL show it under the title in the same f
 ## MODIFIED Requirements
 
 ### Requirement: Title auto-fit and truncation
-The title SHALL be sized as large as fits the panel, down to a minimum legible size, and MAY wrap to two lines before being shortened. Only if it still does not fit SHALL it be truncated with an ellipsis. When an author is present, room for one author line SHALL be reserved below the title first; the author line SHALL be truncated with an ellipsis if it is wider than the panel, and SHALL be dropped from the spine (but kept in the accessible name) if the panel is too short for both.
+The title SHALL be sized as large as fits the panel, down to a minimum legible size, and MAY wrap to two lines before being shortened. Only if it still does not fit SHALL it be truncated with an ellipsis. When an author is present, it SHALL wrap onto as many lines as it needs below the title and SHALL never be shortened with an ellipsis. The author SHALL never cause the title to be truncated: it SHALL shrink (11, then 10, then 9 px) to make room, and SHALL be dropped from the spine (but kept in the accessible name) if even that would cut the title short.
 
 #### Scenario: Short title
 - **WHEN** the title is "Emma"
@@ -58,8 +58,8 @@ The title SHALL be sized as large as fits the panel, down to a minimum legible s
 
 #### Scenario: Long author
 - **WHEN** the author is "Gabriel García Márquez" on a narrow spine
-- **THEN** the author line ends with an ellipsis and the full author remains in the accessible name and tooltip
+- **THEN** the author wraps onto two or more lines under the title, in full, with no ellipsis
 
 #### Scenario: Short spine
-- **WHEN** the panel can't fit the title at the minimum size and an author line together
-- **THEN** the title is shown and the author line is left off the spine
+- **WHEN** the panel can't fit the whole title and the wrapped author, even at 9 px
+- **THEN** the title is shown and the author is left off the spine
