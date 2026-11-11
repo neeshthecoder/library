@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T23:18:52.649Z",
+  "updatedAt": "2026-11-11T23:18:57.350Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1092,7 +1092,7 @@
       },
       "position": null,
       "author": "Bertrand Russell",
-      "finishedAt": "2026-11-11T23:18:51.286Z"
+      "finishedAt": null
     },
     {
       "id": "join5xdcup",
