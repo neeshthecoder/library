@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:45:50.427Z",
+  "updatedAt": "2026-11-11T19:45:53.226Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -907,14 +907,15 @@
         "accent": "#ecc489"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#4b2b5b",
-        "trim": "#ecc489",
-        "ink": "#ecc489",
+        "source": "trim",
+        "bg": "#f2b5a0",
+        "trim": "#8a4b3b",
+        "ink": "#232C32",
         "h": 0.942,
         "w": 0.166
       },
-      "position": null
+      "position": null,
+      "author": "Alissa M. Ardito"
     },
     {
       "id": "a5ozm5hh66",
