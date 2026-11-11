@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:55:33.230Z",
+  "updatedAt": "2026-11-11T19:55:36.735Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -311,7 +311,8 @@
         "trim": "#e8c26a",
         "ink": "#e8c26a",
         "h": 0.967,
-        "w": 0.176
+        "w": 0.176,
+        "font": "pagella"
       },
       "position": {
         "locator": "18",
