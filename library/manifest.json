@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:55:47.010Z",
+  "updatedAt": "2026-11-11T19:55:50.336Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -428,7 +428,8 @@
         "trim": "#f3e9d2",
         "ink": "#232C32",
         "h": 0.966,
-        "w": 0.126
+        "w": 0.126,
+        "font": "pagella"
       },
       "position": null,
       "author": "G. H. Hardy"
