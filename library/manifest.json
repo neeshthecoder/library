@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:45:28.625Z",
+  "updatedAt": "2026-11-11T19:45:31.264Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -269,9 +269,9 @@
         "accent": "#ab3726"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#bfb896",
-        "trim": "#ab3726",
+        "source": "trim",
+        "bg": "#f2b5a0",
+        "trim": "#8a4b3b",
         "ink": "#232C32",
         "h": 0.776,
         "w": 0.19
@@ -281,7 +281,8 @@
         "fraction": 0,
         "label": "1 of 1896",
         "updatedAt": "2026-11-08T04:59:50.588Z"
-      }
+      },
+      "author": "Robert A. Caro"
     },
     {
       "id": "aizyxrvliv",
