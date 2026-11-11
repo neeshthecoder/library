@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:56:51.932Z",
+  "updatedAt": "2026-11-11T19:56:55.057Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -546,7 +546,8 @@
         "trim": "#f4d8b8",
         "ink": "#000000",
         "h": 0.973,
-        "w": 0.166
+        "w": 0.166,
+        "font": "crimson-pro"
       },
       "position": null,
       "author": "J. M. Coetzee"
