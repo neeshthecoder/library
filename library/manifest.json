@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T17:49:03.752Z",
+  "updatedAt": "2026-11-11T17:49:16.882Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -96,7 +96,8 @@
         "fraction": 0.005238250516300031,
         "label": "1%",
         "updatedAt": "2026-11-08T02:20:21.494Z"
-      }
+      },
+      "author": "Amparo Devila"
     },
     {
       "id": "yqarlqrjyk",
