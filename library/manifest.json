@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:45:42.227Z",
+  "updatedAt": "2026-11-11T19:45:44.872Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -412,13 +412,14 @@
       "spine": {
         "source": "trim",
         "design": "arch",
-        "bg": "#c3dde9",
-        "trim": "#b84e4c",
+        "bg": "#8fae8b",
+        "trim": "#f3e9d2",
         "ink": "#232C32",
         "h": 0.966,
         "w": 0.126
       },
-      "position": null
+      "position": null,
+      "author": "G. H. Hardy"
     },
     {
       "id": "lbos7liplw",
