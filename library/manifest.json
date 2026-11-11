@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:51.489Z",
+  "updatedAt": "2026-11-11T19:46:54.948Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -815,14 +815,15 @@
         "accent": "#3a3a37"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#f0ebe5",
-        "trim": "#3a3a37",
-        "ink": "#3a3a37",
+        "source": "trim",
+        "bg": "#9cc0d9",
+        "trim": "#2f4a6d",
+        "ink": "#2f4a6d",
         "h": 0.751,
         "w": 0.204
       },
-      "position": null
+      "position": null,
+      "author": "Robert A. Caro"
     },
     {
       "id": "gocv3tihi4",
