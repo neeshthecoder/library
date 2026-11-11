@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:57:56.829Z",
+  "updatedAt": "2026-11-11T19:57:59.982Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1059,7 +1059,8 @@
         "trim": "#c96f4a",
         "ink": "#232C32",
         "h": 0.76,
-        "w": 0.2
+        "w": 0.2,
+        "font": "pagella"
       },
       "position": null,
       "author": "Jordan Ellenberg"
