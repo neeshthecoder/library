@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:47:36.884Z",
+  "updatedAt": "2026-11-11T19:48:08.718Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -725,9 +725,9 @@
       },
       "spine": {
         "source": "trim",
-        "bg": "#003833",
-        "trim": "#0091ad",
-        "ink": "#F8F6F1",
+        "bg": "#f1e3b5",
+        "trim": "#c96f4a",
+        "ink": "#232C32",
         "h": 0.797,
         "w": 0.193
       },
