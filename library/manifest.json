@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:11.335Z",
+  "updatedAt": "2026-11-11T19:46:14.586Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1138,15 +1138,16 @@
         "accent": "#7c6b5f"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#fcfcfc",
-        "trim": "#7c6b5f",
-        "ink": "#7c6b5f",
+        "source": "trim",
+        "bg": "#b3a4d1",
+        "trim": "#4b3a6e",
+        "ink": "#232C32",
         "h": 0.895,
         "w": 0.131
       },
       "position": null,
-      "finishedAt": null
+      "finishedAt": null,
+      "author": "Paul Lockhart"
     },
     {
       "id": "lz5jc5m4c5",
