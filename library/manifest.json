@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:58:06.813Z",
+  "updatedAt": "2026-11-11T19:58:13.702Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1167,7 +1167,8 @@
         "trim": "#2f4a6d",
         "ink": "#2f4a6d",
         "h": 0.845,
-        "w": 0.15
+        "w": 0.15,
+        "font": "cardo"
       },
       "position": null,
       "author": "Anthony Weston"
