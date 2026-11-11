@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:55:26.539Z",
+  "updatedAt": "2026-11-11T19:55:29.838Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -219,7 +219,8 @@
         "trim": "#f2c879",
         "ink": "#FFFFFF",
         "h": 0.889,
-        "w": 0.179
+        "w": 0.179,
+        "font": "pagella"
       },
       "position": null,
       "author": "Euclid"
