@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:58:03.646Z",
+  "updatedAt": "2026-11-11T19:58:06.813Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1113,7 +1113,8 @@
         "trim": "#7a3e48",
         "ink": "#232C32",
         "h": 0.796,
-        "w": 0.168
+        "w": 0.168,
+        "font": "crimson-pro"
       },
       "position": null,
       "author": "Philip E. Tetlock & Dan Gardner"
