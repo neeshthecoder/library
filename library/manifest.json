@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:45:34.122Z",
+  "updatedAt": "2026-11-11T19:45:36.842Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -436,10 +436,10 @@
         "accent": "#d3bb9e"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#4b5b72",
-        "trim": "#d3bb9e",
-        "ink": "#F8F6F1",
+        "source": "trim",
+        "bg": "#d8a1a4",
+        "trim": "#7a3e48",
+        "ink": "#232C32",
         "h": 0.821,
         "w": 0.17
       },
@@ -448,7 +448,8 @@
         "fraction": 0.0013212368282785757,
         "label": "0%",
         "updatedAt": "2026-11-11T17:09:30.513Z"
-      }
+      },
+      "author": "Douglas Adams"
     },
     {
       "id": "xst3zq43xy",
