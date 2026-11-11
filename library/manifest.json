@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:55:50.336Z",
+  "updatedAt": "2026-11-11T19:55:57.112Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -486,7 +486,8 @@
         "trim": "#6b4a1f",
         "ink": "#232C32",
         "h": 0.79,
-        "w": 0.173
+        "w": 0.173,
+        "font": "cormorant-garamond"
       },
       "position": null,
       "author": "Kazuo Ishiguro"
