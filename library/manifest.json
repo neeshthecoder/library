@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:45:55.964Z",
+  "updatedAt": "2026-11-11T19:45:58.652Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1059,14 +1059,15 @@
         "accent": "#dfeaeb"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#272526",
-        "trim": "#dfeaeb",
-        "ink": "#dfeaeb",
+        "source": "trim",
+        "bg": "#d8a1a4",
+        "trim": "#7a3e48",
+        "ink": "#232C32",
         "h": 0.796,
         "w": 0.168
       },
-      "position": null
+      "position": null,
+      "author": "Philip E. Tetlock & Dan Gardner"
     },
     {
       "id": "b5zt7x2cu2",
