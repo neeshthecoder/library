@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:58:17.069Z",
+  "updatedAt": "2026-11-11T19:58:20.651Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -1222,7 +1222,8 @@
         "trim": "#4b3a6e",
         "ink": "#232C32",
         "h": 0.782,
-        "w": 0.166
+        "w": 0.166,
+        "font": "crimson-pro"
       },
       "position": null,
       "author": "Xiaohuan Lan"
