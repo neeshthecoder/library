@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:47:13.420Z",
+  "updatedAt": "2026-11-11T19:47:16.261Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -583,10 +583,10 @@
         "accent": "#f8f8f7"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#010312",
-        "trim": "#f8f8f7",
-        "ink": "#f8f8f7",
+        "source": "trim",
+        "bg": "#3f7c7a",
+        "trim": "#f2c879",
+        "ink": "#FFFFFF",
         "h": 0.885,
         "w": 0.158
       },
@@ -595,7 +595,8 @@
         "fraction": 0,
         "label": "1 of 160",
         "updatedAt": "2026-11-11T17:08:59.358Z"
-      }
+      },
+      "author": "Albert Camus"
     },
     {
       "id": "rgnnpoootm",
