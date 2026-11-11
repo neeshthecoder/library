@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:46:14.586Z",
+  "updatedAt": "2026-11-11T19:46:22.706Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -182,9 +182,9 @@
       "spine": {
         "source": "trim",
         "design": "arch",
-        "bg": "#002b3a",
-        "trim": "#4976de",
-        "ink": "#F8F6F1",
+        "bg": "#b3a4d1",
+        "trim": "#4b3a6e",
+        "ink": "#232C32",
         "h": 0.838,
         "w": 0.191
       },
@@ -193,7 +193,8 @@
         "fraction": 0,
         "label": "1 of 577",
         "updatedAt": "2026-11-08T05:43:33.134Z"
-      }
+      },
+      "author": "Robert Greene"
     },
     {
       "id": "z53ie2rcds",
