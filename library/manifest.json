@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T19:45:44.872Z",
+  "updatedAt": "2026-11-11T19:45:47.674Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -758,14 +758,15 @@
         "accent": "#f3ead1"
       },
       "spine": {
-        "source": "cover",
-        "bg": "#494a46",
-        "trim": "#f3ead1",
-        "ink": "#f3ead1",
+        "source": "trim",
+        "bg": "#d8a1a4",
+        "trim": "#7a3e48",
+        "ink": "#232C32",
         "h": 0.753,
         "w": 0.188
       },
-      "position": null
+      "position": null,
+      "author": "James C. Scott"
     },
     {
       "id": "7gwvai4xth",
