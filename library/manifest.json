@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-11T18:58:07.879Z",
+  "updatedAt": "2026-11-11T18:58:14.778Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -124,10 +124,10 @@
         "font": "crimson-pro"
       },
       "position": {
-        "locator": "epubcfi(/6/2!/4,/2,/4/2)",
-        "fraction": 0.0010386282341863999,
+        "locator": "epubcfi(/6/4!/4,/2[filepos0000000230],/4/4)",
+        "fraction": 0.0017811988876000407,
         "label": "0%",
-        "updatedAt": "2026-11-08T05:51:50.094Z"
+        "updatedAt": "2026-11-11T18:58:12.846Z"
       }
     },
     {
