@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-21T05:04:07.988Z",
+  "updatedAt": "2026-11-21T05:09:15.268Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -27,10 +27,10 @@
         "font": "crimson-pro"
       },
       "position": {
-        "locator": "epubcfi(/6/12!/4,/158,/202/2/1:142)",
-        "fraction": 0.3014182592562154,
-        "label": "30%",
-        "updatedAt": "2026-11-21T05:03:29.347Z"
+        "locator": "epubcfi(/6/12!/4,/346,/360/2/1:151)",
+        "fraction": 0.31836342745353585,
+        "label": "32%",
+        "updatedAt": "2026-11-21T05:06:49.055Z"
       },
       "author": "John Grisham"
     },
