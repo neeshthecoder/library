@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-23T04:57:18.632Z",
+  "updatedAt": "2026-11-23T04:59:35.614Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -32,7 +32,8 @@
         "label": "99%",
         "updatedAt": "2026-11-23T04:56:52.532Z"
       },
-      "author": "John Grisham"
+      "author": "John Grisham",
+      "finishedAt": "2026-11-23T04:59:34.848Z"
     },
     {
       "id": "stiyw4vs76",
