@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-23T04:59:38.632Z",
+  "updatedAt": "2026-11-23T05:01:03.444Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -61,10 +61,10 @@
         "font": "cormorant-garamond"
       },
       "position": {
-        "locator": "epubcfi(/6/8!/4[1T140-9b8630daf0e3463cba1e6337d523e980],/2,/14/4/2)",
-        "fraction": 0.02082993807040417,
-        "label": "2%",
-        "updatedAt": "2026-11-08T03:10:34.246Z"
+        "locator": "epubcfi(/6/10!/4[2RHM0-9b8630daf0e3463cba1e6337d523e980],/2,/14/1:344)",
+        "fraction": 0.04588443204041721,
+        "label": "5%",
+        "updatedAt": "2026-11-23T04:59:53.453Z"
       },
       "author": "Marghanita Laski"
     },
