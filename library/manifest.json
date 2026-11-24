@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-23T05:01:03.444Z",
+  "updatedAt": "2026-11-24T05:23:47.988Z",
   "books": [
     {
       "id": "s6uorwfz7l",
@@ -64,7 +64,7 @@
         "locator": "epubcfi(/6/10!/4[2RHM0-9b8630daf0e3463cba1e6337d523e980],/2,/14/1:344)",
         "fraction": 0.04588443204041721,
         "label": "5%",
-        "updatedAt": "2026-11-23T04:59:53.453Z"
+        "updatedAt": "2026-11-24T05:23:45.583Z"
       },
       "author": "Marghanita Laski"
     },
